@@ -36,6 +36,8 @@ class ApplicationEntity extends Equatable {
   final String cropType;
   final double? latitude;
   final double? longitude;
+  @JsonKey(name: 'farm_polygon')
+  final List<Map<String, dynamic>>? farmPolygon;
 
   // KYC
   final String? passportPath;
@@ -79,6 +81,7 @@ class ApplicationEntity extends Equatable {
     this.cropType = '',
     this.latitude,
     this.longitude,
+    this.farmPolygon,
     this.passportPath,
     this.kycType,
     this.kycNumber,
@@ -129,6 +132,7 @@ class ApplicationEntity extends Equatable {
     String? cropType,
     double? latitude,
     double? longitude,
+    List<Map<String, dynamic>>? farmPolygon,
     String? passportPath,
     KycType? kycType,
     String? kycNumber,
@@ -164,6 +168,7 @@ class ApplicationEntity extends Equatable {
       cropType: cropType ?? this.cropType,
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
+      farmPolygon: farmPolygon ?? this.farmPolygon,
       passportPath: passportPath ?? this.passportPath,
       kycType: kycType ?? this.kycType,
       kycNumber: kycNumber ?? this.kycNumber,
@@ -201,6 +206,7 @@ class ApplicationEntity extends Equatable {
         cropType,
         latitude,
         longitude,
+        farmPolygon,
         passportPath,
         kycType,
         kycNumber,

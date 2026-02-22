@@ -24,7 +24,7 @@ dependencies:
 
   supabase_flutter: ^2.9.1
 
-  flutter_map: ^7.0.2
+  flutter_map: ^8.2.2
   searchfield: ^1.2.0
   fl_chart: ^0.69.2
   excel: ^4.0.6
@@ -39,6 +39,8 @@ dependencies:
   pdf: ^3.11.3
   printing: ^5.14.2
   universal_html: ^2.3.0
+  latlong2: ^0.9.1
+  maps_toolkit: ^3.1.0
 
 dev_dependencies:
   flutter_test:

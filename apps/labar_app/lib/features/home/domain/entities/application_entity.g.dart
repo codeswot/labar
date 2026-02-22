@@ -33,6 +33,9 @@ ApplicationEntity _$ApplicationEntityFromJson(Map<String, dynamic> json) =>
       cropType: json['cropType'] as String? ?? '',
       latitude: (json['latitude'] as num?)?.toDouble(),
       longitude: (json['longitude'] as num?)?.toDouble(),
+      farmPolygon: (json['farm_polygon'] as List<dynamic>?)
+          ?.map((e) => e as Map<String, dynamic>)
+          .toList(),
       passportPath: json['passportPath'] as String?,
       kycType: $enumDecodeNullable(_$KycTypeEnumMap, json['kycType']),
       kycNumber: json['kycNumber'] as String?,
@@ -70,6 +73,7 @@ Map<String, dynamic> _$ApplicationEntityToJson(ApplicationEntity instance) =>
       'cropType': instance.cropType,
       'latitude': instance.latitude,
       'longitude': instance.longitude,
+      'farm_polygon': instance.farmPolygon,
       'passportPath': instance.passportPath,
       'kycType': _$KycTypeEnumMap[instance.kycType],
       'kycNumber': instance.kycNumber,

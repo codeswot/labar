@@ -50,6 +50,10 @@ class FarmDetailsCubit extends HydratedCubit<FarmDetailsState> {
     emit(state.copyWith(latitude: lat, longitude: lng));
   }
 
+  void farmPolygonChanged(List<Map<String, dynamic>> points) {
+    emit(state.copyWith(farmPolygon: points));
+  }
+
   Future<void> fetchCurrentLocation() async {
     emit(state.copyWith(isFetchingLocation: true));
     try {

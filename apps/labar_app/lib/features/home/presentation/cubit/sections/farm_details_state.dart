@@ -13,6 +13,7 @@ class FarmDetailsState with _$FarmDetailsState {
     RequiredTextInput cropType,
     double? latitude,
     double? longitude,
+    @Default([]) List<dynamic> farmPolygon,
     @Default(false) bool isFetchingLocation,
   }) = _FarmDetailsState;
 

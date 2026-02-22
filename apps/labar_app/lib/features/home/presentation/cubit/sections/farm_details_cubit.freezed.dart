@@ -28,6 +28,7 @@ mixin _$FarmDetailsState {
   RequiredTextInput get cropType => throw _privateConstructorUsedError;
   double? get latitude => throw _privateConstructorUsedError;
   double? get longitude => throw _privateConstructorUsedError;
+  List<dynamic> get farmPolygon => throw _privateConstructorUsedError;
   bool get isFetchingLocation => throw _privateConstructorUsedError;
 
   /// Serializes this FarmDetailsState to a JSON map.
@@ -52,6 +53,7 @@ abstract class $FarmDetailsStateCopyWith<$Res> {
       @RequiredTextInputConverter() RequiredTextInput cropType,
       double? latitude,
       double? longitude,
+      List<dynamic> farmPolygon,
       bool isFetchingLocation});
 }
 
@@ -75,6 +77,7 @@ class _$FarmDetailsStateCopyWithImpl<$Res, $Val extends FarmDetailsState>
     Object? cropType = null,
     Object? latitude = freezed,
     Object? longitude = freezed,
+    Object? farmPolygon = null,
     Object? isFetchingLocation = null,
   }) {
     return _then(_value.copyWith(
@@ -98,6 +101,10 @@ class _$FarmDetailsStateCopyWithImpl<$Res, $Val extends FarmDetailsState>
           ? _value.longitude
           : longitude // ignore: cast_nullable_to_non_nullable
               as double?,
+      farmPolygon: null == farmPolygon
+          ? _value.farmPolygon
+          : farmPolygon // ignore: cast_nullable_to_non_nullable
+              as List<dynamic>,
       isFetchingLocation: null == isFetchingLocation
           ? _value.isFetchingLocation
           : isFetchingLocation // ignore: cast_nullable_to_non_nullable
@@ -120,6 +127,7 @@ abstract class _$$FarmDetailsStateImplCopyWith<$Res>
       @RequiredTextInputConverter() RequiredTextInput cropType,
       double? latitude,
       double? longitude,
+      List<dynamic> farmPolygon,
       bool isFetchingLocation});
 }
 
@@ -141,6 +149,7 @@ class __$$FarmDetailsStateImplCopyWithImpl<$Res>
     Object? cropType = null,
     Object? latitude = freezed,
     Object? longitude = freezed,
+    Object? farmPolygon = null,
     Object? isFetchingLocation = null,
   }) {
     return _then(_$FarmDetailsStateImpl(
@@ -164,6 +173,10 @@ class __$$FarmDetailsStateImplCopyWithImpl<$Res>
           ? _value.longitude
           : longitude // ignore: cast_nullable_to_non_nullable
               as double?,
+      farmPolygon: null == farmPolygon
+          ? _value._farmPolygon
+          : farmPolygon // ignore: cast_nullable_to_non_nullable
+              as List<dynamic>,
       isFetchingLocation: null == isFetchingLocation
           ? _value.isFetchingLocation
           : isFetchingLocation // ignore: cast_nullable_to_non_nullable
@@ -184,8 +197,10 @@ class _$FarmDetailsStateImpl extends _FarmDetailsState {
       this.cropType = const RequiredTextInput.pure(),
       this.latitude,
       this.longitude,
+      final List<dynamic> farmPolygon = const [],
       this.isFetchingLocation = false})
-      : super._();
+      : _farmPolygon = farmPolygon,
+        super._();
 
   factory _$FarmDetailsStateImpl.fromJson(Map<String, dynamic> json) =>
       _$$FarmDetailsStateImplFromJson(json);
@@ -206,13 +221,22 @@ class _$FarmDetailsStateImpl extends _FarmDetailsState {
   final double? latitude;
   @override
   final double? longitude;
+  final List<dynamic> _farmPolygon;
+  @override
+  @JsonKey()
+  List<dynamic> get farmPolygon {
+    if (_farmPolygon is EqualUnmodifiableListView) return _farmPolygon;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_farmPolygon);
+  }
+
   @override
   @JsonKey()
   final bool isFetchingLocation;
 
   @override
   String toString() {
-    return 'FarmDetailsState(farmSize: $farmSize, farmLocation: $farmLocation, cropType: $cropType, latitude: $latitude, longitude: $longitude, isFetchingLocation: $isFetchingLocation)';
+    return 'FarmDetailsState(farmSize: $farmSize, farmLocation: $farmLocation, cropType: $cropType, latitude: $latitude, longitude: $longitude, farmPolygon: $farmPolygon, isFetchingLocation: $isFetchingLocation)';
   }
 
   @override
@@ -230,14 +254,23 @@ class _$FarmDetailsStateImpl extends _FarmDetailsState {
                 other.latitude == latitude) &&
             (identical(other.longitude, longitude) ||
                 other.longitude == longitude) &&
+            const DeepCollectionEquality()
+                .equals(other._farmPolygon, _farmPolygon) &&
             (identical(other.isFetchingLocation, isFetchingLocation) ||
                 other.isFetchingLocation == isFetchingLocation));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, farmSize, farmLocation, cropType,
-      latitude, longitude, isFetchingLocation);
+  int get hashCode => Object.hash(
+      runtimeType,
+      farmSize,
+      farmLocation,
+      cropType,
+      latitude,
+      longitude,
+      const DeepCollectionEquality().hash(_farmPolygon),
+      isFetchingLocation);
 
   /// Create a copy of FarmDetailsState
   /// with the given fields replaced by the non-null parameter values.
@@ -263,6 +296,7 @@ abstract class _FarmDetailsState extends FarmDetailsState {
       @RequiredTextInputConverter() final RequiredTextInput cropType,
       final double? latitude,
       final double? longitude,
+      final List<dynamic> farmPolygon,
       final bool isFetchingLocation}) = _$FarmDetailsStateImpl;
   const _FarmDetailsState._() : super._();
 
@@ -282,6 +316,8 @@ abstract class _FarmDetailsState extends FarmDetailsState {
   double? get latitude;
   @override
   double? get longitude;
+  @override
+  List<dynamic> get farmPolygon;
   @override
   bool get isFetchingLocation;
 

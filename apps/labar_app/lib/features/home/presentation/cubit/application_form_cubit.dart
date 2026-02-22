@@ -132,6 +132,9 @@ class ApplicationFormCubit extends HydratedCubit<ApplicationFormState> {
         cropType: farmDetails.cropType.value,
         latitude: farmDetails.latitude,
         longitude: farmDetails.longitude,
+        farmPolygon: farmDetails.farmPolygon.isNotEmpty
+            ? farmDetails.farmPolygon.cast<Map<String, dynamic>>()
+            : null,
         // Bank
         bankName: bankDetails.bankName.value,
         accountNumber: bankDetails.accountNumber.value,

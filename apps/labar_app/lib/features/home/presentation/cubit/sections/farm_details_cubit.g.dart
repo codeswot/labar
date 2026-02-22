@@ -22,6 +22,7 @@ _$FarmDetailsStateImpl _$$FarmDetailsStateImplFromJson(
               .fromJson(json['crop_type'] as String),
       latitude: (json['latitude'] as num?)?.toDouble(),
       longitude: (json['longitude'] as num?)?.toDouble(),
+      farmPolygon: json['farm_polygon'] as List<dynamic>? ?? const [],
       isFetchingLocation: json['is_fetching_location'] as bool? ?? false,
     );
 
@@ -34,5 +35,6 @@ Map<String, dynamic> _$$FarmDetailsStateImplToJson(
       'crop_type': const RequiredTextInputConverter().toJson(instance.cropType),
       'latitude': instance.latitude,
       'longitude': instance.longitude,
+      'farm_polygon': instance.farmPolygon,
       'is_fetching_location': instance.isFetchingLocation,
     };
