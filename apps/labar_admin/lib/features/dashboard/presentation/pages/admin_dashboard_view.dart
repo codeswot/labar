@@ -692,6 +692,25 @@ class _ApplicationManagementView extends StatelessWidget {
                                           ],
                                         ),
                                       ),
+                                      if (res['is_collected'] != true)
+                                        Tooltip(
+                                          message: 'Mark as collected',
+                                          child: IconButton(
+                                            icon: const Icon(
+                                                Icons.check_circle_outline,
+                                                size: 20,
+                                                color: Colors.green),
+                                            onPressed: () {
+                                              context
+                                                  .read<
+                                                      ApplicationManagementCubit>()
+                                                  .markAllocatedResourceAsCollected(
+                                                    resourceId: res['id'],
+                                                    applicationId: app['id'],
+                                                  );
+                                            },
+                                          ),
+                                        ),
                                       if (res['is_collected'] == true)
                                         MoonTag(
                                           label: const Text('COLLECTED'),
@@ -699,7 +718,7 @@ class _ApplicationManagementView extends StatelessWidget {
                                           backgroundColor: Colors.green
                                               .withValues(alpha: 0.2),
                                         ),
-                                      const SizedBox(width: 8),
+                                      const SizedBox(width: 4),
                                       IconButton(
                                         icon: const Icon(Icons.delete_outline,
                                             size: 20, color: Colors.red),

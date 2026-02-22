@@ -41,6 +41,7 @@ abstract class AdminRepository {
     required String collectionAddress,
   });
   Future<void> removeAllocatedResource(String resourceId);
+  Future<void> markAllocatedResourceAsCollected(String resourceId);
   Future<void> unassignWarehouse(String applicationId);
 
   // Inventory & Waybills
@@ -226,6 +227,12 @@ class AdminRepositoryImpl implements AdminRepository {
         .from('allocated_resources')
         .delete()
         .eq('id', resourceId);
+  }
+
+  Future<void> markAllocatedResourceAsCollected(String resourceId) async {
+    await _supabaseClient
+        .from('allocated_resources')
+        .update({'is_collected': true}).eq('id', resourceId);
   }
 
   @override

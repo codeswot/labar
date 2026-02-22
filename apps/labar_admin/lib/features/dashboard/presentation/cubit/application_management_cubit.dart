@@ -227,6 +227,20 @@ class ApplicationManagementCubit extends Cubit<ApplicationManagementState> {
     }
   }
 
+  Future<void> markAllocatedResourceAsCollected({
+    required String resourceId,
+    required String applicationId,
+  }) async {
+    emit(state.copyWith(isLoading: true, error: null));
+    try {
+      await _adminRepository.markAllocatedResourceAsCollected(resourceId);
+      emit(state.copyWith(isLoading: false));
+      await fetchApplicationDetails(applicationId);
+    } catch (e) {
+      emit(state.copyWith(isLoading: false, error: e.toString()));
+    }
+  }
+
   Future<void> unassignWarehouse(String applicationId) async {
     emit(state.copyWith(isLoading: true, error: null));
     try {

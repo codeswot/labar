@@ -145,3 +145,25 @@ supabase-deploy:
 # Clean and rebuild everything from scratch
 fresh: clean bootstrap build assets l10n
     @echo "✅ Fresh build complete!"
+
+# Build admin web app (with envs) and deploy to Vercel production
+deploy-admin:
+    @echo "🏗️  Building admin web app..."
+    cd apps/labar_admin && flutter build web --release --dart-define-from-file=.env
+    @echo "📦  Copying to Vercel output..."
+    mkdir -p .vercel/output/static
+    rsync -a --delete apps/labar_admin/build/web/ .vercel/output/static/
+    @echo "🚀  Deploying to Vercel production..."
+    vercel deploy --prebuilt --yes
+    @echo "✅  Admin dashboard deployed!"
+
+# Build admin web app (with envs) and deploy to Vercel preview
+deploy-admin-preview:
+    @echo "🏗️  Building admin web app..."
+    cd apps/labar_admin && flutter build web --release --dart-define-from-file=.env
+    @echo "📦  Copying to Vercel output..."
+    mkdir -p .vercel/output/static
+    rsync -a --delete apps/labar_admin/build/web/ .vercel/output/static/
+    @echo "🔍  Deploying to Vercel preview..."
+    vercel deploy --prebuilt
+    @echo "✅  Preview deployment done!"
