@@ -1,0 +1,58 @@
+name: labar_admin
+description: Labar Admin Dashboard - Web Application
+version: 1.0.0+1
+publish_to: none
+
+environment:
+  sdk: '>=3.5.0 <4.0.0'
+  flutter: '>=3.24.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  ui_library:
+    path: ../../packages/ui_library
+
+  flutter_bloc: ^8.1.6
+  hydrated_bloc: ^9.1.5
+  get_it: ^8.0.2
+  injectable: ^2.5.0
+  auto_route: ^9.2.2
+
+  supabase_flutter: ^2.9.1
+
+  flutter_map: ^7.0.2
+  searchfield: ^1.2.0
+  fl_chart: ^0.69.2
+  excel: ^4.0.6
+
+  equatable: ^2.0.7
+  freezed_annotation: ^2.4.4
+  json_annotation: ^4.9.0
+  intl: ^0.20.2
+  path_provider: ^2.1.5
+  logger: ^2.6.2
+  image_picker: ^1.2.1
+  pdf: ^3.11.3
+  printing: ^5.14.2
+  universal_html: ^2.3.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  build_runner: ^2.4.13
+  freezed: ^2.5.7
+  json_serializable: ^6.8.0
+  injectable_generator: ^2.6.2
+  auto_route_generator: ^9.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/
+    - assets/locations/
+    - assets/locations/states.json

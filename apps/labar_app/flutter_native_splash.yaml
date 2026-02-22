@@ -1,0 +1,46 @@
+flutter_native_splash:
+  # Background color for all platforms (except Android 12+)
+  color: "#FAFDFB"
+  color_dark: "#0A1612"
+  
+  # Splash image for pre-Android 12
+  # Should be sized for 4x pixel density
+  image: ../../assets/icon.png
+  
+  # Image alignment for Android (pre-12)
+  # Options: center, bottom, top, left, right, fill, etc.
+  android_gravity: center
+  
+  # Image content mode for iOS
+  # Options: center, scaleAspectFit, scaleAspectFill, etc.
+  ios_content_mode: center
+  
+  # Hide notification bar on Android (iOS hides by default)
+  fullscreen: true
+  
+  # Enable for Android and iOS
+  android: true
+  ios: true
+  
+  # Android 12+ specific configuration
+  # Android 12+ has a different splash screen system
+  android_12:
+    # Background color for Android 12+
+    color: "#FAFDFB"
+    color_dark: "#0A1612"
+    
+    # Center splash image (will be clipped to a circle)
+    # With icon_background_color: 960×960 px (fit within circle 640px diameter)
+    # Without icon_background_color: 1152×1152 px (fit within circle 768px diameter)
+    image: ../../assets/icon.png
+    
+    # Optional: Icon background color (creates a circle behind the icon)
+    # Uncomment if you want better contrast between icon and window background
+    # icon_background_color: "#FFFFFF"
+    
+    # Optional: Branding image at bottom of screen
+    # Must be 800x320 px
+    # branding: ../../assets/branding.png
+  
+  # Disable web splash
+  web: false

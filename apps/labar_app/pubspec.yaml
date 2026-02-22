@@ -1,0 +1,64 @@
+name: labar_app
+description: Labar Farmers Application - Mobile App
+version: 1.0.0+1
+publish_to: none
+
+environment:
+  sdk: '>=3.5.0 <4.0.0'
+  flutter: '>=3.24.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  ui_library:
+    path: ../../packages/ui_library
+
+  flutter_bloc: ^8.1.6
+  hydrated_bloc: ^9.1.5
+  get_it: ^8.0.2
+  injectable: ^2.5.0
+  auto_route: ^9.2.2
+
+  supabase_flutter: ^2.9.1
+
+  formz: ^0.8.0
+  image_picker: ^1.2.1
+  flutter_native_contact_picker: ^0.0.11
+  geolocator: ^14.0.2
+  flutter_map: ^7.0.2
+  signature: ^6.3.0
+  skeletonizer: ^2.1.2
+
+  equatable: ^2.0.8
+  freezed_annotation: ^2.4.4
+  json_annotation: ^4.9.0
+  intl: ^0.20.2
+  path_provider: ^2.1.5
+  flutter_native_splash: ^2.4.7
+  logger: ^2.6.2
+  dartz: ^0.10.1
+  moon_design: ^1.1.0
+  url_launcher: ^6.3.2
+  json_serializable: ^6.9.5
+  build_runner: ^2.5.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  freezed: ^2.5.7
+  injectable_generator: ^2.6.2
+  auto_route_generator: ^9.0.0
+  flutter_launcher_icons: ^0.14.1
+
+flutter:
+  uses-material-design: true
+  generate: true
+
+  assets:
+    - assets/
+    - assets/locations/
+    - shorebird.yaml

@@ -1,0 +1,408 @@
+{
+  "@@locale": "ha",
+  "appName": "Labar",
+  "@appName": {
+    "description": "Sunan aikace-aikacen"
+  },
+  
+  "login": "Shiga",
+  "@login": {
+    "description": "Maɓallin shiga"
+  },
+  "signUp": "Yi Rajista",
+  "@signUp": {
+    "description": "Maɓallin yin rajista"
+  },
+  "signIn": "Shiga",
+  "@signIn": {
+    "description": "Maɓallin shiga"
+  },
+  "email": "Imel",
+  "@email": {
+    "description": "Alamar filin imel"
+  },
+  "password": "Kalmar Sirri",
+  "@password": {
+    "description": "Alamar filin kalmar sirri"
+  },
+  "confirmPassword": "Tabbatar da Kalmar Sirri",
+  "@confirmPassword": {
+    "description": "Alamar filin tabbatar da kalmar sirri"
+  },
+  "forgotPassword": "Ka Manta da Kalmar Sirri?",
+  "@forgotPassword": {
+    "description": "Rubutun hanyar manta da kalmar sirri"
+  },
+  "resetPassword": "Sake Saita Kalmar Sirri",
+  "@resetPassword": {
+    "description": "Maɓallin sake saita kalmar sirri"
+  },
+  "rememberMe": "Ka Tuna da Ni",
+  "@rememberMe": {
+    "description": "Alamar akwatin rajista tuna da ni"
+  },
+  "createAccount": "Ƙirƙiri Asusu",
+  "@createAccount": {
+    "description": "Maɓallin ƙirƙirar asusu"
+  },
+  "welcomeBack": "Barka da Dawowa",
+  "@welcomeBack": {
+    "description": "Saƙon barka da dawowa"
+  },
+  "getStarted": "Fara",
+  "@getStarted": {
+    "description": "Maɓallin farawa"
+  },
+  "alreadyHaveAccount": "Kana da asusu?",
+  "@alreadyHaveAccount": {
+    "description": "Tambaya ta asusu da ake da shi"
+  },
+  "dontHaveAccount": "Ba ka da asusu?",
+  "@dontHaveAccount": {
+    "description": "Tambaya ta asusu da ba a da shi"
+  },
+  
+  "firstName": "Sunan Farko",
+  "@firstName": {
+    "description": "Alamar filin sunan farko"
+  },
+  "lastName": "Sunan Iyali",
+  "@lastName": {
+    "description": "Alamar filin sunan iyali"
+  },
+  "fullName": "Cikakken Suna",
+  "@fullName": {
+    "description": "Alamar filin cikakken suna"
+  },
+  "phoneNumber": "Lambar Waya",
+  "@phoneNumber": {
+    "description": "Alamar filin lambar waya"
+  },
+  "address": "Adireshi",
+  "@address": {
+    "description": "Alamar filin adireshi"
+  },
+  "state": "Jiha",
+  "@state": {
+    "description": "Alamar filin jiha"
+  },
+  "localGovernment": "Karamar Hukuma",
+  "@localGovernment": {
+    "description": "Alamar filin karamar hukuma"
+  },
+  "village": "Ƙauye",
+  "@village": {
+    "description": "Alamar filin ƙauye"
+  },
+  "ward": "Unguwa",
+  "@ward": {
+    "description": "Alamar filin unguwa"
+  },
+  
+  "farmerRegistration": "Rajistar Manomi",
+  "@farmerRegistration": {
+    "description": "Taken rajistar manomi"
+  },
+  "personalInformation": "Bayanan Sirri",
+  "@personalInformation": {
+    "description": "Taken sashen bayanan sirri"
+  },
+  "contactInformation": "Bayanan Tuntuɓa",
+  "@contactInformation": {
+    "description": "Taken sashen bayanan tuntuɓa"
+  },
+  "farmInformation": "Bayanan Gona",
+  "@farmInformation": {
+    "description": "Taken sashen bayanan gona"
+  },
+  "farmSize": "Girman Gona",
+  "@farmSize": {
+    "description": "Alamar filin girman gona"
+  },
+  "farmLocation": "Wurin Gona",
+  "@farmLocation": {
+    "description": "Alamar filin wurin gona"
+  },
+  "cropType": "Nau'in Amfani",
+  "@cropType": {
+    "description": "Alamar filin nau'in amfani"
+  },
+  "cropVariety": "Irin Amfani",
+  "@cropVariety": {
+    "description": "Alamar filin irin amfani"
+  },
+  "plantingDate": "Ranar Shuka",
+  "@plantingDate": {
+    "description": "Alamar filin ranar shuka"
+  },
+  "harvestDate": "Ranar Girbi",
+  "@harvestDate": {
+    "description": "Alamar filin ranar girbi"
+  },
+  "expectedYield": "Yawan da Ake Tsammani",
+  "@expectedYield": {
+    "description": "Alamar filin yawan da ake tsammani"
+  },
+  "farmerId": "Lambar Manomi",
+  "@farmerId": {
+    "description": "Alamar filin lambar manomi"
+  },
+  "dateOfBirth": "Ranar Haihuwa",
+  "@dateOfBirth": {
+    "description": "Alamar filin ranar haihuwa"
+  },
+  "gender": "Jinsi",
+  "@gender": {
+    "description": "Alamar filin jinsi"
+  },
+  "male": "Namiji",
+  "@male": {
+    "description": "Zaɓin jinsi namiji"
+  },
+  "female": "Mace",
+  "@female": {
+    "description": "Zaɓin jinsi mace"
+  },
+  
+  "save": "Ajiye",
+  "@save": {
+    "description": "Maɓallin ajiyewa"
+  },
+  "cancel": "Soke",
+  "@cancel": {
+    "description": "Maɓallin sokewa"
+  },
+  "submit": "Ƙaddamar",
+  "@submit": {
+    "description": "Maɓallin ƙaddamarwa"
+  },
+  "delete": "Goge",
+  "@delete": {
+    "description": "Maɓallin gogewa"
+  },
+  "edit": "Gyara",
+  "@edit": {
+    "description": "Maɓallin gyarawa"
+  },
+  "yes": "Eh",
+  "@yes": {
+    "description": "Zaɓin eh"
+  },
+  "no": "A'a",
+  "@no": {
+    "description": "Zaɓin a'a"
+  },
+  "ok": "To",
+  "@ok": {
+    "description": "Maɓallin to"
+  },
+  "confirm": "Tabbatar",
+  "@confirm": {
+    "description": "Maɓallin tabbatarwa"
+  },
+  "loading": "Ana Lodi...",
+  "@loading": {
+    "description": "Saƙon lodi"
+  },
+  "error": "Kuskure",
+  "@error": {
+    "description": "Saƙon kuskure"
+  },
+  "success": "Nasara",
+  "@success": {
+    "description": "Saƙon nasara"
+  },
+  "retry": "Sake Gwadawa",
+  "@retry": {
+    "description": "Maɓallin sake gwadawa"
+  },
+  "next": "Na Gaba",
+  "@next": {
+    "description": "Maɓallin na gaba"
+  },
+  "previous": "Na Baya",
+  "@previous": {
+    "description": "Maɓallin na baya"
+  },
+  "backButton": "Baya",
+  "@backButton": {
+    "description": "Bayani akan maɓallin baya"
+  },
+  "finish": "Ƙare",
+  "@finish": {
+    "description": "Maɓallin ƙarewa"
+  },
+  "skip": "Tsallake",
+  "@skip": {
+    "description": "Maɓallin tsallakewa"
+  },
+  
+  "fieldRequired": "Ana buƙatar wannan filin",
+  "@fieldRequired": {
+    "description": "Saƙon tabbatarwa na filin da ake buƙata"
+  },
+  "invalidEmail": "Da fatan za a shigar da adireshin imel mai inganci",
+  "@invalidEmail": {
+    "description": "Saƙon tabbatarwa na imel mara inganci"
+  },
+  "passwordTooShort": "Kalmar sirri dole ta kasance aƙalla haruffa 8",
+  "@passwordTooShort": {
+    "description": "Saƙon tabbatarwa na kalmar sirri mai gajarta"
+  },
+  "passwordsDoNotMatch": "Kalmomin sirri ba su dace ba",
+  "@passwordsDoNotMatch": {
+    "description": "Saƙon tabbatarwa na kalmomin sirri da ba su dace ba"
+  },
+  "invalidPhoneNumber": "Da fatan za a shigar da lambar waya mai inganci",
+  "@invalidPhoneNumber": {
+    "description": "Saƙon tabbatarwa na lambar waya mara inganci"
+  },
+  "networkError": "Kuskuren hanyar sadarwa. Da fatan za a duba haɗin ku",
+  "@networkError": {
+    "description": "Saƙon kuskuren hanyar sadarwa"
+  },
+  "somethingWentWrong": "Wani abu ya yi kuskure. Da fatan za a sake gwadawa",
+  "@somethingWentWrong": {
+    "description": "Saƙon kuskure na gaba ɗaya"
+  },
+  "sendRecoveryCodeButton": "Aika Lambar Farfadowa",
+  "codeResent": "An sake aika lambar",
+  
+  "home": "Gida",
+  "@home": {
+    "description": "Alamar kewayawa ta gida"
+  },
+  "profile": "Bayani",
+  "@profile": {
+    "description": "Alamar kewayawa ta bayani"
+  },
+  "settings": "Saitunan",
+  "@settings": {
+    "description": "Alamar kewayawa ta saitunan"
+  },
+  "logout": "Fita",
+  "@logout": {
+    "description": "Maɓallin fitarwa"
+  },
+  "language": "Harshe",
+  "@language": {
+    "description": "Alamar saitunan harshe"
+  },
+  "notifications": "Sanarwa",
+  "@notifications": {
+    "description": "Alamar sanarwa"
+  },
+  "search": "Nema",
+  "@search": {
+    "description": "Rubutun mai ɗaukar wuri na nema"
+  },
+  
+  "bankDetails": "Bank Details",
+  "@bankDetails": {
+    "description": "Bank details section title"
+  },
+  "accountNumber": "Account Number",
+  "@accountNumber": {
+    "description": "Account number field label"
+  },
+  "bankName": "Bank Name",
+  "@bankName": {
+    "description": "Bank name field label"
+  },
+  "accountName": "Account Name",
+  "@accountName": {
+    "description": "Account name label"
+  },
+  
+  "farmDetailsAndLocation": "Farm Details & Location",
+  "@farmDetailsAndLocation": {
+    "description": "Farm details and location section title"
+  },
+  "farmSizeCoordinates": "Farm Size & Coordinates",
+  "@farmSizeCoordinates": {
+    "description": "Farm size and coordinates subsection title"
+  },
+  "farmSizeHectares": "Farm Size (Hectares)",
+  "@farmSizeHectares": {
+    "description": "Farm size in hectares label"
+  },
+  "latitude": "Latitude",
+  "@latitude": {
+    "description": "Latitude label"
+  },
+  "longitude": "Longitude",
+  "@longitude": {
+    "description": "Longitude label"
+  },
+  "getCurrentLocation": "Get Current Location",
+  "@getCurrentLocation": {
+    "description": "Get current location button text"
+  },
+  
+  "nextOfKin": "Next of Kin",
+  "@nextOfKin": {
+    "description": "Next of kin section title"
+  },
+  "relationship": "Relationship",
+  "@relationship": {
+    "description": "Relationship field label"
+  },
+  
+  "attestation": "Attestation",
+  "@attestation": {
+    "description": "Attestation section title"
+  },
+  "attestationStatement": "I hereby certify that the information given in this form is correct and true to the best of my knowledge.",
+  "@attestationStatement": {
+    "description": "Attestation statement text"
+  },
+  "iAgree": "I Agree",
+  "@iAgree": {
+    "description": "I agree checkbox label"
+  },
+  
+  "signature": "Signature",
+  "@signature": {
+    "description": "Signature section title"
+  },
+  "clear": "Clear",
+  "@clear": {
+    "description": "Clear button text"
+  },
+  "saveSignature": "Save Signature",
+  "@saveSignature": {
+    "description": "Save signature button text"
+  },
+  "signatureSaved": "Signature saved!",
+  "@signatureSaved": {
+    "description": "Signature saved success message"
+  },
+  "camera": "Kyamara",
+  "gallery": "Gidan Hoto",
+  "passportPhoto": "Hoton Fasfo",
+  "imageSelected": "Hoto An Zaɓa",
+  "applicationSubmitted": "Application Submitted!",
+  "applicationSubmittedUnderReview": "Your application has been successfully submitted and is under review.",
+  "viewApplication": "View Application",
+  "confirmSubmit": "Confirm & Submit",
+  "signingPassport": "Uploading signature and passport...",
+  "submittingApplication": "Submitting form...",
+  "proofOfPaymentRequired": "Dole ne ku loda shaidar biyan kuɗi kafin ku ci gaba",
+  "uploadProofOfPayment": "Loda Shaidar Biyan Kuɗi",
+  "proofOfPaymentUploaded": "An loda shaidar biyan kuɗi cikin nasara",
+  "allocatedResources": "Abubuwan da aka Bayar",
+  "noResourcesAllocated": "Ba a raba muku wasu kayayyaki ba tukuna.",
+  "collected": "An karɓa",
+  "pending": "Ana jira",
+  "collectionAddress": "Wurin karɓa",
+  "viewAllocatedResources": "Duba Abubuwan da aka Bayar",
+  "applicationApprovedSuccess": "Barka! An amince da aikace-aikacen ku. Yanzu kuna iya duba kayayyakin da aka raba muku a ƙasa.",
+  "assignedWarehouse": "Assigned Warehouse",
+  "viewAssignedWarehouse": "View Assigned Warehouse",
+  "noWarehouseAssigned": "No warehouse assigned yet.",
+  "warehouseAssignmentInstruction": "Admins will assign a warehouse during the receiving process.",
+  "warehouseInformation": "Warehouse Information",
+  "instruction": "Instruction",
+  "warehouseProceedInstruction": "Please proceed to this warehouse with your produce for submission. Ensure you have your application ID ready.",
+  "warehouseBagRecordInstruction": "Record the number of bags received with the admin upon submission."
+}

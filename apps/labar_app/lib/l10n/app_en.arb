@@ -1,0 +1,595 @@
+{
+  "@@locale": "en",
+  "appName": "Labar",
+  "@appName": {
+    "description": "The application name"
+  },
+  
+  "login": "Login",
+  "@login": {
+    "description": "Login button text"
+  },
+  "signUp": "Sign Up",
+  "@signUp": {
+    "description": "Sign up button text"
+  },
+  "signIn": "Sign In",
+  "@signIn": {
+    "description": "Sign in button text"
+  },
+  "email": "Email",
+  "@email": {
+    "description": "Email field label"
+  },
+  "password": "Password",
+  "@password": {
+    "description": "Password field label"
+  },
+  "confirmPassword": "Confirm Password",
+  "@confirmPassword": {
+    "description": "Confirm password field label"
+  },
+  "forgotPassword": "Forgot Password?",
+  "@forgotPassword": {
+    "description": "Forgot password link text"
+  },
+  "resetPassword": "Reset Password",
+  "@resetPassword": {
+    "description": "Reset password button text"
+  },
+  "rememberMe": "Remember Me",
+  "@rememberMe": {
+    "description": "Remember me checkbox label"
+  },
+  "createAccount": "Create Account",
+  "@createAccount": {
+    "description": "Create account button text"
+  },
+  "helloWorld": "Hello World!",
+  "@helloWorld": {
+    "description": "The conventional newborn programmer greeting"
+  },
+  "signInTitle": "Welcome Back",
+  "signInSubtitle": "Sign in to access your dashboard",
+  "signUpTitle": "Create Account",
+  "signUpSubtitle": "Join us and start your journey",
+  "forgotPasswordTitle": "Reset Password",
+  "forgotPasswordSubtitle": "Enter your email to receive a recovery code",
+  "verifyCodeTitle": "Verify Code",
+  "verifyCodeSubtitle": "Enter the code sent to {email}",
+  "@verifyCodeSubtitle": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "emailLabel": "Email address",
+  "passwordLabel": "Password",
+  "confirmPasswordLabel": "Confirm Password",
+  "signInButton": "Sign In",
+  "signUpButton": "Sign Up",
+  "createAccountButton": "Create Account",
+  "sendRecoveryCodeButton": "Send Recovery Code",
+  "verifyButton": "Verify",
+  "forgotPasswordLink": "Forgot Password?",
+  "dontHaveAccount": "Don't have an account?",
+  "alreadyHaveAccount": "Already have an account?",
+  "invalidEmail": "Invalid email",
+  "invalidPassword": "Invalid password",
+  "passwordTooShort": "Password too short",
+  "passwordMismatch": "Passwords do not match",
+  "authenticationFailed": "Authentication failed",
+  "registrationFailed": "Registration failed",
+  "accountCreated": "Account created! Please sign in.",
+  "codeVerified": "Verified Successfully",
+  "invalidCode": "Invalid Code",
+  "codeResent": "Code resent",
+  "errorOccurred": "An error occurred",
+  "failedToSendLink": "Failed to send reset link",
+  "verificationFailed": "Verification failed",
+  "welcomeBack": "Welcome Back",
+  "@welcomeBack": {
+    "description": "Welcome back message"
+  },
+  "getStarted": "Get Started",
+  "@getStarted": {
+    "description": "Get started button text"
+  },
+  "@alreadyHaveAccount": {
+    "description": "Already have account prompt"
+  },
+  "dontHaveAccount": "Don't have an account?",
+  "@dontHaveAccount": {
+    "description": "Don't have account prompt"
+  },
+  
+  "firstName": "First Name",
+  "@firstName": {
+    "description": "First name field label"
+  },
+  "lastName": "Last Name",
+  "@lastName": {
+    "description": "Last name field label"
+  },
+  "fullName": "Full Name",
+  "@fullName": {
+    "description": "Full name field label"
+  },
+  "phoneNumber": "Phone Number",
+  "@phoneNumber": {
+    "description": "Phone number field label"
+  },
+  "address": "Address",
+  "@address": {
+    "description": "Address field label"
+  },
+  "state": "State",
+  "@state": {
+    "description": "State field label"
+  },
+  "localGovernment": "Local Government",
+  "@localGovernment": {
+    "description": "Local government field label"
+  },
+  "village": "Village",
+  "@village": {
+    "description": "Village field label"
+  },
+  "ward": "Ward",
+  "@ward": {
+    "description": "Ward field label"
+  },
+  
+  "farmerRegistration": "Farmer Registration",
+  "@farmerRegistration": {
+    "description": "Farmer registration title"
+  },
+  "personalInformation": "Personal Information",
+  "@personalInformation": {
+    "description": "Personal information section title"
+  },
+  "contactInformation": "Contact Information",
+  "@contactInformation": {
+    "description": "Contact information section title"
+  },
+  "farmInformation": "Farm Information",
+  "@farmInformation": {
+    "description": "Farm information section title"
+  },
+  "farmSize": "Farm Size",
+  "@farmSize": {
+    "description": "Farm size field label"
+  },
+  "farmLocation": "Farm Location",
+  "@farmLocation": {
+    "description": "Farm location field label"
+  },
+  "cropType": "Crop Type",
+  "@cropType": {
+    "description": "Crop type field label"
+  },
+  "cropVariety": "Crop Variety",
+  "@cropVariety": {
+    "description": "Crop variety field label"
+  },
+  "plantingDate": "Planting Date",
+  "@plantingDate": {
+    "description": "Planting date field label"
+  },
+  "harvestDate": "Harvest Date",
+  "@harvestDate": {
+    "description": "Harvest date field label"
+  },
+  "expectedYield": "Expected Yield",
+  "@expectedYield": {
+    "description": "Expected yield field label"
+  },
+  "farmerId": "Farmer ID",
+  "@farmerId": {
+    "description": "Farmer ID field label"
+  },
+  "dateOfBirth": "Date of Birth",
+  "@dateOfBirth": {
+    "description": "Date of birth field label"
+  },
+  "gender": "Gender",
+  "@gender": {
+    "description": "Gender field label"
+  },
+  "male": "Male",
+  "@male": {
+    "description": "Male gender option"
+  },
+  "female": "Female",
+  "@female": {
+    "description": "Female gender option"
+  },
+  
+  "save": "Save",
+  "@save": {
+    "description": "Save button text"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button text"
+  },
+  "submit": "Submit",
+  "@submit": {
+    "description": "Submit button text"
+  },
+  "delete": "Delete",
+  "@delete": {
+    "description": "Delete button text"
+  },
+  "edit": "Edit",
+  "@edit": {
+    "description": "Edit button text"
+  },
+  "yes": "Yes",
+  "@yes": {
+    "description": "Yes option"
+  },
+  "no": "No",
+  "@no": {
+    "description": "No option"
+  },
+  "ok": "OK",
+  "@ok": {
+    "description": "OK button text"
+  },
+  "confirm": "Confirm",
+  "@confirm": {
+    "description": "Confirm button text"
+  },
+  "loading": "Loading...",
+  "@loading": {
+    "description": "Loading message"
+  },
+  "error": "Error",
+  "@error": {
+    "description": "Error message"
+  },
+  "success": "Success",
+  "@success": {
+    "description": "Success message"
+  },
+  "retry": "Retry",
+  "@retry": {
+    "description": "Retry button text"
+  },
+  "next": "Next",
+  "@next": {
+    "description": "Next button text"
+  },
+  "previous": "Previous",
+  "@previous": {
+    "description": "Previous button text"
+  },
+  "backButton": "Back",
+  "@backButton": {
+    "description": "Back button tooltip"
+  },
+  "finish": "Finish",
+  "@finish": {
+    "description": "Finish button text"
+  },
+  "skip": "Skip",
+  "@skip": {
+    "description": "Skip button text"
+  },
+  
+  "fieldRequired": "This field is required",
+  "@fieldRequired": {
+    "description": "Required field validation message"
+  },
+  "invalidEmail": "Please enter a valid email address",
+  "@invalidEmail": {
+    "description": "Invalid email validation message"
+  },
+  "passwordTooShort": "Password must be at least 8 characters",
+  "@passwordTooShort": {
+    "description": "Password too short validation message"
+  },
+  "passwordsDoNotMatch": "Passwords do not match",
+  "@passwordsDoNotMatch": {
+    "description": "Passwords don't match validation message"
+  },
+  "invalidPhoneNumber": "Please enter a valid phone number",
+  "@invalidPhoneNumber": {
+    "description": "Invalid phone number validation message"
+  },
+  "networkError": "Network error. Please check your connection",
+  "@networkError": {
+    "description": "Network error message"
+  },
+  "somethingWentWrong": "Something went wrong. Please try again",
+  "@somethingWentWrong": {
+    "description": "Generic error message"
+  },
+  "applicationForm": "Application Form",
+  "@applicationForm": {
+    "description": "Application form title"
+  },
+  
+  "home": "Home",
+  "@home": {
+    "description": "Home navigation label"
+  },
+  "profile": "Profile",
+  "@profile": {
+    "description": "Profile navigation label"
+  },
+  "settings": "Settings",
+  "@settings": {
+    "description": "Settings navigation label"
+  },
+  "logout": "Logout",
+  "@logout": {
+    "description": "Logout button text"
+  },
+  "language": "Language",
+  "@language": {
+    "description": "Language settings label"
+  },
+  "notifications": "Notifications",
+  "@notifications": {
+    "description": "Notifications label"
+  },
+  "search": "Search",
+  "@search": {
+    "description": "Search placeholder text"
+  },
+  
+  "theme": "Theme",
+  "@theme": {
+    "description": "Theme settings label"
+  },
+  "termsAndConditions": "Terms & Conditions",
+  "@termsAndConditions": {
+    "description": "Terms and Conditions label"
+  },
+  "license": "License",
+  "@license": {
+    "description": "License label"
+  },
+  "viewTerms": "View Terms & Conditions",
+  "@viewTerms": {
+    "description": "View Terms & Conditions button text"
+  },
+  "viewLicense": "View License",
+  "@viewLicense": {
+    "description": "View License button text"
+  },
+  "system": "System",
+  "@system": {
+    "description": "System theme option"
+  },
+  "light": "Light",
+  "@light": {
+    "description": "Light theme option"
+  },
+  "dark": "Dark",
+  "@dark": {
+    "description": "Dark theme option"
+  },
+  "logoutConfirmationTitle": "Log Out",
+  "@logoutConfirmationTitle": {
+    "description": "Logout confirmation dialog title"
+  },
+  "logoutConfirmationMessage": "Are you sure you want to log out?",
+  "@logoutConfirmationMessage": {
+    "description": "Logout confirmation dialog message"
+  },
+  
+  "bankDetails": "Bank Details",
+  "@bankDetails": {
+    "description": "Bank details section title"
+  },
+  "accountNumber": "Account Number",
+  "@accountNumber": {
+    "description": "Account number field label"
+  },
+  "bankName": "Bank Name",
+  "@bankName": {
+    "description": "Bank name field label"
+  },
+  "accountName": "Account Name",
+  "@accountName": {
+    "description": "Account name field label"
+  },
+  
+  "farmDetailsAndLocation": "Farm Details & Location",
+  "@farmDetailsAndLocation": {
+    "description": "Farm details and location section title"
+  },
+  "farmSizeCoordinates": "Farm Size & Coordinates",
+  "@farmSizeCoordinates": {
+    "description": "Farm size and coordinates subsection title"
+  },
+  "farmSizeHectares": "Farm Size (Hectares)",
+  "@farmSizeHectares": {
+    "description": "Farm size in hectares label"
+  },
+  "latitude": "Latitude",
+  "@latitude": {
+    "description": "Latitude label"
+  },
+  "longitude": "Longitude",
+  "@longitude": {
+    "description": "Longitude label"
+  },
+  "getCurrentLocation": "Get Current Location",
+  "@getCurrentLocation": {
+    "description": "Get current location button text"
+  },
+  
+  "nextOfKin": "Next of Kin",
+  "@nextOfKin": {
+    "description": "Next of kin section title"
+  },
+  "relationship": "Relationship",
+  "@relationship": {
+    "description": "Relationship field label"
+  },
+  
+  "attestation": "Attestation",
+  "@attestation": {
+    "description": "Attestation section title"
+  },
+  "attestationStatement": "I hereby certify that the information given in this form is correct and true to the best of my knowledge.",
+  "@attestationStatement": {
+    "description": "Attestation statement text"
+  },
+  "iAgree": "I Agree",
+  "@iAgree": {
+    "description": "I agree checkbox label"
+  },
+  
+  "signature": "Signature",
+  "@signature": {
+    "description": "Signature section title"
+  },
+  "clear": "Clear",
+  "@clear": {
+    "description": "Clear button text"
+  },
+  "saveSignature": "Save Signature",
+  "@saveSignature": {
+    "description": "Save signature button text"
+  },
+  "signatureSaved": "Signature saved!",
+  "@signatureSaved": {
+    "description": "Signature saved success message"
+  },
+  
+  "otherNames": "Other Names",
+  "@otherNames": {
+    "description": "Other names field label"
+  },
+  "passportPhoto": "Passport Photo",
+  "@passportPhoto": {
+    "description": "Passport photo field label"
+  },
+  "kycInformation": "KYC Information",
+  "@kycInformation": {
+    "description": "KYC information section title"
+  },
+  "idType": "ID Type",
+  "@idType": {
+    "description": "ID Type label"
+  },
+  "idNumber": "ID Number",
+  "@idNumber": {
+    "description": "ID Number label"
+  },
+  "nin": "NIN",
+  "@nin": {
+    "description": "National Identification Number option"
+  },
+  "bvn": "BVN",
+  "@bvn": {
+    "description": "Bank Verification Number option"
+  },
+  "internationalPassport": "Passport",
+  "@internationalPassport": {
+    "description": "International Passport option"
+  },
+  "votersCard": "Voters Card",
+  "@votersCard": {
+    "description": "Voters Card option"
+  },
+  "farmSizeAndCoordinates": "Farm Size & Coordinates",
+  "@farmSizeAndCoordinates": {
+     "description": "Title for farm size and coordinates subsection"
+  },
+  "farmDescription": "Farm Location / Description",
+  "@farmDescription": {
+      "description": "Farm location description label"
+  },
+  "camera": "Camera",
+  "gallery": "Gallery",
+  "imageSelected": "Image Selected",
+  "applicationSubmitted": "Application Submitted!",
+  "@applicationSubmitted": {
+    "description": "Title for the application submitted success screen"
+  },
+  "applicationSubmittedUnderReview": "Your application has been successfully submitted and is under review.",
+  "@applicationSubmittedUnderReview": {
+    "description": "Subtitle for the application submitted success screen"
+  },
+  "viewApplication": "View Application",
+  "@viewApplication": {
+    "description": "Button text to view the submitted application"
+  },
+  "confirmSubmit": "Confirm & Submit",
+  "@confirmSubmit": {
+    "description": "Button text to confirm and submit the application"
+  },
+  "signingPassport": "Uploading signature and passport...",
+  "@signingPassport": {
+    "description": "Loading message when uploading biometrics"
+  },
+  "submittingApplication": "Submitting form...",
+  "@submittingApplication": {
+    "description": "Loading message when submitting the application form"
+  },
+  "applicationMessageInitial": "Dear {name}, your application has been submitted and will be in review shortly. You will be notified once the review is completed. You can check the status of your application at any time by logging into your account. You can modify your application before it is reviewed.",
+  "@applicationMessageInitial": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "applicationMessageInReview": "Dear {name}, your application is currently under review by our agents. We will notify you once the process is complete.",
+  "@applicationMessageInReview": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "applicationMessageApproved": "Congratulations {name}! Your application has been approved. You can now proceed with the next steps of the project.",
+  "@applicationMessageApproved": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "applicationMessageRejected": "Dear {name}, we regret to inform you that your application has been rejected at this time. Please check your email or contact support for more details.",
+  "@applicationMessageRejected": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "frequentlyAskedQuestions": "Frequently Asked Questions",
+  "faqCheckOut": "Check out our Frequently Asked Questions (FAQ) if you have any concerns:",
+  "faqQuestion1": "How long does the review process take?",
+  "faqAnswer1": "Typically, the review process takes between 3 to 5 business days. You will receive a notification once a decision is made.",
+  "faqQuestion2": "Can I edit my application after submission?",
+  "faqAnswer2": "Yes, you can edit your application as long as it is still in the 'Initial' status. Once it moves to 'In Review', editing will be disabled.",
+  "faqQuestion3": "What documents are required for KYC?",
+  "faqAnswer3": "We accept National ID (NIN), BVN, International Passport, or a valid Voters Card for the KYC process.",
+  "proofOfPaymentRequired": "Upload proof of payment to proceed with application",
+  "uploadProofOfPayment": "Upload Proof of Payment",
+  "proofOfPaymentUploaded": "Proof of payment uploaded successfully",
+  "allocatedResources": "Allocated Resources",
+  "noResourcesAllocated": "No resources have been allocated to you yet.",
+  "collected": "Collected",
+  "pending": "Pending",
+  "collectionAddress": "Collection Address",
+  "viewAllocatedResources": "View Allocated Resources",
+  "applicationApprovedSuccess": "Great news! Your application has been approved. You can now view and collect your allocated resources below.",
+  "assignedWarehouse": "Assigned Warehouse",
+  "viewAssignedWarehouse": "View Assigned Warehouse",
+  "noWarehouseAssigned": "No warehouse assigned yet.",
+  "warehouseAssignmentInstruction": "Admins will assign a warehouse during the receiving process.",
+  "warehouseInformation": "Warehouse Information",
+  "instruction": "Instruction",
+  "warehouseProceedInstruction": "Please proceed to this warehouse with your produce for submission. Ensure you have your application ID ready.",
+  "warehouseBagRecordInstruction": "Record the number of bags received with the admin upon submission."
+}

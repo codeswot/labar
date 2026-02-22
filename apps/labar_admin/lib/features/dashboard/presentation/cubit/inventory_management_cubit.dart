@@ -1,0 +1,95 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
+import 'package:labar_admin/core/utils/app_logger.dart';
+import 'package:labar_admin/features/dashboard/data/repositories/admin_repository_impl.dart';
+
+part 'inventory_management_cubit.freezed.dart';
+
+@freezed
+class InventoryManagementState with _$InventoryManagementState {
+  const factory InventoryManagementState({
+    @Default(false) bool isLoading,
+    @Default([]) List<Map<String, dynamic>> inventory,
+    @Default([]) List<Map<String, dynamic>> waybills,
+    @Default([]) List<Map<String, dynamic>> warehouses,
+    String? error,
+  }) = _InventoryManagementState;
+}
+
+@injectable
+class InventoryManagementCubit extends Cubit<InventoryManagementState> {
+  final AdminRepository _repository;
+
+  InventoryManagementCubit(this._repository)
+      : super(const InventoryManagementState());
+
+  Future<void> init() async {
+    emit(state.copyWith(isLoading: true, error: null));
+    try {
+      final inventory = await _repository.getInventory();
+      final waybills = await _repository.getWaybills();
+      final warehouses = await _repository.getWarehouses();
+
+      emit(state.copyWith(
+        isLoading: false,
+        inventory: inventory,
+        waybills: waybills,
+        warehouses: warehouses,
+      ));
+    } catch (e, stack) {
+      AppLogger.error('Failed to init inventory', e, stack);
+      emit(state.copyWith(isLoading: false, error: e.toString()));
+    }
+  }
+
+  Future<void> addInventory({
+    required String warehouseId,
+    required String itemName,
+    required num quantity,
+    required String unit,
+  }) async {
+    try {
+      await _repository.addOrUpdateInventory(
+          warehouseId, itemName, quantity, unit);
+      await init(); // Refresh
+    } catch (e, stack) {
+      AppLogger.error('Failed to add inventory', e, stack);
+      emit(state.copyWith(error: e.toString()));
+    }
+  }
+
+  Future<Map<String, dynamic>?> generateWaybill({
+    required String warehouseId,
+    required String destination,
+    required String driverName,
+    required String driverPhone,
+    required String vehicleNumber,
+    required String itemName,
+    required num quantity,
+    required String unit,
+    required String createdBy,
+  }) async {
+    try {
+      final data = {
+        'warehouse_id': warehouseId,
+        'destination': destination,
+        'driver_name': driverName,
+        'driver_phone': driverPhone,
+        'vehicle_number': vehicleNumber,
+        'item_name': itemName,
+        'quantity': quantity,
+        'unit': unit,
+        'created_by': createdBy,
+      };
+
+      final waybill = await _repository.createWaybill(data);
+      await init(); // Refresh data
+      return waybill;
+    } catch (e, stack) {
+      AppLogger.error('Failed to generate waybill', e, stack);
+      emit(state.copyWith(error: e.toString()));
+      return null;
+    }
+  }
+}

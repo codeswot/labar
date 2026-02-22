@@ -1,0 +1,10 @@
+name: labar_workspace
+description: Labar monorepo workspace
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: '>=3.5.0 <4.0.0'
+
+dev_dependencies:
+  melos: ^7.4.0
