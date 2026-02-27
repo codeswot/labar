@@ -1,4 +1,4 @@
-# Labar Monorepo - Just Commands
+# Labar Grains Monorepo - Just Commands
 # Install just: https://github.com/casey/just
 
 # List all available commands

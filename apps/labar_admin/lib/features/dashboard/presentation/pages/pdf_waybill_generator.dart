@@ -35,7 +35,7 @@ class WaybillPdfGenerator {
                   pw.Row(
                     mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                     children: [
-                      pw.Text('LABAR WAYBILL',
+                      pw.Text('LABAR GRAINS WAYBILL',
                           style: pw.TextStyle(
                               fontSize: 24,
                               fontWeight: pw.FontWeight.bold,

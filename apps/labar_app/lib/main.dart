@@ -41,7 +41,7 @@ void main() async {
       };
 
       try {
-        AppLogger.info('🚀 Initializing Labar App...');
+        AppLogger.info('🚀 Initializing Labar Grains...');
 
         HydratedBloc.storage = await HydratedStorage.build(
           storageDirectory: await getApplicationDocumentsDirectory(),
@@ -108,7 +108,7 @@ class LabarApp extends StatelessWidget {
             return BlocBuilder<LanguageCubit, Locale>(
               builder: (context, locale) {
                 return MaterialApp.router(
-                  title: 'Labar',
+                  title: 'Labar Grains',
                   debugShowCheckedModeBanner: false,
                   theme: AppTheme.lightTheme(),
                   darkTheme: AppTheme.darkTheme(),

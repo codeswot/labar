@@ -131,7 +131,7 @@ class _SignInPageState extends State<SignInPage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'Labar Admin',
+                'Labar Grains Admin',
                 style: context.moonTypography?.heading.text24,
                 textAlign: TextAlign.center,
               ),

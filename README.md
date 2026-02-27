@@ -1,6 +1,6 @@
-# Labar Monorepo
+# Labar Grains Monorepo
 
-A Flutter monorepo for the Labar Farmers Application using Melos for workspace management.
+A Flutter monorepo for the Labar Grains Farmers Application using Melos for workspace management.
 
 ## Project Structure
 
@@ -126,7 +126,7 @@ just upgrade           # Upgrade all dependencies
 
 ## Applications
 
-### Labar App (Mobile)
+### Labar Grains App (Mobile)
 
 **Package Name**: `com.geeksaxis.labar`  
 **Platforms**: Android, iOS  
@@ -137,7 +137,7 @@ cd apps/labar_app
 flutter run
 ```
 
-### Labar Admin (Web)
+### Labar Grains Admin (Web)
 
 **Package Name**: `com.geeksaxis.labar`  
 **Platform**: Web

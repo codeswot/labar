@@ -46,7 +46,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           ),
                           const SizedBox(width: 12),
                           Text(
-                            'Labar Admin',
+                            'Labar Grains Admin',
                             style: context.moonTypography?.heading.text18,
                           ),
                         ],

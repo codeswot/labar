@@ -101,7 +101,7 @@ abstract class AppLocalizations {
   /// The application name
   ///
   /// In en, this message translates to:
-  /// **'Labar'**
+  /// **'Labar Grains'**
   String get appName;
 
   /// Login button text

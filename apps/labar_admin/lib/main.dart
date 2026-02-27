@@ -34,7 +34,7 @@ void main() async {
       };
 
       try {
-        AppLogger.info('🚀 Initializing Labar Admin...');
+        AppLogger.info('🚀 Initializing Labar Grains Admin...');
 
         HydratedBloc.storage = await HydratedStorage.build(
           storageDirectory: kIsWeb
@@ -97,7 +97,7 @@ class LabarAdminApp extends StatelessWidget {
         child: BlocBuilder<ThemeCubit, AppThemeMode>(
           builder: (context, themeMode) {
             return MaterialApp.router(
-              title: 'Labar Admin',
+              title: 'Labar Grains Admin',
               debugShowCheckedModeBanner: false,
               theme: AppTheme.lightTheme(),
               darkTheme: AppTheme.darkTheme(),
