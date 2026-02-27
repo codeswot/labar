@@ -51,6 +51,8 @@ abstract class AdminRepository {
   Future<List<Map<String, dynamic>>> getWaybills();
   Future<Map<String, dynamic>> createWaybill(Map<String, dynamic> data);
   Future<List<Map<String, dynamic>>> getWarehouses();
+  Future<List<Map<String, dynamic>>> getInventoryAllocations(
+      String inventoryId);
 }
 
 @LazySingleton(as: AdminRepository)
@@ -326,6 +328,17 @@ class AdminRepositoryImpl implements AdminRepository {
   @override
   Future<List<Map<String, dynamic>>> getWarehouses() async {
     final response = await _supabaseClient.from('warehouses').select();
+    return List<Map<String, dynamic>>.from(response);
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getInventoryAllocations(
+      String inventoryId) async {
+    final response = await _supabaseClient
+        .from('allocated_resources')
+        .select('*, applications(*)')
+        .eq('item', inventoryId)
+        .order('created_at', ascending: false);
     return List<Map<String, dynamic>>.from(response);
   }
 }

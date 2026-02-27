@@ -15,6 +15,15 @@ class InventoryManagementView extends StatefulWidget {
 }
 
 class _InventoryManagementViewState extends State<InventoryManagementView> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<InventoryManagementCubit, InventoryManagementState>(
@@ -45,6 +54,31 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                       style: context.moonTypography?.heading.text24),
                   Row(
                     children: [
+                      SizedBox(
+                        width: 300,
+                        child: MoonTextInput(
+                          controller: _searchController,
+                          hintText: 'Search inventory & waybills...',
+                          leading: const Icon(Icons.search),
+                          onChanged: (value) {
+                            setState(() {
+                              _searchQuery = value.toLowerCase();
+                            });
+                          },
+                          trailing: _searchQuery.isNotEmpty
+                              ? IconButton(
+                                  icon: const Icon(Icons.close),
+                                  onPressed: () {
+                                    _searchController.clear();
+                                    setState(() {
+                                      _searchQuery = '';
+                                    });
+                                  },
+                                )
+                              : null,
+                        ),
+                      ),
+                      const SizedBox(width: 24),
                       AppButton.filled(
                         isFullWidth: false,
                         onTap: () =>
@@ -82,21 +116,37 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                           style: context.moonTypography?.heading.text18),
                     ),
                     const Divider(height: 0),
-                    if (state.inventory.isEmpty)
-                      const Padding(
-                        padding: EdgeInsets.all(48.0),
-                        child:
-                            Center(child: Text('No inventory records found.')),
-                      )
-                    else
-                      DataTable(
+                    Builder(builder: (context) {
+                      final filteredInventory = state.inventory.where((inv) {
+                        if (_searchQuery.isEmpty) return true;
+                        final itemName =
+                            (inv['item_name'] ?? '').toString().toLowerCase();
+                        final warehouseName = (inv['warehouses']?['name'] ?? '')
+                            .toString()
+                            .toLowerCase();
+                        return itemName.contains(_searchQuery) ||
+                            warehouseName.contains(_searchQuery);
+                      }).toList();
+
+                      if (filteredInventory.isEmpty) {
+                        return Padding(
+                          padding: const EdgeInsets.all(48.0),
+                          child: Center(
+                            child: Text(_searchQuery.isEmpty
+                                ? 'No inventory records found.'
+                                : 'No records matching "$_searchQuery"'),
+                          ),
+                        );
+                      }
+
+                      return DataTable(
                         columns: const [
                           DataColumn(label: Text('Item Name')),
                           DataColumn(label: Text('Warehouse')),
                           DataColumn(label: Text('Quantity')),
                           DataColumn(label: Text('Unit')),
                         ],
-                        rows: state.inventory.map((inv) {
+                        rows: filteredInventory.map((inv) {
                           return DataRow(cells: [
                             DataCell(Text(inv['item_name'] ?? '')),
                             DataCell(Text(inv['warehouses']?['name'] ??
@@ -105,7 +155,8 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                             DataCell(Text(inv['unit'] ?? '')),
                           ]);
                         }).toList(),
-                      ),
+                      );
+                    }),
                   ],
                 ),
               ),
@@ -130,13 +181,33 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                           style: context.moonTypography?.heading.text18),
                     ),
                     const Divider(height: 0),
-                    if (state.waybills.isEmpty)
-                      const Padding(
-                        padding: EdgeInsets.all(48.0),
-                        child: Center(child: Text('No waybills found.')),
-                      )
-                    else
-                      DataTable(
+                    Builder(builder: (context) {
+                      final filteredWaybills = state.waybills.where((wb) {
+                        if (_searchQuery.isEmpty) return true;
+                        final waybillNumber = (wb['waybill_number'] ?? '')
+                            .toString()
+                            .toLowerCase();
+                        final itemName =
+                            (wb['item_name'] ?? '').toString().toLowerCase();
+                        final destination =
+                            (wb['destination'] ?? '').toString().toLowerCase();
+                        return waybillNumber.contains(_searchQuery) ||
+                            itemName.contains(_searchQuery) ||
+                            destination.contains(_searchQuery);
+                      }).toList();
+
+                      if (filteredWaybills.isEmpty) {
+                        return Padding(
+                          padding: const EdgeInsets.all(48.0),
+                          child: Center(
+                            child: Text(_searchQuery.isEmpty
+                                ? 'No waybills found.'
+                                : 'No waybills matching "$_searchQuery"'),
+                          ),
+                        );
+                      }
+
+                      return DataTable(
                         columns: const [
                           DataColumn(label: Text('Waybill #')),
                           DataColumn(label: Text('Item Name')),
@@ -145,7 +216,7 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                           DataColumn(label: Text('Date Generated')),
                           DataColumn(label: Text('Action')),
                         ],
-                        rows: state.waybills.map((wb) {
+                        rows: filteredWaybills.map((wb) {
                           final generatedDate = (wb['dispatch_date'] != null)
                               ? DateFormat('MMM dd, yyyy HH:mm')
                                   .format(DateTime.parse(wb['dispatch_date']))
@@ -169,7 +240,8 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                             ),
                           ]);
                         }).toList(),
-                      ),
+                      );
+                    }),
                   ],
                 ),
               ),

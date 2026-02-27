@@ -233,8 +233,24 @@ class _ActivityItem extends StatelessWidget {
   }
 }
 
-class _ApplicationManagementView extends StatelessWidget {
+class _ApplicationManagementView extends StatefulWidget {
   const _ApplicationManagementView();
+
+  @override
+  State<_ApplicationManagementView> createState() =>
+      _ApplicationManagementViewState();
+}
+
+class _ApplicationManagementViewState
+    extends State<_ApplicationManagementView> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -248,10 +264,39 @@ class _ApplicationManagementView extends StatelessWidget {
             children: [
               Text('Application Management',
                   style: context.moonTypography?.heading.text24),
-              AppButton.filled(
-                isFullWidth: false,
-                onTap: () => _showCreateApplicationDialog(context),
-                label: const Text('Create Application'),
+              Row(
+                children: [
+                  SizedBox(
+                    width: 300,
+                    child: MoonTextInput(
+                      controller: _searchController,
+                      hintText: 'Search applications...',
+                      leading: const Icon(Icons.search),
+                      onChanged: (value) {
+                        setState(() {
+                          _searchQuery = value.toLowerCase();
+                        });
+                      },
+                      trailing: _searchQuery.isNotEmpty
+                          ? IconButton(
+                              icon: const Icon(Icons.close),
+                              onPressed: () {
+                                _searchController.clear();
+                                setState(() {
+                                  _searchQuery = '';
+                                });
+                              },
+                            )
+                          : null,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  AppButton.filled(
+                    isFullWidth: false,
+                    onTap: () => _showCreateApplicationDialog(context),
+                    label: const Text('Create Application'),
+                  ),
+                ],
               ),
             ],
           ),
@@ -284,8 +329,50 @@ class _ApplicationManagementView extends StatelessWidget {
                     );
                   }
 
-                  if (state.applications.isEmpty) {
-                    return const Center(child: Text('No applications yet'));
+                  final applications = state.applications.where((app) {
+                    if (_searchQuery.isEmpty) return true;
+
+                    final regNo =
+                        (app['reg_no'] ?? '').toString().toLowerCase();
+                    final firstName =
+                        (app['first_name'] ?? '').toString().toLowerCase();
+                    final lastName =
+                        (app['last_name'] ?? '').toString().toLowerCase();
+                    final otherNames =
+                        (app['other_names'] ?? '').toString().toLowerCase();
+                    final status =
+                        (app['status'] ?? '').toString().toLowerCase();
+                    final stateName =
+                        (app['state'] ?? '').toString().toLowerCase();
+                    final phoneNumber =
+                        (app['phone_number'] ?? '').toString().toLowerCase();
+
+                    return regNo.contains(_searchQuery) ||
+                        firstName.contains(_searchQuery) ||
+                        lastName.contains(_searchQuery) ||
+                        otherNames.contains(_searchQuery) ||
+                        status.contains(_searchQuery) ||
+                        stateName.contains(_searchQuery) ||
+                        phoneNumber.contains(_searchQuery);
+                  }).toList();
+
+                  if (applications.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.search_off_rounded,
+                              size: 48, color: context.moonColors?.trunks),
+                          const SizedBox(height: 16),
+                          Text(
+                            _searchQuery.isEmpty
+                                ? 'No applications yet'
+                                : 'No applications found matching "$_searchQuery"',
+                            style: context.moonTypography?.body.text16,
+                          ),
+                        ],
+                      ),
+                    );
                   }
 
                   return Container(
@@ -311,7 +398,7 @@ class _ApplicationManagementView extends StatelessWidget {
                               DataColumn(label: Text('State')),
                               DataColumn(label: Text('Action')),
                             ],
-                            rows: state.applications.map((app) {
+                            rows: applications.map((app) {
                               final status =
                                   app['status']?.toString().toLowerCase() ??
                                       'initial';
@@ -1370,8 +1457,22 @@ class _ApplicationManagementView extends StatelessWidget {
   }
 }
 
-class _UserManagementView extends StatelessWidget {
+class _UserManagementView extends StatefulWidget {
   const _UserManagementView();
+
+  @override
+  State<_UserManagementView> createState() => _UserManagementViewState();
+}
+
+class _UserManagementViewState extends State<_UserManagementView> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1397,26 +1498,86 @@ class _UserManagementView extends StatelessWidget {
               children: [
                 Text('User Management',
                     style: context.moonTypography?.heading.text24),
-                if (callerRole == 'super_admin')
-                  AppButton.filled(
-                    isFullWidth: false,
-                    onTap: () => _showAddUserDialog(context),
-                    label: const Text('Add Admin / Agent'),
-                  ),
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 300,
+                      child: MoonTextInput(
+                        controller: _searchController,
+                        hintText: 'Search users...',
+                        leading: const Icon(Icons.search),
+                        onChanged: (value) {
+                          setState(() {
+                            _searchQuery = value.toLowerCase();
+                          });
+                        },
+                        trailing: _searchQuery.isNotEmpty
+                            ? IconButton(
+                                icon: const Icon(Icons.close),
+                                onPressed: () {
+                                  _searchController.clear();
+                                  setState(() {
+                                    _searchQuery = '';
+                                  });
+                                },
+                              )
+                            : null,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    if (callerRole == 'super_admin')
+                      AppButton.filled(
+                        isFullWidth: false,
+                        onTap: () => _showAddUserDialog(context),
+                        label: const Text('Add Admin / Agent'),
+                      ),
+                  ],
+                ),
               ],
             ),
             const SizedBox(height: 24),
             Expanded(
               child: BlocBuilder<UserManagementCubit, UserManagementState>(
                 builder: (context, state) {
-                  if (state.isLoading && state.users.isEmpty) {
-                    return const Center(child: MoonCircularLoader());
-                  }
+                  final users = state.users.where((user) {
+                    if (_searchQuery.isEmpty) return true;
 
-                  if (state.error != null && state.users.isEmpty) {
-                    return AppErrorView(
-                      onRetry: () =>
-                          context.read<UserManagementCubit>().fetchUsers(),
+                    final firstName = (user.firstName ?? '').toLowerCase();
+                    final lastName = (user.lastName ?? '').toLowerCase();
+                    final email = (user.email ?? '').toLowerCase();
+                    final role = (user.role ?? '').toLowerCase();
+
+                    return firstName.contains(_searchQuery) ||
+                        lastName.contains(_searchQuery) ||
+                        email.contains(_searchQuery) ||
+                        role.contains(_searchQuery);
+                  }).toList();
+
+                  if (users.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.search_off_rounded,
+                              size: 48, color: context.moonColors?.trunks),
+                          const SizedBox(height: 16),
+                          Text(
+                            _searchQuery.isEmpty
+                                ? 'No users found'
+                                : 'No users found matching "$_searchQuery"',
+                            style: context.moonTypography?.body.text16,
+                          ),
+                          if (state.error != null) ...[
+                            const SizedBox(height: 16),
+                            AppButton.filled(
+                              label: const Text('Retry'),
+                              onTap: () => context
+                                  .read<UserManagementCubit>()
+                                  .fetchUsers(),
+                            ),
+                          ],
+                        ],
+                      ),
                     );
                   }
 
@@ -1444,7 +1605,7 @@ class _UserManagementView extends StatelessWidget {
                               DataColumn(label: Text('Status')),
                               DataColumn(label: Text('Action')),
                             ],
-                            rows: state.users.map((user) {
+                            rows: users.map((user) {
                               final isActive = user.active ?? true;
                               final isMe = user.id == currentUser?.id;
                               final fullName = (user.firstName != null ||

@@ -22,6 +22,8 @@ mixin _$InventoryManagementState {
   List<Map<String, dynamic>> get waybills => throw _privateConstructorUsedError;
   List<Map<String, dynamic>> get warehouses =>
       throw _privateConstructorUsedError;
+  List<Map<String, dynamic>> get selectedInventoryAllocations =>
+      throw _privateConstructorUsedError;
   String? get error => throw _privateConstructorUsedError;
 
   /// Create a copy of InventoryManagementState
@@ -42,6 +44,7 @@ abstract class $InventoryManagementStateCopyWith<$Res> {
       List<Map<String, dynamic>> inventory,
       List<Map<String, dynamic>> waybills,
       List<Map<String, dynamic>> warehouses,
+      List<Map<String, dynamic>> selectedInventoryAllocations,
       String? error});
 }
 
@@ -65,6 +68,7 @@ class _$InventoryManagementStateCopyWithImpl<$Res,
     Object? inventory = null,
     Object? waybills = null,
     Object? warehouses = null,
+    Object? selectedInventoryAllocations = null,
     Object? error = freezed,
   }) {
     return _then(_value.copyWith(
@@ -83,6 +87,10 @@ class _$InventoryManagementStateCopyWithImpl<$Res,
       warehouses: null == warehouses
           ? _value.warehouses
           : warehouses // ignore: cast_nullable_to_non_nullable
+              as List<Map<String, dynamic>>,
+      selectedInventoryAllocations: null == selectedInventoryAllocations
+          ? _value.selectedInventoryAllocations
+          : selectedInventoryAllocations // ignore: cast_nullable_to_non_nullable
               as List<Map<String, dynamic>>,
       error: freezed == error
           ? _value.error
@@ -106,6 +114,7 @@ abstract class _$$InventoryManagementStateImplCopyWith<$Res>
       List<Map<String, dynamic>> inventory,
       List<Map<String, dynamic>> waybills,
       List<Map<String, dynamic>> warehouses,
+      List<Map<String, dynamic>> selectedInventoryAllocations,
       String? error});
 }
 
@@ -128,6 +137,7 @@ class __$$InventoryManagementStateImplCopyWithImpl<$Res>
     Object? inventory = null,
     Object? waybills = null,
     Object? warehouses = null,
+    Object? selectedInventoryAllocations = null,
     Object? error = freezed,
   }) {
     return _then(_$InventoryManagementStateImpl(
@@ -147,6 +157,10 @@ class __$$InventoryManagementStateImplCopyWithImpl<$Res>
           ? _value._warehouses
           : warehouses // ignore: cast_nullable_to_non_nullable
               as List<Map<String, dynamic>>,
+      selectedInventoryAllocations: null == selectedInventoryAllocations
+          ? _value._selectedInventoryAllocations
+          : selectedInventoryAllocations // ignore: cast_nullable_to_non_nullable
+              as List<Map<String, dynamic>>,
       error: freezed == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
@@ -163,10 +177,12 @@ class _$InventoryManagementStateImpl implements _InventoryManagementState {
       final List<Map<String, dynamic>> inventory = const [],
       final List<Map<String, dynamic>> waybills = const [],
       final List<Map<String, dynamic>> warehouses = const [],
+      final List<Map<String, dynamic>> selectedInventoryAllocations = const [],
       this.error})
       : _inventory = inventory,
         _waybills = waybills,
-        _warehouses = warehouses;
+        _warehouses = warehouses,
+        _selectedInventoryAllocations = selectedInventoryAllocations;
 
   @override
   @JsonKey()
@@ -198,12 +214,22 @@ class _$InventoryManagementStateImpl implements _InventoryManagementState {
     return EqualUnmodifiableListView(_warehouses);
   }
 
+  final List<Map<String, dynamic>> _selectedInventoryAllocations;
+  @override
+  @JsonKey()
+  List<Map<String, dynamic>> get selectedInventoryAllocations {
+    if (_selectedInventoryAllocations is EqualUnmodifiableListView)
+      return _selectedInventoryAllocations;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_selectedInventoryAllocations);
+  }
+
   @override
   final String? error;
 
   @override
   String toString() {
-    return 'InventoryManagementState(isLoading: $isLoading, inventory: $inventory, waybills: $waybills, warehouses: $warehouses, error: $error)';
+    return 'InventoryManagementState(isLoading: $isLoading, inventory: $inventory, waybills: $waybills, warehouses: $warehouses, selectedInventoryAllocations: $selectedInventoryAllocations, error: $error)';
   }
 
   @override
@@ -218,6 +244,9 @@ class _$InventoryManagementStateImpl implements _InventoryManagementState {
             const DeepCollectionEquality().equals(other._waybills, _waybills) &&
             const DeepCollectionEquality()
                 .equals(other._warehouses, _warehouses) &&
+            const DeepCollectionEquality().equals(
+                other._selectedInventoryAllocations,
+                _selectedInventoryAllocations) &&
             (identical(other.error, error) || other.error == error));
   }
 
@@ -228,6 +257,7 @@ class _$InventoryManagementStateImpl implements _InventoryManagementState {
       const DeepCollectionEquality().hash(_inventory),
       const DeepCollectionEquality().hash(_waybills),
       const DeepCollectionEquality().hash(_warehouses),
+      const DeepCollectionEquality().hash(_selectedInventoryAllocations),
       error);
 
   /// Create a copy of InventoryManagementState
@@ -246,6 +276,7 @@ abstract class _InventoryManagementState implements InventoryManagementState {
       final List<Map<String, dynamic>> inventory,
       final List<Map<String, dynamic>> waybills,
       final List<Map<String, dynamic>> warehouses,
+      final List<Map<String, dynamic>> selectedInventoryAllocations,
       final String? error}) = _$InventoryManagementStateImpl;
 
   @override
@@ -256,6 +287,8 @@ abstract class _InventoryManagementState implements InventoryManagementState {
   List<Map<String, dynamic>> get waybills;
   @override
   List<Map<String, dynamic>> get warehouses;
+  @override
+  List<Map<String, dynamic>> get selectedInventoryAllocations;
   @override
   String? get error;
 

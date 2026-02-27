@@ -13,6 +13,7 @@ class InventoryManagementState with _$InventoryManagementState {
     @Default([]) List<Map<String, dynamic>> inventory,
     @Default([]) List<Map<String, dynamic>> waybills,
     @Default([]) List<Map<String, dynamic>> warehouses,
+    @Default([]) List<Map<String, dynamic>> selectedInventoryAllocations,
     String? error,
   }) = _InventoryManagementState;
 }
@@ -90,6 +91,22 @@ class InventoryManagementCubit extends Cubit<InventoryManagementState> {
       AppLogger.error('Failed to generate waybill', e, stack);
       emit(state.copyWith(error: e.toString()));
       return null;
+    }
+  }
+
+  Future<void> fetchInventoryDetails(String inventoryId) async {
+    emit(state.copyWith(
+        isLoading: true, error: null, selectedInventoryAllocations: []));
+    try {
+      final allocations =
+          await _repository.getInventoryAllocations(inventoryId);
+      emit(state.copyWith(
+        isLoading: false,
+        selectedInventoryAllocations: allocations,
+      ));
+    } catch (e, stack) {
+      AppLogger.error('Failed to fetch inventory details', e, stack);
+      emit(state.copyWith(isLoading: false, error: e.toString()));
     }
   }
 }
