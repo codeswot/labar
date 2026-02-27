@@ -1,5 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:labar_app/features/home/domain/entities/agent_entity.dart';
 import 'package:labar_app/features/home/domain/entities/application_entity.dart';
+import 'package:labar_app/features/home/domain/entities/warehouse_entity.dart';
 
 part 'application_form_state.freezed.dart';
 part 'application_form_state.g.dart';
@@ -18,6 +20,8 @@ class ApplicationFormState with _$ApplicationFormState {
     String? loadingMessage,
     @Default('') String userId,
     ApplicationEntity? initialApplication,
+    WarehouseEntity? selectedWarehouse,
+    AgentEntity? selectedAgent,
   }) = _ApplicationFormState;
 
   factory ApplicationFormState.fromJson(Map<String, dynamic> json) =>

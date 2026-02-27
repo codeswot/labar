@@ -1,3 +1,4 @@
+import 'package:labar_app/features/home/domain/entities/agent_entity.dart';
 import 'package:labar_app/features/home/domain/entities/application_entity.dart';
 
 abstract class ApplicationRepository {
@@ -16,4 +17,7 @@ abstract class ApplicationRepository {
 
   /// Fetches the current application once (useful for refreshing signed URLs).
   Future<ApplicationEntity?> getApplication();
+
+  /// Fetches the list of all agents.
+  Future<List<AgentEntity>> getAgents();
 }

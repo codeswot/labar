@@ -1,7 +1,9 @@
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:labar_app/core/utils/app_logger.dart';
+import 'package:labar_app/features/home/domain/entities/agent_entity.dart';
 import 'package:labar_app/features/home/domain/entities/application_entity.dart';
+import 'package:labar_app/features/home/domain/entities/warehouse_entity.dart';
 import 'package:labar_app/features/home/domain/entities/enums.dart';
 import 'package:labar_app/features/home/domain/repositories/application_repository.dart';
 import 'package:labar_app/features/home/presentation/cubit/application_form_state.dart';
@@ -42,11 +44,21 @@ class ApplicationFormCubit extends HydratedCubit<ApplicationFormState> {
       initialApplication: null,
       status: ApplicationFormStatus.initial,
       currentStep: 0,
+      selectedWarehouse: null,
+      selectedAgent: null,
     ));
   }
 
+  void selectWarehouse(WarehouseEntity warehouse) {
+    emit(state.copyWith(selectedWarehouse: warehouse));
+  }
+
+  void selectAgent(AgentEntity agent) {
+    emit(state.copyWith(selectedAgent: agent));
+  }
+
   void nextStep() {
-    if (state.currentStep < 5) {
+    if (state.currentStep < 6) {
       emit(state.copyWith(currentStep: state.currentStep + 1));
     }
   }
@@ -80,6 +92,7 @@ class ApplicationFormCubit extends HydratedCubit<ApplicationFormState> {
 
     try {
       String? passportPath;
+      String? idCardPath;
       String? signaturePath;
 
       if (biometrics.passportPath != null &&
@@ -89,6 +102,16 @@ class ApplicationFormCubit extends HydratedCubit<ApplicationFormState> {
           passportPath = await _applicationRepository.uploadFile(
             biometrics.passportPath!,
             'passport_${state.userId}.jpg',
+          );
+        }
+      }
+
+      if (biometrics.idCardPath != null && biometrics.idCardPath!.isNotEmpty) {
+        final idCardFile = File(biometrics.idCardPath!);
+        if (await idCardFile.exists()) {
+          idCardPath = await _applicationRepository.uploadFile(
+            biometrics.idCardPath!,
+            'id_card_${state.userId}.jpg',
           );
         }
       }
@@ -112,6 +135,8 @@ class ApplicationFormCubit extends HydratedCubit<ApplicationFormState> {
       final application = ApplicationEntity(
         id: state.initialApplication?.id ?? '',
         userId: state.userId,
+        warehouseId: state.selectedWarehouse?.id,
+        agentId: state.selectedAgent?.id,
         // Personal
         firstName: personalInfo.firstName.value,
         lastName: personalInfo.lastName.value,
@@ -122,6 +147,7 @@ class ApplicationFormCubit extends HydratedCubit<ApplicationFormState> {
         town: personalInfo.town.value,
         dateOfBirth: personalInfo.dateOfBirth,
         passportPath: passportPath,
+        idCardPath: idCardPath,
         // Contact
         phoneNumber: contactInfo.phoneNumber.value,
         nextOfKinName: contactInfo.nextOfKinName.value,

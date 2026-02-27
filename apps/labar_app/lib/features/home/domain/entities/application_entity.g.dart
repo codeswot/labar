@@ -10,6 +10,8 @@ ApplicationEntity _$ApplicationEntityFromJson(Map<String, dynamic> json) =>
     ApplicationEntity(
       id: json['id'] as String,
       userId: json['userId'] as String,
+      warehouseId: json['warehouseId'] as String?,
+      agentId: json['agentId'] as String?,
       status: $enumDecodeNullable(_$ApplicationStatusEnumMap, json['status']) ??
           ApplicationStatus.initial,
       firstName: json['firstName'] as String? ?? '',
@@ -21,6 +23,7 @@ ApplicationEntity _$ApplicationEntityFromJson(Map<String, dynamic> json) =>
       gender: json['gender'] as String? ?? '',
       state: json['state'] as String? ?? '',
       lga: json['lga'] as String? ?? '',
+      town: json['town'] as String? ?? '',
       bankName: json['bankName'] as String?,
       accountNumber: json['accountNumber'] as String?,
       accountName: json['accountName'] as String?,
@@ -40,6 +43,7 @@ ApplicationEntity _$ApplicationEntityFromJson(Map<String, dynamic> json) =>
       kycType: $enumDecodeNullable(_$KycTypeEnumMap, json['kycType']),
       kycNumber: json['kycNumber'] as String?,
       signaturePath: json['signaturePath'] as String?,
+      idCardPath: json['id_card_path'] as String?,
       proofOfPaymentPath: json['proof_of_payment_path'] as String?,
       createdAt: json['createdAt'] == null
           ? null
@@ -53,6 +57,8 @@ Map<String, dynamic> _$ApplicationEntityToJson(ApplicationEntity instance) =>
     <String, dynamic>{
       'id': instance.id,
       'userId': instance.userId,
+      'warehouseId': instance.warehouseId,
+      'agentId': instance.agentId,
       'status': _$ApplicationStatusEnumMap[instance.status]!,
       'firstName': instance.firstName,
       'lastName': instance.lastName,
@@ -61,6 +67,7 @@ Map<String, dynamic> _$ApplicationEntityToJson(ApplicationEntity instance) =>
       'gender': instance.gender,
       'state': instance.state,
       'lga': instance.lga,
+      'town': instance.town,
       'bankName': instance.bankName,
       'accountNumber': instance.accountNumber,
       'accountName': instance.accountName,
@@ -78,6 +85,7 @@ Map<String, dynamic> _$ApplicationEntityToJson(ApplicationEntity instance) =>
       'kycType': _$KycTypeEnumMap[instance.kycType],
       'kycNumber': instance.kycNumber,
       'signaturePath': instance.signaturePath,
+      'id_card_path': instance.idCardPath,
       'proof_of_payment_path': instance.proofOfPaymentPath,
       'createdAt': instance.createdAt?.toIso8601String(),
       'updatedAt': instance.updatedAt?.toIso8601String(),

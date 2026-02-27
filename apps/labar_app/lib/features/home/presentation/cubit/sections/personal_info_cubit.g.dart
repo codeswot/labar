@@ -30,6 +30,9 @@ _$PersonalInfoStateImpl _$$PersonalInfoStateImplFromJson(
       lga: json['lga'] == null
           ? const RequiredTextInput.pure()
           : const RequiredTextInputConverter().fromJson(json['lga'] as String),
+      town: json['town'] == null
+          ? const RequiredTextInput.pure()
+          : const RequiredTextInputConverter().fromJson(json['town'] as String),
       dateOfBirth: json['date_of_birth'] == null
           ? null
           : DateTime.parse(json['date_of_birth'] as String),
@@ -54,6 +57,7 @@ Map<String, dynamic> _$$PersonalInfoStateImplToJson(
       'state_of_origin':
           const RequiredTextInputConverter().toJson(instance.stateOfOrigin),
       'lga': const RequiredTextInputConverter().toJson(instance.lga),
+      'town': const RequiredTextInputConverter().toJson(instance.town),
       'date_of_birth': instance.dateOfBirth?.toIso8601String(),
       'available_states': instance.availableStates,
       'current_lgas': instance.currentLgas,

@@ -453,12 +453,37 @@ class _ApplicationManagementView extends StatelessWidget {
                             _DetailInfo(
                                 label: 'State', value: app['state'] ?? '-'),
                             _DetailInfo(label: 'LGA', value: app['lga'] ?? '-'),
+                            _DetailInfo(
+                                label: 'Town/Village',
+                                value: app['town'] ?? '-'),
                           ],
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 16),
+                  if (app['id_card_url'] != null)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('ID Card',
+                            style: context.moonTypography?.heading.text14),
+                        const SizedBox(height: 8),
+                        Container(
+                          width: double.infinity,
+                          height: 250,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            image: DecorationImage(
+                              image: NetworkImage(app['id_card_url']),
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+                    ),
+                  const SizedBox(height: 16),
                   Text('Farm Location',
                       style: context.moonTypography?.heading.text16),
                   const SizedBox(height: 12),
@@ -492,7 +517,9 @@ class _ApplicationManagementView extends StatelessWidget {
                               'state',
                               'lga',
                               'status',
-                              'reg_no'
+                              'reg_no',
+                              'id_card_path',
+                              'id_card_url'
                             }.contains(e.key))
                         .map((e) => SizedBox(
                               width: 200,
@@ -784,6 +811,7 @@ class _ApplicationManagementView extends StatelessWidget {
     final kycNumberController = TextEditingController(text: '');
     final latitudeController = TextEditingController(text: '');
     final longitudeController = TextEditingController(text: '');
+    final townController = TextEditingController(text: '');
 
     String? gender = '';
     String? kycType = '';
@@ -941,6 +969,10 @@ class _ApplicationManagementView extends StatelessWidget {
                           ),
                           const SizedBox(height: 12),
                           MoonTextInput(
+                              controller: townController,
+                              hintText: 'Town/Village'),
+                          const SizedBox(height: 12),
+                          MoonTextInput(
                               controller: farmLocationController,
                               hintText: 'Farm Location'),
                           const SizedBox(height: 12),
@@ -1089,6 +1121,7 @@ class _ApplicationManagementView extends StatelessWidget {
                           'phone_number': phoneController.text.trim(),
                           'state': selectedState,
                           'lga': selectedLga,
+                          'town': townController.text.trim(),
                           'farm_location': farmLocationController.text.trim(),
                           'farm_size': farmSizeController.text.trim(),
                           'crop_type': cropTypeController.text.trim(),

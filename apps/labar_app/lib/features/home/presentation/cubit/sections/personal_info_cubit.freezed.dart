@@ -32,6 +32,8 @@ mixin _$PersonalInfoState {
   RequiredTextInput get stateOfOrigin => throw _privateConstructorUsedError;
   @RequiredTextInputConverter()
   RequiredTextInput get lga => throw _privateConstructorUsedError;
+  @RequiredTextInputConverter()
+  RequiredTextInput get town => throw _privateConstructorUsedError;
   DateTime? get dateOfBirth => throw _privateConstructorUsedError;
   List<String> get availableStates => throw _privateConstructorUsedError;
   List<String> get currentLgas => throw _privateConstructorUsedError;
@@ -59,6 +61,7 @@ abstract class $PersonalInfoStateCopyWith<$Res> {
       @RequiredTextInputConverter() RequiredTextInput gender,
       @RequiredTextInputConverter() RequiredTextInput stateOfOrigin,
       @RequiredTextInputConverter() RequiredTextInput lga,
+      @RequiredTextInputConverter() RequiredTextInput town,
       DateTime? dateOfBirth,
       List<String> availableStates,
       List<String> currentLgas});
@@ -85,6 +88,7 @@ class _$PersonalInfoStateCopyWithImpl<$Res, $Val extends PersonalInfoState>
     Object? gender = null,
     Object? stateOfOrigin = null,
     Object? lga = null,
+    Object? town = null,
     Object? dateOfBirth = freezed,
     Object? availableStates = null,
     Object? currentLgas = null,
@@ -113,6 +117,10 @@ class _$PersonalInfoStateCopyWithImpl<$Res, $Val extends PersonalInfoState>
       lga: null == lga
           ? _value.lga
           : lga // ignore: cast_nullable_to_non_nullable
+              as RequiredTextInput,
+      town: null == town
+          ? _value.town
+          : town // ignore: cast_nullable_to_non_nullable
               as RequiredTextInput,
       dateOfBirth: freezed == dateOfBirth
           ? _value.dateOfBirth
@@ -145,6 +153,7 @@ abstract class _$$PersonalInfoStateImplCopyWith<$Res>
       @RequiredTextInputConverter() RequiredTextInput gender,
       @RequiredTextInputConverter() RequiredTextInput stateOfOrigin,
       @RequiredTextInputConverter() RequiredTextInput lga,
+      @RequiredTextInputConverter() RequiredTextInput town,
       DateTime? dateOfBirth,
       List<String> availableStates,
       List<String> currentLgas});
@@ -169,6 +178,7 @@ class __$$PersonalInfoStateImplCopyWithImpl<$Res>
     Object? gender = null,
     Object? stateOfOrigin = null,
     Object? lga = null,
+    Object? town = null,
     Object? dateOfBirth = freezed,
     Object? availableStates = null,
     Object? currentLgas = null,
@@ -197,6 +207,10 @@ class __$$PersonalInfoStateImplCopyWithImpl<$Res>
       lga: null == lga
           ? _value.lga
           : lga // ignore: cast_nullable_to_non_nullable
+              as RequiredTextInput,
+      town: null == town
+          ? _value.town
+          : town // ignore: cast_nullable_to_non_nullable
               as RequiredTextInput,
       dateOfBirth: freezed == dateOfBirth
           ? _value.dateOfBirth
@@ -228,6 +242,7 @@ class _$PersonalInfoStateImpl extends _PersonalInfoState {
       @RequiredTextInputConverter()
       this.stateOfOrigin = const RequiredTextInput.pure(),
       @RequiredTextInputConverter() this.lga = const RequiredTextInput.pure(),
+      @RequiredTextInputConverter() this.town = const RequiredTextInput.pure(),
       this.dateOfBirth,
       final List<String> availableStates = const [],
       final List<String> currentLgas = const []})
@@ -263,6 +278,10 @@ class _$PersonalInfoStateImpl extends _PersonalInfoState {
   @RequiredTextInputConverter()
   final RequiredTextInput lga;
   @override
+  @JsonKey()
+  @RequiredTextInputConverter()
+  final RequiredTextInput town;
+  @override
   final DateTime? dateOfBirth;
   final List<String> _availableStates;
   @override
@@ -284,7 +303,7 @@ class _$PersonalInfoStateImpl extends _PersonalInfoState {
 
   @override
   String toString() {
-    return 'PersonalInfoState(firstName: $firstName, lastName: $lastName, otherNames: $otherNames, gender: $gender, stateOfOrigin: $stateOfOrigin, lga: $lga, dateOfBirth: $dateOfBirth, availableStates: $availableStates, currentLgas: $currentLgas)';
+    return 'PersonalInfoState(firstName: $firstName, lastName: $lastName, otherNames: $otherNames, gender: $gender, stateOfOrigin: $stateOfOrigin, lga: $lga, town: $town, dateOfBirth: $dateOfBirth, availableStates: $availableStates, currentLgas: $currentLgas)';
   }
 
   @override
@@ -302,6 +321,7 @@ class _$PersonalInfoStateImpl extends _PersonalInfoState {
             (identical(other.stateOfOrigin, stateOfOrigin) ||
                 other.stateOfOrigin == stateOfOrigin) &&
             (identical(other.lga, lga) || other.lga == lga) &&
+            (identical(other.town, town) || other.town == town) &&
             (identical(other.dateOfBirth, dateOfBirth) ||
                 other.dateOfBirth == dateOfBirth) &&
             const DeepCollectionEquality()
@@ -320,6 +340,7 @@ class _$PersonalInfoStateImpl extends _PersonalInfoState {
       gender,
       stateOfOrigin,
       lga,
+      town,
       dateOfBirth,
       const DeepCollectionEquality().hash(_availableStates),
       const DeepCollectionEquality().hash(_currentLgas));
@@ -349,6 +370,7 @@ abstract class _PersonalInfoState extends PersonalInfoState {
       @RequiredTextInputConverter() final RequiredTextInput gender,
       @RequiredTextInputConverter() final RequiredTextInput stateOfOrigin,
       @RequiredTextInputConverter() final RequiredTextInput lga,
+      @RequiredTextInputConverter() final RequiredTextInput town,
       final DateTime? dateOfBirth,
       final List<String> availableStates,
       final List<String> currentLgas}) = _$PersonalInfoStateImpl;
@@ -375,6 +397,9 @@ abstract class _PersonalInfoState extends PersonalInfoState {
   @override
   @RequiredTextInputConverter()
   RequiredTextInput get lga;
+  @override
+  @RequiredTextInputConverter()
+  RequiredTextInput get town;
   @override
   DateTime? get dateOfBirth;
   @override

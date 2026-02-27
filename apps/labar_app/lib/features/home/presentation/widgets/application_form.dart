@@ -20,6 +20,8 @@ import 'sections/kyc_section.dart';
 import 'sections/bank_details_section.dart';
 import 'sections/farm_details_section.dart';
 import 'sections/biometrics_section.dart';
+import 'sections/warehouse_selection_section.dart';
+import 'sections/agent_selection_section.dart';
 
 import 'package:labar_app/core/di/injection.dart';
 
@@ -156,7 +158,7 @@ class _ApplicationFormState extends State<ApplicationForm> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
                       child: LinearProgressIndicator(
-                        value: (state.currentStep + 1) / 6,
+                        value: (state.currentStep + 1) / 8,
                         color: context.moonColors?.piccolo,
                         backgroundColor: context.moonColors?.beerus,
                         minHeight: 8,
@@ -168,11 +170,13 @@ class _ApplicationFormState extends State<ApplicationForm> {
                       controller: _pageController,
                       physics: const NeverScrollableScrollPhysics(),
                       children: const [
+                        WarehouseSelectionSection(),
                         PersonalInformationSection(),
                         ContactInformationSection(),
                         KYCSection(),
                         FarmDetailsSection(),
                         BankDetailsSection(),
+                        AgentSelectionSection(),
                         BiometricsSection(),
                       ],
                     ),
@@ -272,54 +276,83 @@ class _AttestationBottomSheetState extends State<_AttestationBottomSheet> {
       ),
       padding: const EdgeInsets.all(16.0),
       child: SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              context.l10n.attestation,
-              style: context.moonTypography?.heading.text20,
-            ),
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: context.moonColors?.goku,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                    color: context.moonColors?.beerus ?? Colors.grey),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                context.l10n.attestation,
+                style: context.moonTypography?.heading.text20,
               ),
-              child: Text(
-                context.l10n.attestationStatement,
-                style: context.moonTypography?.body.text14,
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: context.moonColors?.goku,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                      color: context.moonColors?.beerus ?? Colors.grey),
+                ),
+                child: Text(
+                  context.l10n.attestationStatement,
+                  style: context.moonTypography?.body.text14,
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            MoonMenuItem(
-              onTap: () {
-                setState(() {
-                  _accepted = !_accepted;
-                });
-              },
-              label: Text(context.l10n.iAgree),
-              leading: Checkbox(
-                value: _accepted,
-                onChanged: (val) {
+              const SizedBox(height: 24),
+              Text(
+                context.l10n.termsAndConditions,
+                style: context.moonTypography?.heading.text20,
+              ),
+              const SizedBox(height: 16),
+              Container(
+                constraints: const BoxConstraints(maxHeight: 250),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: context.moonColors?.goku,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                      color: context.moonColors?.beerus ?? Colors.grey),
+                ),
+                child: SingleChildScrollView(
+                  child: Text(
+                    context.l10n.termsAndConditionsContent,
+                    style: context.moonTypography?.body.text12,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              MoonMenuItem(
+                onTap: () {
                   setState(() {
-                    _accepted = val ?? false;
+                    _accepted = !_accepted;
                   });
                 },
+                label: Expanded(
+                  child: Text(
+                    context.l10n.iAgreeToTermsAndAttestation,
+                    style: context.moonTypography?.body.text14,
+                  ),
+                ),
+                leading: Checkbox(
+                  value: _accepted,
+                  onChanged: (val) {
+                    setState(() {
+                      _accepted = val ?? false;
+                    });
+                  },
+                ),
               ),
-            ),
-            const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              child: AppButton.filled(
-                label: Text(context.l10n.confirmSubmit),
-                onTap: _accepted ? () => widget.onConfirm(_accepted) : null,
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: AppButton.filled(
+                  label: Text(context.l10n.confirmSubmit),
+                  onTap: _accepted ? () => widget.onConfirm(_accepted) : null,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -344,29 +377,37 @@ class _ValidationButton extends StatelessWidget {
         bool isValid = false;
         switch (currentStep) {
           case 0:
-            isValid = context.select((PersonalInfoCubit c) => c.state.isValid);
+            isValid = context.select(
+                (ApplicationFormCubit c) => c.state.selectedWarehouse != null);
             break;
           case 1:
-            isValid = context.select((ContactInfoCubit c) => c.state.isValid);
+            isValid = context.select((PersonalInfoCubit c) => c.state.isValid);
             break;
           case 2:
-            isValid = context.select((KycDetailsCubit c) => c.state.isValid);
+            isValid = context.select((ContactInfoCubit c) => c.state.isValid);
             break;
           case 3:
-            isValid = context.select((FarmDetailsCubit c) => c.state.isValid);
+            isValid = context.select((KycDetailsCubit c) => c.state.isValid);
             break;
           case 4:
-            isValid = context.select((BankDetailsCubit c) => c.state.isValid);
+            isValid = context.select((FarmDetailsCubit c) => c.state.isValid);
             break;
           case 5:
+            isValid = context.select((BankDetailsCubit c) => c.state.isValid);
+            break;
+          case 6:
+            isValid = context.select(
+                (ApplicationFormCubit c) => c.state.selectedAgent != null);
+            break;
+          case 7:
             isValid = context.select((BiometricsCubit c) => c.state.isValid);
             break;
         }
 
         return AppButton.filled(
           label:
-              Text(currentStep == 5 ? context.l10n.submit : context.l10n.next),
-          onTap: isValid ? (currentStep == 5 ? onSubmit : onNext) : null,
+              Text(currentStep == 7 ? context.l10n.submit : context.l10n.next),
+          onTap: isValid ? (currentStep == 7 ? onSubmit : onNext) : null,
         );
       },
     );

@@ -148,6 +148,25 @@ class ApplicationDetailsPage extends StatelessWidget {
                     ),
                   ),
                 ],
+                if (currentApp.idCardUrl != null) ...[
+                  const SizedBox(height: 24),
+                  _SectionTitle(title: context.l10n.idCard),
+                  const SizedBox(height: 8),
+                  Container(
+                    height: 200,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: context.moonColors!.beerus),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: SupabaseImage(
+                      imageUrl: currentApp.idCardUrl!,
+                      fit: BoxFit.contain,
+                      onRefresh: () =>
+                          context.read<HomeCubit>().refreshApplication(),
+                    ),
+                  ),
+                ],
               ],
             ),
           ),

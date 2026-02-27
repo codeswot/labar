@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:labar_app/core/extensions/localization_extension.dart';
 import 'package:labar_app/features/home/presentation/cubit/sections/biometrics_cubit.dart';
 import 'package:labar_app/features/home/presentation/widgets/inputs/passport_input.dart';
+import 'package:labar_app/features/home/presentation/widgets/inputs/id_card_input.dart';
 import 'package:signature/signature.dart';
 import 'package:ui_library/ui_library.dart';
 
@@ -41,6 +42,8 @@ class _BiometricsSectionState extends State<BiometricsSection> {
               ),
               const SizedBox(height: 16),
               const PassportInput(),
+              const SizedBox(height: 16),
+              const IDCardInput(),
               const SizedBox(height: 16),
               Text(
                 context.l10n.signature,

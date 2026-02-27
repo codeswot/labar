@@ -302,6 +302,19 @@ class AppLocalizationsHa extends AppLocalizations {
   String get applicationForm => 'Application Form';
 
   @override
+  String get selectWarehouse => 'Zaɓi Ma\'ajiyar Kaya';
+
+  @override
+  String get searchWarehouses => 'Nemi ma\'ajiyar kaya...';
+
+  @override
+  String get noWarehousesFound => 'Ba a sami ma\'ajiyar kaya ba';
+
+  @override
+  String get warehouseSelectionSubtitle =>
+      'Da fatan za a zaɓi ma\'ajiyar kaya inda za a sarrafa aikace-aikacenku';
+
+  @override
   String get home => 'Gida';
 
   @override
@@ -326,7 +339,7 @@ class AppLocalizationsHa extends AppLocalizations {
   String get theme => 'Theme';
 
   @override
-  String get termsAndConditions => 'Terms & Conditions';
+  String get termsAndConditions => 'Yarjejeniyar Amincewa';
 
   @override
   String get license => 'License';
@@ -466,7 +479,8 @@ class AppLocalizationsHa extends AppLocalizations {
   String get confirmSubmit => 'Confirm & Submit';
 
   @override
-  String get signingPassport => 'Uploading signature and passport...';
+  String get signingPassport =>
+      'Ana loda sa hannu, foton fasfo, da katin shaida...';
 
   @override
   String get submittingApplication => 'Submitting form...';
@@ -578,4 +592,31 @@ class AppLocalizationsHa extends AppLocalizations {
   @override
   String get warehouseBagRecordInstruction =>
       'Record the number of bags received with the admin upon submission.';
+
+  @override
+  String get selectAgent => 'Zaɓi Wakili (Agent/Sub-Agent)';
+
+  @override
+  String get agentSelectionSubtitle =>
+      'Da fatan za a zaɓi wakilin da kuke yin rajista a ƙarƙashinsa';
+
+  @override
+  String get searchAgents => 'Nemi wakilai...';
+
+  @override
+  String get noAgentsFound => 'Ba a sami wakilai ba';
+
+  @override
+  String get idCard => 'Hoton Katin Shaida';
+
+  @override
+  String get idCardUploaded => 'An Zaɓi Hoton Katin Shaida';
+
+  @override
+  String get termsAndConditionsContent =>
+      'TAKARDAR YARJEJENTYA TSAKANIN KAMPANIN LABAR GRAINS & FEEDS MERCHANTS COMPANY LIMITED\nDA\nMANOMI/MANOMA DAMINAN 2024 SHIRIN TAIMAKON MANOMA\n\n1. Kampanin ta amince tare da manoma samar da kayan aikin gona (Taki, Sinadarai, Iri da Takin kaji) akan farashin dake rubuce a fiallen lissafi dake manne.\n\n2. Kampanita amince tare da manomi cewa Manomi zaiyi amfani da duka kayan da ya amsa domin zaibiya da wannan irin da ya ansa.\n\n3. Manomi ya amince zaibiya gwar-gwadon kayan da ya amsa da Masaran gonan shi a karshen damina (kafin ko ranan 15/11/2024) duk da cewa za\'a tsaida farashin biyan kaya a ranar 15/11/2024, da tsaka-tsakin farashin makwabtan kasuwanni a ranar.\n\n4. Manomi ya amince cewa bazaiyi girbi ba saiya gayyaci kuma yasanar da wakilin kampani kwana uku kafin girbi, kuma baza ya cire amfanin gonan ba kafin girbi don wani dadili nashi sai da izinin kampani.\n\n5. Manomi ya yarda bazai kai amfanin gonansa gida ba saiya biya kampani gwar-gwadon masaran da ake binshi tareda kai kayan inda kampani ta tanada.\n\n6. Manomi ya yarda cewa zai biya da masara duka bashin da akebin sa tsakanin 1/11/2024 zuwa 30/11/2024. In kuma ya kasa biya akan lokaci, kampani zata shiga gonan idan bai chashe ba ta chashe bakin bashin da take bi tare da kudin aiki.\n\n7. Manomi ya yarda da ya biya taran N300 akan ko wani hecta a ko wanni rana, na rashin biyan kaya akan lokaci daga 1/12/2024 har zuwa ranan da yagama biya.\n\n8. Manomi ya yarda zai jinginar da ka dara (wanda zai iya kasancewa; gona, fege, gida, Karfen hawa) har saiya biya bashin da ake binsa. Kampani zata saida wannan kadara in har manomi bai biya bashin ranar 30/11/2024.';
+
+  @override
+  String get iAgreeToTermsAndAttestation =>
+      'Na amince da Shaidar da Yarjejeniyar Amincewa';
 }

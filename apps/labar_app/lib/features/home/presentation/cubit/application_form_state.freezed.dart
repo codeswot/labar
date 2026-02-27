@@ -27,6 +27,8 @@ mixin _$ApplicationFormState {
   String get userId => throw _privateConstructorUsedError;
   ApplicationEntity? get initialApplication =>
       throw _privateConstructorUsedError;
+  WarehouseEntity? get selectedWarehouse => throw _privateConstructorUsedError;
+  AgentEntity? get selectedAgent => throw _privateConstructorUsedError;
 
   /// Serializes this ApplicationFormState to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -50,7 +52,9 @@ abstract class $ApplicationFormStateCopyWith<$Res> {
       String? errorMessage,
       String? loadingMessage,
       String userId,
-      ApplicationEntity? initialApplication});
+      ApplicationEntity? initialApplication,
+      WarehouseEntity? selectedWarehouse,
+      AgentEntity? selectedAgent});
 }
 
 /// @nodoc
@@ -75,6 +79,8 @@ class _$ApplicationFormStateCopyWithImpl<$Res,
     Object? loadingMessage = freezed,
     Object? userId = null,
     Object? initialApplication = freezed,
+    Object? selectedWarehouse = freezed,
+    Object? selectedAgent = freezed,
   }) {
     return _then(_value.copyWith(
       currentStep: null == currentStep
@@ -101,6 +107,14 @@ class _$ApplicationFormStateCopyWithImpl<$Res,
           ? _value.initialApplication
           : initialApplication // ignore: cast_nullable_to_non_nullable
               as ApplicationEntity?,
+      selectedWarehouse: freezed == selectedWarehouse
+          ? _value.selectedWarehouse
+          : selectedWarehouse // ignore: cast_nullable_to_non_nullable
+              as WarehouseEntity?,
+      selectedAgent: freezed == selectedAgent
+          ? _value.selectedAgent
+          : selectedAgent // ignore: cast_nullable_to_non_nullable
+              as AgentEntity?,
     ) as $Val);
   }
 }
@@ -119,7 +133,9 @@ abstract class _$$ApplicationFormStateImplCopyWith<$Res>
       String? errorMessage,
       String? loadingMessage,
       String userId,
-      ApplicationEntity? initialApplication});
+      ApplicationEntity? initialApplication,
+      WarehouseEntity? selectedWarehouse,
+      AgentEntity? selectedAgent});
 }
 
 /// @nodoc
@@ -141,6 +157,8 @@ class __$$ApplicationFormStateImplCopyWithImpl<$Res>
     Object? loadingMessage = freezed,
     Object? userId = null,
     Object? initialApplication = freezed,
+    Object? selectedWarehouse = freezed,
+    Object? selectedAgent = freezed,
   }) {
     return _then(_$ApplicationFormStateImpl(
       currentStep: null == currentStep
@@ -167,6 +185,14 @@ class __$$ApplicationFormStateImplCopyWithImpl<$Res>
           ? _value.initialApplication
           : initialApplication // ignore: cast_nullable_to_non_nullable
               as ApplicationEntity?,
+      selectedWarehouse: freezed == selectedWarehouse
+          ? _value.selectedWarehouse
+          : selectedWarehouse // ignore: cast_nullable_to_non_nullable
+              as WarehouseEntity?,
+      selectedAgent: freezed == selectedAgent
+          ? _value.selectedAgent
+          : selectedAgent // ignore: cast_nullable_to_non_nullable
+              as AgentEntity?,
     ));
   }
 }
@@ -181,7 +207,9 @@ class _$ApplicationFormStateImpl extends _ApplicationFormState {
       this.errorMessage,
       this.loadingMessage,
       this.userId = '',
-      this.initialApplication})
+      this.initialApplication,
+      this.selectedWarehouse,
+      this.selectedAgent})
       : super._();
 
   factory _$ApplicationFormStateImpl.fromJson(Map<String, dynamic> json) =>
@@ -202,10 +230,14 @@ class _$ApplicationFormStateImpl extends _ApplicationFormState {
   final String userId;
   @override
   final ApplicationEntity? initialApplication;
+  @override
+  final WarehouseEntity? selectedWarehouse;
+  @override
+  final AgentEntity? selectedAgent;
 
   @override
   String toString() {
-    return 'ApplicationFormState(currentStep: $currentStep, status: $status, errorMessage: $errorMessage, loadingMessage: $loadingMessage, userId: $userId, initialApplication: $initialApplication)';
+    return 'ApplicationFormState(currentStep: $currentStep, status: $status, errorMessage: $errorMessage, loadingMessage: $loadingMessage, userId: $userId, initialApplication: $initialApplication, selectedWarehouse: $selectedWarehouse, selectedAgent: $selectedAgent)';
   }
 
   @override
@@ -222,13 +254,25 @@ class _$ApplicationFormStateImpl extends _ApplicationFormState {
                 other.loadingMessage == loadingMessage) &&
             (identical(other.userId, userId) || other.userId == userId) &&
             (identical(other.initialApplication, initialApplication) ||
-                other.initialApplication == initialApplication));
+                other.initialApplication == initialApplication) &&
+            (identical(other.selectedWarehouse, selectedWarehouse) ||
+                other.selectedWarehouse == selectedWarehouse) &&
+            (identical(other.selectedAgent, selectedAgent) ||
+                other.selectedAgent == selectedAgent));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, currentStep, status,
-      errorMessage, loadingMessage, userId, initialApplication);
+  int get hashCode => Object.hash(
+      runtimeType,
+      currentStep,
+      status,
+      errorMessage,
+      loadingMessage,
+      userId,
+      initialApplication,
+      selectedWarehouse,
+      selectedAgent);
 
   /// Create a copy of ApplicationFormState
   /// with the given fields replaced by the non-null parameter values.
@@ -250,13 +294,14 @@ class _$ApplicationFormStateImpl extends _ApplicationFormState {
 
 abstract class _ApplicationFormState extends ApplicationFormState {
   const factory _ApplicationFormState(
-          {final int currentStep,
-          final ApplicationFormStatus status,
-          final String? errorMessage,
-          final String? loadingMessage,
-          final String userId,
-          final ApplicationEntity? initialApplication}) =
-      _$ApplicationFormStateImpl;
+      {final int currentStep,
+      final ApplicationFormStatus status,
+      final String? errorMessage,
+      final String? loadingMessage,
+      final String userId,
+      final ApplicationEntity? initialApplication,
+      final WarehouseEntity? selectedWarehouse,
+      final AgentEntity? selectedAgent}) = _$ApplicationFormStateImpl;
   const _ApplicationFormState._() : super._();
 
   factory _ApplicationFormState.fromJson(Map<String, dynamic> json) =
@@ -274,6 +319,10 @@ abstract class _ApplicationFormState extends ApplicationFormState {
   String get userId;
   @override
   ApplicationEntity? get initialApplication;
+  @override
+  WarehouseEntity? get selectedWarehouse;
+  @override
+  AgentEntity? get selectedAgent;
 
   /// Create a copy of ApplicationFormState
   /// with the given fields replaced by the non-null parameter values.

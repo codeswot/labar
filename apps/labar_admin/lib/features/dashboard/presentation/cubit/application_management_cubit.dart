@@ -86,6 +86,14 @@ class ApplicationManagementCubit extends Cubit<ApplicationManagementState> {
                   app['proof_of_payment_url'] = url;
                 } catch (_) {}
               }
+              if (app['id_card_path'] != null) {
+                try {
+                  final url = await _supabaseClient.storage
+                      .from('uploads')
+                      .createSignedUrl(app['id_card_path'], 3600);
+                  app['id_card_url'] = url;
+                } catch (_) {}
+              }
             }));
 
             emit(state.copyWith(

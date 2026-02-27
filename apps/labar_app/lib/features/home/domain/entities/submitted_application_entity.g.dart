@@ -11,6 +11,8 @@ SubmittedApplicationEntity _$SubmittedApplicationEntityFromJson(
     SubmittedApplicationEntity(
       id: json['id'] as String?,
       userId: json['user_id'] as String,
+      warehouseId: json['warehouse_id'] as String?,
+      agentId: json['agent_id'] as String?,
       status: $enumDecodeNullable(_$ApplicationStatusEnumMap, json['status']) ??
           ApplicationStatus.initial,
       firstName: json['first_name'] as String,
@@ -22,6 +24,7 @@ SubmittedApplicationEntity _$SubmittedApplicationEntityFromJson(
       gender: json['gender'] as String,
       state: json['state'] as String,
       lga: json['lga'] as String,
+      town: json['town'] as String,
       bankName: json['bank_name'] as String?,
       accountNumber: json['account_number'] as String?,
       accountName: json['account_name'] as String?,
@@ -38,6 +41,7 @@ SubmittedApplicationEntity _$SubmittedApplicationEntityFromJson(
       kycType: $enumDecodeNullable(_$KycTypeEnumMap, json['kyc_type']),
       kycNumber: json['kyc_number'] as String?,
       signaturePath: json['signature_path'] as String?,
+      idCardPath: json['id_card_path'] as String?,
       proofOfPaymentPath: json['proof_of_payment_path'] as String?,
       createdAt: json['created_at'] == null
           ? null
@@ -52,6 +56,8 @@ Map<String, dynamic> _$SubmittedApplicationEntityToJson(
     <String, dynamic>{
       if (instance.id case final value?) 'id': value,
       'user_id': instance.userId,
+      'warehouse_id': instance.warehouseId,
+      'agent_id': instance.agentId,
       'status': _$ApplicationStatusEnumMap[instance.status]!,
       'first_name': instance.firstName,
       'last_name': instance.lastName,
@@ -60,6 +66,7 @@ Map<String, dynamic> _$SubmittedApplicationEntityToJson(
       'gender': instance.gender,
       'state': instance.state,
       'lga': instance.lga,
+      'town': instance.town,
       'bank_name': instance.bankName,
       'account_number': instance.accountNumber,
       'account_name': instance.accountName,
@@ -76,6 +83,7 @@ Map<String, dynamic> _$SubmittedApplicationEntityToJson(
       'kyc_type': _$KycTypeEnumMap[instance.kycType],
       'kyc_number': instance.kycNumber,
       'signature_path': instance.signaturePath,
+      'id_card_path': instance.idCardPath,
       'proof_of_payment_path': instance.proofOfPaymentPath,
       if (instance.createdAt?.toIso8601String() case final value?)
         'created_at': value,

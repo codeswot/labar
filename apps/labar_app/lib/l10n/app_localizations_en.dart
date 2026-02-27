@@ -297,6 +297,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get applicationForm => 'Application Form';
 
   @override
+  String get selectWarehouse => 'Select Warehouse';
+
+  @override
+  String get searchWarehouses => 'Search warehouses...';
+
+  @override
+  String get noWarehousesFound => 'No warehouses found';
+
+  @override
+  String get warehouseSelectionSubtitle =>
+      'Please choose a warehouse where your application will be processed';
+
+  @override
   String get home => 'Home';
 
   @override
@@ -321,7 +334,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get theme => 'Theme';
 
   @override
-  String get termsAndConditions => 'Terms & Conditions';
+  String get termsAndConditions => 'Memorandum of Agreement';
 
   @override
   String get license => 'License';
@@ -461,7 +474,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get confirmSubmit => 'Confirm & Submit';
 
   @override
-  String get signingPassport => 'Uploading signature and passport...';
+  String get signingPassport => 'Uploading signature, passport, and ID card...';
 
   @override
   String get submittingApplication => 'Submitting form...';
@@ -573,4 +586,31 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get warehouseBagRecordInstruction =>
       'Record the number of bags received with the admin upon submission.';
+
+  @override
+  String get selectAgent => 'Select Agent/Sub-Agent';
+
+  @override
+  String get agentSelectionSubtitle =>
+      'Please select the agent you are registering under';
+
+  @override
+  String get searchAgents => 'Search agents...';
+
+  @override
+  String get noAgentsFound => 'No agents found';
+
+  @override
+  String get idCard => 'ID Card Photo';
+
+  @override
+  String get idCardUploaded => 'ID Card Photo Selected';
+
+  @override
+  String get termsAndConditionsContent =>
+      'MEMORANDUM OF AGREEMENT\nLABAR GRAINS & FEEDS MERCHANT COMPANY LIMITED\nAND\nFARMERS (OUTGROWER) OF\n2024 WET SEASON PRIVATE ANCHOR BORROWER PROGRAM\n\n1. That the company agrees with the farmer(s) to provide farm inputs: Fertilizer, Agro-chemical, seed & Chicken manure at an agreed price stipulated in the Economic of Production attached.\n\n2. The company and the farmer agree that the farmer(s) shall use all the above farm inputs Provided, for the same variety of seeds will be returned during harvest.\n\n3. The farmer(s) agrees with the Company to pay for the agreed value of inputs provided with maize equivalent at the end of the farming season (on or before 15th November, 2024) even though the off-take price will be determined by the average market price of the neighboring markets on the 15th November 2024.\n\n4. The Company and the Farmer(s) agree that the Company\'s agent must be present on the day of harvest and shall be informed three days prior to the harvest and shall not harvest his farm prematurely for any reason without the approval of the Company.\n\n5. The Farmer(s) agrees with the Company NOT to take his harvest home until he/she has settled and delivered fully the loan package to the location as would be fixed by the Company in due time.\n\n6. The Farmer(s) agrees with the Company to pay the entire loan obligation with maize equivalent as agreed within 1/11/2024 to 30/11/2024. In the event of failure to settle the loan as at when due, the Company shall where the farmer has not made harvest, take over the farm and harvest the equivalent of the total loan package together with the accrued expenses.\n\n7. The Farmer(s) agrees with the Company to pay the sum of N300.00 penalty per hectare for each day of default, starting from the 1/12/2024 until the loan package is fully set-off.\n\n8. The Farmer(s) agrees with the company to register any of the farmer\'s asset with the Company be it moveable or immovable as collateral to the loan, which shall be liquidated where he defaults in paying the loan package on the 30/11/2024.';
+
+  @override
+  String get iAgreeToTermsAndAttestation =>
+      'I agree to the Attestation and Memorandum of Agreement';
 }

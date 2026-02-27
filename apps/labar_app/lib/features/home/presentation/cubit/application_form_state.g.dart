@@ -20,6 +20,14 @@ _$ApplicationFormStateImpl _$$ApplicationFormStateImplFromJson(
           ? null
           : ApplicationEntity.fromJson(
               json['initial_application'] as Map<String, dynamic>),
+      selectedWarehouse: json['selected_warehouse'] == null
+          ? null
+          : WarehouseEntity.fromJson(
+              json['selected_warehouse'] as Map<String, dynamic>),
+      selectedAgent: json['selected_agent'] == null
+          ? null
+          : AgentEntity.fromJson(
+              json['selected_agent'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$ApplicationFormStateImplToJson(
@@ -31,6 +39,8 @@ Map<String, dynamic> _$$ApplicationFormStateImplToJson(
       'loading_message': instance.loadingMessage,
       'user_id': instance.userId,
       'initial_application': instance.initialApplication,
+      'selected_warehouse': instance.selectedWarehouse,
+      'selected_agent': instance.selectedAgent,
     };
 
 const _$ApplicationFormStatusEnumMap = {

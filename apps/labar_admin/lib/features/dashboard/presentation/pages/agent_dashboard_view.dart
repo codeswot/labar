@@ -44,6 +44,7 @@ class _AgentApplicationsList extends StatelessWidget {
     final nextOfKinPhoneController = TextEditingController();
     final nextOfKinRelationshipController = TextEditingController();
     final kycNumberController = TextEditingController();
+    final townController = TextEditingController();
 
     String? gender;
     String? kycType;
@@ -78,6 +79,7 @@ class _AgentApplicationsList extends StatelessWidget {
       signatureBase64: signatureBase64,
       showEmail: true,
       showDocuments: true,
+      townController: townController,
       picker: picker,
       onSave: (ctx, updatedGender, updatedKycType, passport, signature) {
         ctx.read<AgentCubit>().createApplication(
@@ -105,6 +107,7 @@ class _AgentApplicationsList extends StatelessWidget {
                 nextOfKinRelationshipController:
                     nextOfKinRelationshipController,
                 kycNumberController: kycNumberController,
+                townController: townController,
                 gender: updatedGender,
                 kycType: updatedKycType,
               ),
@@ -153,6 +156,7 @@ class _AgentApplicationsList extends StatelessWidget {
         TextEditingController(text: app['next_of_kin_relationship'] ?? '');
     final kycNumberController =
         TextEditingController(text: app['kyc_number'] ?? '');
+    final townController = TextEditingController(text: app['town'] ?? '');
 
     _showApplicationFormDialog(
       context,
@@ -181,6 +185,7 @@ class _AgentApplicationsList extends StatelessWidget {
       signatureBase64: null,
       showEmail: false,
       showDocuments: false,
+      townController: townController,
       picker: ImagePicker(),
       onSave: (ctx, updatedGender, updatedKycType, _, __) {
         ctx.read<AgentCubit>().updateApplication(
@@ -204,6 +209,7 @@ class _AgentApplicationsList extends StatelessWidget {
                 nextOfKinRelationshipController:
                     nextOfKinRelationshipController,
                 kycNumberController: kycNumberController,
+                townController: townController,
                 gender: updatedGender,
                 kycType: updatedKycType,
               ),
@@ -246,6 +252,7 @@ class _AgentApplicationsList extends StatelessWidget {
             String? passport, String? signature)
         onSave,
     required String saveLabel,
+    required TextEditingController townController,
   }) {
     String? currentGender = gender;
     String? currentKycType = kycType;
@@ -319,6 +326,9 @@ class _AgentApplicationsList extends StatelessWidget {
                       MoonFormTextInput(
                           controller: dobController,
                           hintText: 'Date of Birth (YYYY-MM-DD)'),
+                      const SizedBox(height: 8),
+                      MoonFormTextInput(
+                          controller: townController, hintText: 'Town/Village'),
                       const SizedBox(height: 8),
                       DropdownButtonFormField<String>(
                         value: currentGender,
@@ -503,6 +513,7 @@ class _AgentApplicationsList extends StatelessWidget {
     required TextEditingController nextOfKinPhoneController,
     required TextEditingController nextOfKinRelationshipController,
     required TextEditingController kycNumberController,
+    required TextEditingController townController,
     required String? gender,
     required String? kycType,
   }) {
@@ -526,6 +537,7 @@ class _AgentApplicationsList extends StatelessWidget {
       'next_of_kin_relationship': nextOfKinRelationshipController.text.trim(),
       'kyc_type': kycType,
       'kyc_number': kycNumberController.text.trim(),
+      'town': townController.text.trim(),
     };
   }
 

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:injectable/injectable.dart';
 import 'package:labar_app/core/utils/app_logger.dart';
+import 'package:labar_app/features/home/domain/entities/agent_entity.dart';
 import 'package:labar_app/features/home/domain/entities/application_entity.dart';
 import 'package:labar_app/features/home/domain/entities/submitted_application_entity.dart';
 import 'package:labar_app/features/home/domain/repositories/application_repository.dart';
@@ -81,9 +82,21 @@ class ApplicationRepositoryImpl implements ApplicationRepository {
       }
     }
 
+    String? idCardUrl;
+    if (submitted.idCardPath != null && submitted.idCardPath!.isNotEmpty) {
+      try {
+        idCardUrl = await _supabaseClient.storage
+            .from('uploads')
+            .createSignedUrl(submitted.idCardPath!, 3600);
+      } catch (e) {
+        AppLogger.error('Failed to create signed URL for ID card', e);
+      }
+    }
+
     return submitted.toApplicationEntity(
       passportUrl: passportUrl,
       signatureUrl: signatureUrl,
+      idCardUrl: idCardUrl,
       proofOfPaymentUrl: proofOfPaymentUrl,
     );
   }
@@ -101,7 +114,30 @@ class ApplicationRepositoryImpl implements ApplicationRepository {
     final submittedEntity =
         SubmittedApplicationEntity.fromApplicationEntity(application);
 
-    await _supabaseClient.from('applications').upsert(submittedEntity.toJson());
+    // 1. Upsert to applications and get the ID
+    final response = await _supabaseClient
+        .from('applications')
+        .upsert(submittedEntity.toJson())
+        .select('id')
+        .single();
+
+    final applicationId = response['id'] as String;
+
+    // 2. Upsert to farmer_designation if warehouse is provided
+    if (application.warehouseId != null) {
+      final designationData = {
+        'application': applicationId,
+        'warehouse': application.warehouseId,
+      };
+
+      if (application.agentId != null) {
+        designationData['agent'] = application.agentId;
+      }
+
+      await _supabaseClient
+          .from('farmer_designation')
+          .upsert(designationData, onConflict: 'application');
+    }
   }
 
   @override
@@ -116,5 +152,19 @@ class ApplicationRepositoryImpl implements ApplicationRepository {
         );
 
     return uniqueName;
+  }
+
+  @override
+  Future<List<AgentEntity>> getAgents() async {
+    // We join profiles with user_roles to get only agents
+    final response = await _supabaseClient
+        .from('profiles')
+        .select('*, user_roles!inner(role, active)')
+        .eq('user_roles.role', 'agent')
+        .eq('user_roles.active', true);
+
+    return (response as List)
+        .map((json) => AgentEntity.fromJson(json))
+        .toList();
   }
 }

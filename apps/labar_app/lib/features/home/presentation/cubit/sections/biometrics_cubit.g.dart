@@ -13,6 +13,7 @@ _$BiometricsStateImpl _$$BiometricsStateImplFromJson(
           ?.map((e) => (e as num).toInt())
           .toList(),
       passportPath: json['passportPath'] as String?,
+      idCardPath: json['idCardPath'] as String?,
     );
 
 Map<String, dynamic> _$$BiometricsStateImplToJson(
@@ -20,4 +21,5 @@ Map<String, dynamic> _$$BiometricsStateImplToJson(
     <String, dynamic>{
       'signatureBytes': instance.signatureBytes,
       'passportPath': instance.passportPath,
+      'idCardPath': instance.idCardPath,
     };

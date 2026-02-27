@@ -8,6 +8,8 @@ part 'application_entity.g.dart';
 class ApplicationEntity extends Equatable {
   final String id;
   final String userId;
+  final String? warehouseId;
+  final String? agentId;
   final ApplicationStatus status;
 
   // Personal Info
@@ -45,6 +47,8 @@ class ApplicationEntity extends Equatable {
   final KycType? kycType;
   final String? kycNumber;
   final String? signaturePath;
+  @JsonKey(name: 'id_card_path')
+  final String? idCardPath;
   @JsonKey(name: 'proof_of_payment_path')
   final String? proofOfPaymentPath;
 
@@ -54,6 +58,8 @@ class ApplicationEntity extends Equatable {
   @JsonKey(includeToJson: false, includeFromJson: false)
   final String? signatureUrl;
   @JsonKey(includeToJson: false, includeFromJson: false)
+  final String? idCardUrl;
+  @JsonKey(includeToJson: false, includeFromJson: false)
   final String? proofOfPaymentUrl;
 
   final DateTime? createdAt;
@@ -62,6 +68,8 @@ class ApplicationEntity extends Equatable {
   const ApplicationEntity({
     required this.id,
     required this.userId,
+    this.warehouseId,
+    this.agentId,
     this.status = ApplicationStatus.initial,
     this.firstName = '',
     this.lastName = '',
@@ -88,9 +96,11 @@ class ApplicationEntity extends Equatable {
     this.kycType,
     this.kycNumber,
     this.signaturePath,
+    this.idCardPath,
     this.proofOfPaymentPath,
     this.passportUrl,
     this.signatureUrl,
+    this.idCardUrl,
     this.proofOfPaymentUrl,
     this.createdAt,
     this.updatedAt,
@@ -114,6 +124,8 @@ class ApplicationEntity extends Equatable {
   ApplicationEntity copyWith({
     String? id,
     String? userId,
+    String? warehouseId,
+    String? agentId,
     ApplicationStatus? status,
     String? firstName,
     String? lastName,
@@ -140,9 +152,11 @@ class ApplicationEntity extends Equatable {
     KycType? kycType,
     String? kycNumber,
     String? signaturePath,
+    String? idCardPath,
     String? proofOfPaymentPath,
     String? passportUrl,
     String? signatureUrl,
+    String? idCardUrl,
     String? proofOfPaymentUrl,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -150,6 +164,8 @@ class ApplicationEntity extends Equatable {
     return ApplicationEntity(
       id: id ?? this.id,
       userId: userId ?? this.userId,
+      warehouseId: warehouseId ?? this.warehouseId,
+      agentId: agentId ?? this.agentId,
       status: status ?? this.status,
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
@@ -177,9 +193,11 @@ class ApplicationEntity extends Equatable {
       kycType: kycType ?? this.kycType,
       kycNumber: kycNumber ?? this.kycNumber,
       signaturePath: signaturePath ?? this.signaturePath,
+      idCardPath: idCardPath ?? this.idCardPath,
       proofOfPaymentPath: proofOfPaymentPath ?? this.proofOfPaymentPath,
       passportUrl: passportUrl ?? this.passportUrl,
       signatureUrl: signatureUrl ?? this.signatureUrl,
+      idCardUrl: idCardUrl ?? this.idCardUrl,
       proofOfPaymentUrl: proofOfPaymentUrl ?? this.proofOfPaymentUrl,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -190,6 +208,8 @@ class ApplicationEntity extends Equatable {
   List<Object?> get props => [
         id,
         userId,
+        warehouseId,
+        agentId,
         status,
         firstName,
         lastName,
@@ -216,9 +236,11 @@ class ApplicationEntity extends Equatable {
         kycType,
         kycNumber,
         signaturePath,
+        idCardPath,
         proofOfPaymentPath,
         passportUrl,
         signatureUrl,
+        idCardUrl,
         proofOfPaymentUrl,
         createdAt,
         updatedAt,

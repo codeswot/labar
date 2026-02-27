@@ -54,6 +54,18 @@ class WarehouseRepositoryImpl implements WarehouseRepository {
           );
         });
   }
+
+  @override
+  Future<List<WarehouseEntity>> getWarehouses() async {
+    final response = await _supabaseClient
+        .from('warehouses')
+        .select()
+        .order('name', ascending: true);
+
+    return (response as List)
+        .map((json) => WarehouseEntity.fromJson(json))
+        .toList();
+  }
 }
 
 extension on FarmerDesignationEntity {

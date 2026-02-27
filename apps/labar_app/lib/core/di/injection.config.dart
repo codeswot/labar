@@ -52,6 +52,8 @@ import '../../features/home/domain/repositories/warehouse_repository.dart'
     as _i503;
 import '../../features/home/domain/usecases/get_lgas_usecase.dart' as _i636;
 import '../../features/home/domain/usecases/get_states_usecase.dart' as _i239;
+import '../../features/home/presentation/cubit/agent_selection_cubit.dart'
+    as _i774;
 import '../../features/home/presentation/cubit/allocated_resources_cubit.dart'
     as _i230;
 import '../../features/home/presentation/cubit/application_form_cubit.dart'
@@ -71,6 +73,8 @@ import '../../features/home/presentation/cubit/sections/kyc_details_cubit.dart'
     as _i2;
 import '../../features/home/presentation/cubit/sections/personal_info_cubit.dart'
     as _i1026;
+import '../../features/home/presentation/cubit/warehouse_selection_cubit.dart'
+    as _i801;
 import '../../features/settings/presentation/cubit/settings_cubit.dart'
     as _i792;
 import '../localization/language_cubit.dart' as _i170;
@@ -117,10 +121,14 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i153.AuthRepositoryImpl(gh<_i107.AuthRemoteDataSource>()));
     gh.factory<_i948.AssignedWarehouseCubit>(
         () => _i948.AssignedWarehouseCubit(gh<_i503.WarehouseRepository>()));
+    gh.factory<_i801.WarehouseSelectionCubit>(
+        () => _i801.WarehouseSelectionCubit(gh<_i503.WarehouseRepository>()));
     gh.lazySingleton<_i124.ApplicationFormCubit>(
         () => _i124.ApplicationFormCubit(gh<_i508.ApplicationRepository>()));
     gh.factory<_i9.HomeCubit>(
         () => _i9.HomeCubit(gh<_i508.ApplicationRepository>()));
+    gh.factory<_i774.AgentSelectionCubit>(
+        () => _i774.AgentSelectionCubit(gh<_i508.ApplicationRepository>()));
     gh.lazySingleton<_i796.SessionCubit>(
         () => _i796.SessionCubit(gh<_i787.AuthRepository>()));
     gh.lazySingleton<_i239.GetStatesUseCase>(

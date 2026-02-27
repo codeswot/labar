@@ -10,6 +10,7 @@ class BiometricsState with _$BiometricsState {
   const factory BiometricsState({
     List<int>? signatureBytes,
     String? passportPath,
+    String? idCardPath,
   }) = _BiometricsState;
 
   const BiometricsState._();
@@ -19,7 +20,8 @@ class BiometricsState with _$BiometricsState {
 
   bool get isValid =>
       (signatureBytes != null && signatureBytes!.isNotEmpty) &&
-      (passportPath != null && passportPath!.isNotEmpty);
+      (passportPath != null && passportPath!.isNotEmpty) &&
+      (idCardPath != null && idCardPath!.isNotEmpty);
 }
 
 @injectable
@@ -32,5 +34,9 @@ class BiometricsCubit extends Cubit<BiometricsState> {
 
   void setPassport(String? path) {
     emit(state.copyWith(passportPath: path));
+  }
+
+  void setIDCard(String? path) {
+    emit(state.copyWith(idCardPath: path));
   }
 }
