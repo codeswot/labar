@@ -64,6 +64,38 @@ class AgentCubit extends Cubit<AgentState> {
     }
   }
 
+  Future<void> updateApplication(String id, Map<String, dynamic> data) async {
+    emit(state.copyWith(isLoading: true, error: null));
+    try {
+      await _agentRepository.updateApplication(id, data);
+      emit(state.copyWith(isLoading: false));
+    } catch (e) {
+      emit(state.copyWith(isLoading: false, error: e.toString()));
+    }
+  }
+
+  Future<void> createApplication({
+    required String email,
+    required Map<String, dynamic> metadata,
+    required Map<String, dynamic> applicationData,
+    String? passportBase64,
+    String? signatureBase64,
+  }) async {
+    emit(state.copyWith(isLoading: true, error: null));
+    try {
+      await _agentRepository.createApplication(
+        email: email,
+        metadata: metadata,
+        applicationData: applicationData,
+        passportBase64: passportBase64,
+        signatureBase64: signatureBase64,
+      );
+      emit(state.copyWith(isLoading: false));
+    } catch (e) {
+      emit(state.copyWith(isLoading: false, error: e.toString()));
+    }
+  }
+
   Future<void> uploadAssets({
     required String applicationId,
     String? passportBase64,

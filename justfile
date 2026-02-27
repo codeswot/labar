@@ -150,20 +150,24 @@ fresh: clean bootstrap build assets l10n
 deploy-admin:
     @echo "🏗️  Building admin web app..."
     cd apps/labar_admin && flutter build web --release --dart-define-from-file=.env
-    @echo "📦  Copying to Vercel output..."
+    @echo "📦  Preparing Vercel output..."
+    rm -rf .vercel/output
     mkdir -p .vercel/output/static
+    echo '{"version":3}' > .vercel/output/config.json
     rsync -a --delete apps/labar_admin/build/web/ .vercel/output/static/
     @echo "🚀  Deploying to Vercel production..."
-    vercel deploy --prebuilt --yes
+    vercel deploy --prebuilt --prod --yes
     @echo "✅  Admin dashboard deployed!"
 
 # Build admin web app (with envs) and deploy to Vercel preview
 deploy-admin-preview:
     @echo "🏗️  Building admin web app..."
     cd apps/labar_admin && flutter build web --release --dart-define-from-file=.env
-    @echo "📦  Copying to Vercel output..."
+    @echo "📦  Preparing Vercel output..."
+    rm -rf .vercel/output
     mkdir -p .vercel/output/static
+    echo '{"version":3}' > .vercel/output/config.json
     rsync -a --delete apps/labar_admin/build/web/ .vercel/output/static/
     @echo "🔍  Deploying to Vercel preview..."
-    vercel deploy --prebuilt
+    vercel deploy --prebuilt --yes
     @echo "✅  Preview deployment done!"

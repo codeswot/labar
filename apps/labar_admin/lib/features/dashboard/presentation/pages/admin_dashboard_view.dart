@@ -766,30 +766,27 @@ class _ApplicationManagementView extends StatelessWidget {
   }
 
   void _showCreateApplicationDialog(BuildContext context) {
-    final emailController =
-        TextEditingController(text: 'elmubarak333@icloud.com');
-    final firstNameController = TextEditingController(text: 'Muhammad');
-    final lastNameController = TextEditingController(text: 'Ibrahim');
-    final otherNamesController = TextEditingController(text: 'Sani');
-    final phoneController = TextEditingController(text: '08012345678');
-    final dobController = TextEditingController(text: '1990-01-01');
-    final bankNameController = TextEditingController(text: 'Test Bank');
-    final accountNumberController = TextEditingController(text: '1234567890');
-    final accountNameController =
-        TextEditingController(text: 'Muhammad Ibrahim');
-    final nextOfKinNameController = TextEditingController(text: 'Ali Ibrahim');
-    final nextOfKinPhoneController = TextEditingController(text: '08087654321');
-    final nextOfKinRelationshipController =
-        TextEditingController(text: 'Brother');
-    final farmSizeController = TextEditingController(text: '5');
-    final farmLocationController = TextEditingController(text: 'Test Location');
-    final cropTypeController = TextEditingController(text: 'Maize');
-    final kycNumberController = TextEditingController(text: '12345678901');
-    final latitudeController = TextEditingController(text: '9.0765');
-    final longitudeController = TextEditingController(text: '7.3986');
+    final emailController = TextEditingController(text: '');
+    final firstNameController = TextEditingController(text: '');
+    final lastNameController = TextEditingController(text: '');
+    final otherNamesController = TextEditingController(text: '');
+    final phoneController = TextEditingController(text: '');
+    final dobController = TextEditingController(text: '');
+    final bankNameController = TextEditingController(text: '');
+    final accountNumberController = TextEditingController(text: '');
+    final accountNameController = TextEditingController(text: '');
+    final nextOfKinNameController = TextEditingController(text: '');
+    final nextOfKinPhoneController = TextEditingController(text: '');
+    final nextOfKinRelationshipController = TextEditingController(text: '');
+    final farmSizeController = TextEditingController(text: '');
+    final farmLocationController = TextEditingController(text: '');
+    final cropTypeController = TextEditingController(text: '');
+    final kycNumberController = TextEditingController(text: '');
+    final latitudeController = TextEditingController(text: '');
+    final longitudeController = TextEditingController(text: '');
 
-    String? gender = 'Male';
-    String? kycType = 'nin';
+    String? gender = '';
+    String? kycType = '';
     String? selectedState;
     String? selectedLga;
     String? passportBase64;

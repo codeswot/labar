@@ -10,6 +10,13 @@ abstract class AgentRepository {
     String? passportBase64,
     String? signatureBase64,
   });
+  Future<void> createApplication({
+    required String email,
+    required Map<String, dynamic> metadata,
+    required Map<String, dynamic> applicationData,
+    String? passportBase64,
+    String? signatureBase64,
+  });
 }
 
 @LazySingleton(as: AgentRepository)
@@ -47,6 +54,24 @@ class AgentRepositoryImpl implements AgentRepository {
     await _supabaseClient.functions.invoke('admin-service', body: {
       'action': 'upload_application_assets',
       'applicationId': applicationId,
+      'passportBase64': passportBase64,
+      'signatureBase64': signatureBase64,
+    });
+  }
+
+  @override
+  Future<void> createApplication({
+    required String email,
+    required Map<String, dynamic> metadata,
+    required Map<String, dynamic> applicationData,
+    String? passportBase64,
+    String? signatureBase64,
+  }) async {
+    await _supabaseClient.functions.invoke('admin-service', body: {
+      'action': 'agent_create_farmer_application',
+      'email': email,
+      'metadata': metadata,
+      'applicationData': applicationData,
       'passportBase64': passportBase64,
       'signatureBase64': signatureBase64,
     });
