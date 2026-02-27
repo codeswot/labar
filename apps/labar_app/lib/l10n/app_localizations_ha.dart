@@ -173,7 +173,7 @@ class AppLocalizationsHa extends AppLocalizations {
   String get localGovernment => 'Karamar Hukuma';
 
   @override
-  String get village => 'Ƙauye';
+  String get village => 'Gari';
 
   @override
   String get ward => 'Unguwa';

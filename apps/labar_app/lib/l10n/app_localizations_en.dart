@@ -171,7 +171,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get localGovernment => 'Local Government';
 
   @override
-  String get village => 'Village';
+  String get village => 'Town/Village';
 
   @override
   String get ward => 'Ward';

@@ -419,7 +419,7 @@ abstract class AppLocalizations {
   /// Village field label
   ///
   /// In en, this message translates to:
-  /// **'Village'**
+  /// **'Town/Village'**
   String get village;
 
   /// Ward field label

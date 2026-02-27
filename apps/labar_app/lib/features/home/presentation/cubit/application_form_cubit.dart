@@ -119,6 +119,7 @@ class ApplicationFormCubit extends HydratedCubit<ApplicationFormState> {
         gender: personalInfo.gender.value,
         state: personalInfo.stateOfOrigin.value,
         lga: personalInfo.lga.value,
+        town: personalInfo.town.value,
         dateOfBirth: personalInfo.dateOfBirth,
         passportPath: passportPath,
         // Contact

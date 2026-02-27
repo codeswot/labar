@@ -27,6 +27,7 @@ class PersonalInfoCubit extends HydratedCubit<PersonalInfoState> {
     String? gender,
     String? stateOfOrigin,
     String? lga,
+    String? town,
     DateTime? dateOfBirth,
   }) {
     if (state.availableStates.isEmpty) {
@@ -52,6 +53,9 @@ class PersonalInfoCubit extends HydratedCubit<PersonalInfoState> {
       lga: lga != null && lga.isNotEmpty
           ? RequiredTextInput.dirty(lga)
           : state.lga,
+      town: town != null && town.isNotEmpty
+          ? RequiredTextInput.dirty(town)
+          : state.town,
       dateOfBirth: dateOfBirth ?? state.dateOfBirth,
     ));
 
@@ -110,6 +114,10 @@ class PersonalInfoCubit extends HydratedCubit<PersonalInfoState> {
 
   void lgaChanged(String value) {
     emit(state.copyWith(lga: RequiredTextInput.dirty(value)));
+  }
+
+  void townChanged(String value) {
+    emit(state.copyWith(town: RequiredTextInput.dirty(value)));
   }
 
   void dateOfBirthChanged(DateTime? value) {

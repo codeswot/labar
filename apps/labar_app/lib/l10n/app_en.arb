@@ -132,7 +132,7 @@
   "@localGovernment": {
     "description": "Local government field label"
   },
-  "village": "Village",
+  "village": "Town/Village",
   "@village": {
     "description": "Village field label"
   },

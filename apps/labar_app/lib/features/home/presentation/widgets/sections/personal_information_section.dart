@@ -9,6 +9,7 @@ import 'package:labar_app/features/home/presentation/widgets/inputs/last_name_in
 import 'package:labar_app/features/home/presentation/widgets/inputs/lga_input.dart';
 import 'package:labar_app/features/home/presentation/widgets/inputs/other_names_input.dart';
 import 'package:labar_app/features/home/presentation/widgets/inputs/state_input.dart';
+import 'package:labar_app/features/home/presentation/widgets/inputs/town_village_input.dart';
 import 'package:moon_design/moon_design.dart';
 import 'package:ui_library/ui_library.dart';
 
@@ -31,7 +32,8 @@ class PersonalInformationSection extends StatelessWidget {
             buildWhen: (previous, current) =>
                 previous.firstName != current.firstName ||
                 previous.lastName != current.lastName ||
-                previous.otherNames != current.otherNames,
+                previous.otherNames != current.otherNames ||
+                previous.town != current.town,
             builder: (context, state) {
               final cubit = BlocProvider.of<PersonalInfoCubit>(context);
               return MoonTextInputGroup(
@@ -50,6 +52,11 @@ class PersonalInformationSection extends StatelessWidget {
                     context: context,
                     state: state,
                     onChanged: cubit.otherNamesChanged,
+                  ),
+                  TownVillageInput(
+                    context: context,
+                    state: state,
+                    onChanged: cubit.townChanged,
                   ),
                 ],
               );

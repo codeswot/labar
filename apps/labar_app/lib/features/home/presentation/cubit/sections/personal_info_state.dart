@@ -18,6 +18,9 @@ class PersonalInfoState with _$PersonalInfoState {
     @RequiredTextInputConverter()
     @Default(RequiredTextInput.pure())
     RequiredTextInput lga,
+    @RequiredTextInputConverter()
+    @Default(RequiredTextInput.pure())
+    RequiredTextInput town,
     DateTime? dateOfBirth,
     @Default([]) List<String> availableStates,
     @Default([]) List<String> currentLgas,
@@ -52,6 +55,7 @@ class PersonalInfoState with _$PersonalInfoState {
           gender,
           stateOfOrigin,
           lga,
+          town,
         ]) &&
         strictAdult;
   }

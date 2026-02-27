@@ -18,6 +18,7 @@ class ApplicationEntity extends Equatable {
   final String gender;
   final String state;
   final String lga;
+  final String town;
 
   // Bank Details
   final String? bankName;
@@ -69,6 +70,7 @@ class ApplicationEntity extends Equatable {
     this.gender = '',
     this.state = '',
     this.lga = '',
+    this.town = '',
     this.bankName,
     this.accountNumber,
     this.accountName,
@@ -120,6 +122,7 @@ class ApplicationEntity extends Equatable {
     String? gender,
     String? state,
     String? lga,
+    String? town,
     String? bankName,
     String? accountNumber,
     String? accountName,
@@ -155,6 +158,7 @@ class ApplicationEntity extends Equatable {
       gender: gender ?? this.gender,
       state: state ?? this.state,
       lga: lga ?? this.lga,
+      town: town ?? this.town,
       bankName: bankName ?? this.bankName,
       accountNumber: accountNumber ?? this.accountNumber,
       accountName: accountName ?? this.accountName,
@@ -194,6 +198,7 @@ class ApplicationEntity extends Equatable {
         gender,
         state,
         lga,
+        town,
         bankName,
         accountNumber,
         accountName,
