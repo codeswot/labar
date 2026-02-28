@@ -5,6 +5,8 @@ import 'package:labar_app/core/di/injection.dart';
 import 'package:labar_app/core/extensions/localization_extension.dart';
 import 'package:labar_app/features/home/presentation/cubit/assigned_warehouse_cubit.dart';
 import 'package:labar_app/features/home/presentation/cubit/assigned_warehouse_state.dart';
+import 'package:labar_app/core/utils/currency_utils.dart';
+import 'package:labar_app/features/home/domain/entities/allocated_resource_entity.dart';
 import 'package:ui_library/ui_library.dart';
 
 @RoutePage()
@@ -122,7 +124,8 @@ class AssignedWarehousePage extends StatelessWidget {
                       _InfoTile(
                         icon: Icons.location_on_outlined,
                         label: context.l10n.address,
-                        value: warehouse.location ?? 'Not specified',
+                        value:
+                            '${warehouse.state ?? ''}${(warehouse.state != null && (warehouse.address != null || warehouse.location != null)) ? '\n' : ''}${warehouse.address ?? warehouse.location ?? 'Not specified'}',
                       ),
                       const SizedBox(height: 12),
                       _InfoTile(
@@ -215,7 +218,7 @@ class AssignedWarehousePage extends StatelessWidget {
 }
 
 class _ResourceTile extends StatelessWidget {
-  final dynamic resource;
+  final AllocatedResourceEntity resource;
 
   const _ResourceTile({required this.resource});
 
@@ -257,13 +260,36 @@ class _ResourceTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  resource.item,
+                  resource.inventoryItem?['item_name'] ??
+                      resource.item ??
+                      'Unknown Item',
                   style: context.moonTypography?.body.text16.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
-                  resource.collectionAddress,
+                  'Quantity: ${resource.quantity} ${resource.inventoryItem?['unit'] ?? ''}'
+                      .trim(),
+                  style: context.moonTypography?.body.text12.copyWith(
+                    color: context.moonColors?.trunks,
+                  ),
+                ),
+                Builder(builder: (context) {
+                  final inv = resource.inventoryItem;
+                  final price = inv?['price_per_item'] ?? 0;
+                  final total = resource.quantity * price;
+                  return Text(
+                    price > 0
+                        ? 'Price: ${CurrencyUtils.formatNaira(price)} | Total: ${CurrencyUtils.formatNaira(total)}'
+                        : 'Free',
+                    style: context.moonTypography?.body.text12.copyWith(
+                      color: context.moonColors?.roshi ?? Colors.green,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  );
+                }),
+                Text(
+                  resource.collectionAddress ?? '',
                   style: context.moonTypography?.body.text12.copyWith(
                     color: context.moonColors?.trunks,
                   ),

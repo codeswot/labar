@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:labar_app/core/extensions/localization_extension.dart';
 import 'package:labar_app/features/home/presentation/cubit/allocated_resources_cubit.dart';
 import 'package:labar_app/core/di/injection.dart';
+import 'package:labar_app/core/utils/currency_utils.dart';
 import 'package:ui_library/ui_library.dart';
 
 @RoutePage()
@@ -102,18 +103,52 @@ class AllocatedResourcesPage extends StatelessWidget {
                             resource.collectionAddress ?? '',
                             style: context.moonTypography?.body.text12,
                           ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Quantity Allocated',
-                            style: context.moonTypography?.body.text12.copyWith(
-                              color: context.moonColors?.trunks,
-                            ),
-                          ),
-                          Text(
-                            '${resource.quantity} ${resource.inventoryItem?['unit'] ?? ''}'
-                                .trim(),
-                            style: context.moonTypography?.body.text14,
-                          ),
+                          Builder(builder: (context) {
+                            final inv = resource.inventoryItem;
+                            final price = inv?['price_per_item'] ?? 0;
+                            final total = resource.quantity * price;
+                            final unit = inv?['unit'] ?? '';
+
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Quantity Allocated',
+                                  style: context.moonTypography?.body.text12
+                                      .copyWith(
+                                    color: context.moonColors?.trunks,
+                                  ),
+                                ),
+                                Text(
+                                  '${resource.quantity} $unit'.trim(),
+                                  style: context.moonTypography?.body.text14,
+                                ),
+                                if (price > 0) ...[
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'Price: ${CurrencyUtils.formatNaira(price)} | Total: ${CurrencyUtils.formatNaira(total)}',
+                                    style: context.moonTypography?.body.text12
+                                        .copyWith(
+                                      color: context.moonColors?.roshi ??
+                                          Colors.green,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ] else ...[
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'Free',
+                                    style: context.moonTypography?.body.text12
+                                        .copyWith(
+                                      color: context.moonColors?.roshi ??
+                                          Colors.green,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            );
+                          }),
                         ],
                       ),
                     );

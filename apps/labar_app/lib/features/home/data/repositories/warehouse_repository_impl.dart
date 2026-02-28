@@ -31,15 +31,19 @@ class WarehouseRepositoryImpl implements WarehouseRepository {
               .eq('id', warehouseId)
               .maybeSingle();
 
-          // Fetch allocated resources
+          // Fetch allocated resources with inventory details
           final resourcesData = await _supabaseClient
               .from('allocated_resources')
-              .select()
+              .select('*, inventory(*, warehouses(name, state))')
               .eq('application', applicationId);
 
-          final resources = (resourcesData as List)
-              .map((r) => AllocatedResourceEntity.fromJson(r))
-              .toList();
+          final resources = (resourcesData as List).map((itemRow) {
+            final mergedRow = Map<String, dynamic>.from(itemRow);
+            if (itemRow['inventory'] != null) {
+              mergedRow['inventory_item'] = itemRow['inventory'];
+            }
+            return AllocatedResourceEntity.fromJson(mergedRow);
+          }).toList();
 
           final designation = FarmerDesignationEntity.fromJson(designationData);
 

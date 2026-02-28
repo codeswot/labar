@@ -9,6 +9,8 @@ class WarehouseEntity extends Equatable {
   final String name;
   final String? location;
   final String? contactNumber;
+  final String? state;
+  final String? address;
   final DateTime? createdAt;
 
   const WarehouseEntity({
@@ -16,6 +18,8 @@ class WarehouseEntity extends Equatable {
     required this.name,
     this.location,
     this.contactNumber,
+    this.state,
+    this.address,
     this.createdAt,
   });
 
@@ -25,5 +29,6 @@ class WarehouseEntity extends Equatable {
   Map<String, dynamic> toJson() => _$WarehouseEntityToJson(this);
 
   @override
-  List<Object?> get props => [id, name, location, contactNumber, createdAt];
+  List<Object?> get props =>
+      [id, name, location, contactNumber, state, address, createdAt];
 }
