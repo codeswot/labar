@@ -11,9 +11,14 @@ import 'package:labar_admin/features/dashboard/presentation/pages/user_managemen
 import 'package:labar_admin/features/dashboard/presentation/pages/inventory_management_view.dart';
 import 'package:labar_admin/features/dashboard/presentation/pages/warehouse_management_view.dart';
 
+import 'package:labar_admin/features/dashboard/presentation/cubit/item_management_cubit.dart';
+import 'package:labar_admin/features/dashboard/presentation/pages/item_management_view.dart';
+
 class AdminDashboardView extends StatelessWidget {
   final int index;
-  const AdminDashboardView({super.key, required this.index});
+  final Function(int)? onIndexChanged;
+  const AdminDashboardView(
+      {super.key, required this.index, this.onIndexChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +33,7 @@ class AdminDashboardView extends StatelessWidget {
             create: (context) => getIt<DashboardOverviewCubit>()..init()),
         BlocProvider(
             create: (context) => getIt<InventoryManagementCubit>()..init()),
+        BlocProvider(create: (context) => getIt<ItemManagementCubit>()..init()),
       ],
       child: _buildContent(index),
     );
@@ -44,7 +50,10 @@ class AdminDashboardView extends StatelessWidget {
       case 3:
         return const InventoryManagementView();
       case 4:
-        return const WarehouseManagementView();
+        return WarehouseManagementView(
+            onNavigateToInventory: () => onIndexChanged?.call(3));
+      case 5:
+        return const ItemManagementView();
       default:
         return const DashboardOverview();
     }

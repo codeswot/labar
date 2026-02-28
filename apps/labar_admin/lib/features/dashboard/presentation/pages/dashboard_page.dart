@@ -87,18 +87,27 @@ class _DashboardPageState extends State<DashboardPage> {
                           selected: _selectedIndex == 2,
                           onTap: () => setState(() => _selectedIndex = 2),
                         ),
-                      _SidebarItem(
-                        label: 'Inventory',
-                        icon: Icons.inventory_2_rounded,
-                        selected: _selectedIndex == 3,
-                        onTap: () => setState(() => _selectedIndex = 3),
-                      ),
-                      _SidebarItem(
-                        label: 'Warehouses',
-                        icon: Icons.warehouse_rounded,
-                        selected: _selectedIndex == 4,
-                        onTap: () => setState(() => _selectedIndex = 4),
-                      ),
+                      if (isSuperAdmin)
+                        _SidebarItem(
+                          label: 'Items',
+                          icon: Icons.category_rounded,
+                          selected: _selectedIndex == 5,
+                          onTap: () => setState(() => _selectedIndex = 5),
+                        ),
+                      if (isWarehouseManager || isAdmin)
+                        _SidebarItem(
+                          label: 'Inventory',
+                          icon: Icons.inventory_2_rounded,
+                          selected: _selectedIndex == 3,
+                          onTap: () => setState(() => _selectedIndex = 3),
+                        ),
+                      if (isAdmin || isWarehouseManager)
+                        _SidebarItem(
+                          label: 'Warehouses',
+                          icon: Icons.warehouse_rounded,
+                          selected: _selectedIndex == 4,
+                          onTap: () => setState(() => _selectedIndex = 4),
+                        ),
                     ] else ...[
                       _SidebarItem(
                         label: 'My Applications',
@@ -159,7 +168,11 @@ class _DashboardPageState extends State<DashboardPage> {
                   child: AnimatedSwitcher(
                     duration: const Duration(milliseconds: 200),
                     child: (isAdmin || isWarehouseManager)
-                        ? AdminDashboardView(index: _selectedIndex)
+                        ? AdminDashboardView(
+                            index: _selectedIndex,
+                            onIndexChanged: (i) =>
+                                setState(() => _selectedIndex = i),
+                          )
                         : const AgentDashboardView(),
                   ),
                 ),

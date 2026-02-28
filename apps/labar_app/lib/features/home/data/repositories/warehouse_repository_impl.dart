@@ -34,7 +34,7 @@ class WarehouseRepositoryImpl implements WarehouseRepository {
           // Fetch allocated resources with inventory details
           final resourcesData = await _supabaseClient
               .from('allocated_resources')
-              .select('*, inventory(*, warehouses(name, state))')
+              .select('*, inventory(*, warehouses(name, state), items(*))')
               .eq('application', applicationId);
 
           final resources = (resourcesData as List).map((itemRow) {

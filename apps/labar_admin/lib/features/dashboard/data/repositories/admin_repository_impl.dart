@@ -44,10 +44,36 @@ abstract class AdminRepository {
   Future<void> markAllocatedResourceAsCollected(String resourceId);
   Future<void> unassignWarehouse(String applicationId);
 
+  // Item Management
+  Future<List<Map<String, dynamic>>> getItems();
+  Future<void> addItem({
+    required String name,
+    required String unit,
+    required num price,
+    required String location,
+    String? description,
+  });
+  Future<void> updateItem({
+    required String id,
+    required String name,
+    required String unit,
+    required num price,
+    required String location,
+    String? description,
+  });
+  Future<void> deleteItem(String id);
+
   // Inventory & Waybills
+  Future<List<Map<String, dynamic>>> getItemsByLocation(
+      String location); // To filter items by location if needed
   Future<List<Map<String, dynamic>>> getInventory();
-  Future<void> addOrUpdateInventory(String warehouseId, String itemName,
-      num quantity, String unit, num? pricePerItem);
+  Future<void> addOrUpdateInventory({
+    required String warehouseId,
+    required String itemId,
+    required String
+        itemName, // Keep for backward compatibility or unique index requirement
+    required num quantity,
+  });
   Future<List<Map<String, dynamic>>> getWaybills();
   Future<Map<String, dynamic>> createWaybill(Map<String, dynamic> data);
   Future<List<Map<String, dynamic>>> getWarehouses();
@@ -69,6 +95,7 @@ abstract class AdminRepository {
       String warehouseId);
 
   // Streams for real-time
+  Stream<List<Map<String, dynamic>>> get itemsStream;
   Stream<List<Map<String, dynamic>>> get inventoryStream;
   Stream<List<Map<String, dynamic>>> get waybillsStream;
   Stream<List<Map<String, dynamic>>> get warehousesStream;
@@ -222,7 +249,7 @@ class AdminRepositoryImpl implements AdminRepository {
       String applicationId) async {
     final response = await _supabaseClient
         .from('allocated_resources')
-        .select('*, inventory(*)')
+        .select('*, inventory(*, items(*))')
         .eq('application', applicationId);
     return List<Map<String, dynamic>>.from(response);
   }
@@ -267,37 +294,99 @@ class AdminRepositoryImpl implements AdminRepository {
   }
 
   @override
-  Future<List<Map<String, dynamic>>> getInventory() async {
+  Future<List<Map<String, dynamic>>> getItems() async {
     final response = await _supabaseClient
-        .from('inventory')
-        .select('*, warehouses!inner(name, state, address)')
+        .from('items')
+        .select()
         .order('created_at', ascending: false);
     return List<Map<String, dynamic>>.from(response);
   }
 
   @override
-  Future<void> addOrUpdateInventory(String warehouseId, String itemName,
-      num quantity, String unit, num? pricePerItem) async {
+  Future<void> addItem({
+    required String name,
+    required String unit,
+    required num price,
+    required String location,
+    String? description,
+  }) async {
+    await _supabaseClient.from('items').insert({
+      'name': name,
+      'unit': unit,
+      'price': price,
+      'location': location,
+      'description': description,
+    });
+  }
+
+  @override
+  Future<void> updateItem({
+    required String id,
+    required String name,
+    required String unit,
+    required num price,
+    required String location,
+    String? description,
+  }) async {
+    await _supabaseClient.from('items').update({
+      'name': name,
+      'unit': unit,
+      'price': price,
+      'location': location,
+      'description': description,
+    }).eq('id', id);
+  }
+
+  @override
+  Future<void> deleteItem(String id) async {
+    await _supabaseClient.from('items').delete().eq('id', id);
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getItemsByLocation(String location) async {
+    final response = await _supabaseClient
+        .from('items')
+        .select()
+        .eq('location', location)
+        .order('created_at', ascending: false);
+    return List<Map<String, dynamic>>.from(response);
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getInventory() async {
+    final response = await _supabaseClient
+        .from('inventory')
+        .select('*, warehouses!inner(name, state, address), items!inner(*)')
+        .order('created_at', ascending: false);
+    return List<Map<String, dynamic>>.from(response);
+  }
+
+  @override
+  Future<void> addOrUpdateInventory({
+    required String warehouseId,
+    required String itemId,
+    required String itemName,
+    required num quantity,
+  }) async {
     final current = await _supabaseClient
         .from('inventory')
         .select()
         .eq('warehouse_id', warehouseId)
-        .eq('item_name', itemName)
+        .eq('item_id', itemId)
         .maybeSingle();
 
     if (current != null) {
       final newQ = (current['quantity'] as num) + quantity;
       await _supabaseClient.from('inventory').update({
         'quantity': newQ,
-        if (pricePerItem != null) 'price_per_item': pricePerItem,
+        'updated_at': DateTime.now().toIso8601String(),
       }).eq('id', current['id']);
     } else {
       await _supabaseClient.from('inventory').insert({
         'warehouse_id': warehouseId,
+        'item_id': itemId,
         'item_name': itemName,
         'quantity': quantity,
-        'unit': unit,
-        'price_per_item': pricePerItem,
       });
     }
   }
@@ -361,7 +450,7 @@ class AdminRepositoryImpl implements AdminRepository {
       String inventoryId) async {
     final response = await _supabaseClient
         .from('allocated_resources')
-        .select('*, applications(*)')
+        .select('*, applications(*), inventory(*, items(*))')
         .eq('item', inventoryId)
         .order('created_at', ascending: false);
     return List<Map<String, dynamic>>.from(response);
@@ -383,11 +472,20 @@ class AdminRepositoryImpl implements AdminRepository {
     // Join via inventory link
     final response = await _supabaseClient
         .from('allocated_resources')
-        .select('*, inventory!inner(*), applications(*)')
+        .select('*, inventory!inner(*, items(*)), applications(*)')
         .eq('inventory.warehouse_id', warehouseId)
         .order('created_at', ascending: false);
     return List<Map<String, dynamic>>.from(response);
   }
+
+  @override
+  Stream<List<Map<String, dynamic>>> get itemsStream => _supabaseClient
+      .from('items')
+      .stream(primaryKey: ['id'])
+      .order('created_at', ascending: false)
+      .asyncMap((event) async {
+        return await getItems();
+      });
 
   @override
   Stream<List<Map<String, dynamic>>> get inventoryStream => _supabaseClient

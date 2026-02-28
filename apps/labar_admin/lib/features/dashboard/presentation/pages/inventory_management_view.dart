@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:labar_admin/core/session/session_cubit.dart';
+import 'package:labar_admin/core/session/session_state.dart';
 import 'package:labar_admin/core/utils/currency_utils.dart';
 import 'package:labar_admin/features/dashboard/presentation/cubit/inventory_management_cubit.dart';
 import 'package:labar_admin/features/dashboard/presentation/widgets/detail_info.dart';
@@ -85,24 +86,37 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                         ),
                       ),
                       const SizedBox(width: 24),
-                      AppButton.filled(
-                        isFullWidth: false,
-                        onTap: () =>
-                            _showAddInventory(context, state.warehouses),
-                        label: const Text('Add Inventory'),
-                      ),
-                      const SizedBox(width: 12),
-                      AppButton.filled(
-                        isFullWidth: false,
-                        onTap: () => _showAddWarehouse(context),
-                        label: const Text('Add Warehouse'),
-                      ),
-                      const SizedBox(width: 12),
-                      AppButton.filled(
-                        isFullWidth: false,
-                        onTap: () => _showGenerateWaybill(
-                            context, state.inventory, state.warehouses),
-                        label: const Text('Generate Waybill'),
+                      BlocBuilder<SessionCubit, SessionState>(
+                        builder: (context, sessionState) {
+                          final isSuperAdmin =
+                              sessionState.user?.role == 'super_admin';
+
+                          return Row(
+                            children: [
+                              AppButton.filled(
+                                isFullWidth: false,
+                                onTap: () => _showAddInventory(
+                                    context, state.warehouses, state.items),
+                                label: const Text('Add Inventory'),
+                              ),
+                              if (isSuperAdmin) ...[
+                                const SizedBox(width: 12),
+                                AppButton.filled(
+                                  isFullWidth: false,
+                                  onTap: () => _showAddWarehouse(context),
+                                  label: const Text('Add Warehouse'),
+                                ),
+                              ],
+                              const SizedBox(width: 12),
+                              AppButton.filled(
+                                isFullWidth: false,
+                                onTap: () => _showGenerateWaybill(
+                                    context, state.inventory, state.warehouses),
+                                label: const Text('Generate Waybill'),
+                              ),
+                            ],
+                          );
+                        },
                       ),
                     ],
                   )
@@ -235,6 +249,7 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                           DataColumn(label: Text('Price per Item')),
                         ],
                         rows: filteredInventory.map((inv) {
+                          final itemData = inv['items'];
                           return DataRow(
                               onSelectChanged: (_) =>
                                   _showInventoryDetailDialog(context, inv),
@@ -245,10 +260,10 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                                 DataCell(
                                     Text(inv['warehouses']?['state'] ?? 'N/A')),
                                 DataCell(Text(inv['quantity'].toString())),
-                                DataCell(Text(inv['unit'] ?? '')),
-                                DataCell(Text(inv['price_per_item'] != null
+                                DataCell(Text(itemData?['unit'] ?? '')),
+                                DataCell(Text(itemData?['price'] != null
                                     ? CurrencyUtils.formatNaira(
-                                        inv['price_per_item'])
+                                        itemData?['price'])
                                     : 'Free')),
                               ]);
                         }).toList(),
@@ -450,6 +465,7 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                 const SizedBox(height: 12),
                 MoonDropdown(
                   show: showStateDropdown,
+                  constrainWidthToChild: true,
                   onTapOutside: () => setState(() => showStateDropdown = false),
                   content: Container(
                     constraints: const BoxConstraints(maxHeight: 300),
@@ -511,14 +527,14 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
     );
   }
 
-  void _showAddInventory(
-      BuildContext context, List<Map<String, dynamic>> warehouses) {
+  void _showAddInventory(BuildContext context,
+      List<Map<String, dynamic>> warehouses, List<Map<String, dynamic>> items) {
     final cubit = context.read<InventoryManagementCubit>();
     String? selectedWarehouseId;
-    final itemNameController = TextEditingController();
+    String? selectedItemId;
     final qtyController = TextEditingController();
-    final unitController = TextEditingController();
-    final priceController = TextEditingController();
+    bool showWHDropdown = false;
+    bool showItemDropdown = false;
 
     showDialog(
         context: context,
@@ -526,76 +542,99 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
               title: const Text('Add Inventory'),
               content: SizedBox(
                 width: 400,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    StatefulBuilder(builder: (builderContext, setState) {
-                      bool showDropdown = false;
-
-                      return StatefulBuilder(
-                          builder: (innerContext, setInnerState) {
-                        return MoonDropdown(
-                          show: showDropdown,
-                          onTapOutside: () =>
-                              setInnerState(() => showDropdown = false),
-                          content: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: warehouses.map((w) {
-                              return MoonMenuItem(
-                                onTap: () {
-                                  setInnerState(() {
-                                    selectedWarehouseId = w['id'];
-                                    showDropdown = false;
-                                  });
-                                  setState(() {});
-                                },
-                                label: Text(
-                                    '${w['name']} (${w['state'] ?? 'N/A'})'),
-                              );
-                            }).toList(),
-                          ),
-                          child: GestureDetector(
-                            onTap: () => setInnerState(
-                                () => showDropdown = !showDropdown),
-                            child: AbsorbPointer(
-                              child: MoonTextInput(
-                                hintText: 'Select Warehouse',
-                                readOnly: true,
-                                controller: TextEditingController(
-                                    text: warehouses.firstWhere(
-                                        (w) => w['id'] == selectedWarehouseId,
-                                        orElse: () => {'name': ''})['name']),
-                              ),
+                child:
+                    StatefulBuilder(builder: (builderContext, setDialogState) {
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Warehouse Dropdown
+                      MoonDropdown(
+                        show: showWHDropdown,
+                        constrainWidthToChild: true,
+                        onTapOutside: () =>
+                            setDialogState(() => showWHDropdown = false),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: warehouses.map((w) {
+                            return MoonMenuItem(
+                              onTap: () {
+                                setDialogState(() {
+                                  selectedWarehouseId = w['id'];
+                                  showWHDropdown = false;
+                                });
+                              },
+                              label:
+                                  Text('${w['name']} (${w['state'] ?? 'N/A'})'),
+                            );
+                          }).toList(),
+                        ),
+                        child: GestureDetector(
+                          onTap: () => setDialogState(
+                              () => showWHDropdown = !showWHDropdown),
+                          child: AbsorbPointer(
+                            child: MoonTextInput(
+                              hintText: 'Select Warehouse',
+                              readOnly: true,
+                              controller: TextEditingController(
+                                  text: warehouses.firstWhere(
+                                      (w) => w['id'] == selectedWarehouseId,
+                                      orElse: () => {'name': ''})['name']),
+                              trailing: const Icon(Icons.arrow_drop_down),
                             ),
                           ),
-                        );
-                      });
-                    }),
-                    const SizedBox(height: 12),
-                    MoonTextInput(
-                      controller: itemNameController,
-                      hintText: 'Item Name (e.g. Fertilizer NPK 15:15:15)',
-                    ),
-                    const SizedBox(height: 12),
-                    MoonTextInput(
-                      controller: qtyController,
-                      hintText: 'Quantity',
-                      keyboardType: TextInputType.number,
-                    ),
-                    const SizedBox(height: 12),
-                    MoonTextInput(
-                      controller: unitController,
-                      hintText: 'Unit (e.g. Bags)',
-                    ),
-                    const SizedBox(height: 12),
-                    MoonTextInput(
-                      controller: priceController,
-                      hintText: 'Price per Item (Optional, blank = Free)',
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
-                    ),
-                  ],
-                ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      // Item Dropdown
+                      MoonDropdown(
+                        show: showItemDropdown,
+                        constrainWidthToChild: true,
+                        onTapOutside: () =>
+                            setDialogState(() => showItemDropdown = false),
+                        content: Container(
+                          constraints: const BoxConstraints(maxHeight: 250),
+                          child: SingleChildScrollView(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: items.map((i) {
+                                return MoonMenuItem(
+                                  onTap: () {
+                                    setDialogState(() {
+                                      selectedItemId = i['id'];
+                                      showItemDropdown = false;
+                                    });
+                                  },
+                                  label: Text('${i['name']} (${i['unit']})'),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                        ),
+                        child: GestureDetector(
+                          onTap: () => setDialogState(
+                              () => showItemDropdown = !showItemDropdown),
+                          child: AbsorbPointer(
+                            child: MoonTextInput(
+                              hintText: 'Select Item',
+                              readOnly: true,
+                              controller: TextEditingController(
+                                  text: items.firstWhere(
+                                      (i) => i['id'] == selectedItemId,
+                                      orElse: () => {'name': ''})['name']),
+                              trailing: const Icon(Icons.arrow_drop_down),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      MoonTextInput(
+                        controller: qtyController,
+                        hintText: 'Quantity',
+                        keyboardType: TextInputType.number,
+                      ),
+                    ],
+                  );
+                }),
               ),
               actions: [
                 TextButton(
@@ -605,10 +644,14 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                 AppButton.filled(
                   onTap: () {
                     final qty = num.tryParse(qtyController.text) ?? 0;
-                    final price = num.tryParse(priceController.text);
                     if (selectedWarehouseId == null) {
                       MoonToast.show(context,
                           label: const Text('Please select a warehouse'));
+                      return;
+                    }
+                    if (selectedItemId == null) {
+                      MoonToast.show(context,
+                          label: const Text('Please select an item'));
                       return;
                     }
                     if (qty <= 0) {
@@ -616,12 +659,15 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                           label: const Text('Quantity must be greater than 0'));
                       return;
                     }
+
+                    final item =
+                        items.firstWhere((i) => i['id'] == selectedItemId);
+
                     cubit.addInventory(
                       warehouseId: selectedWarehouseId!,
-                      itemName: itemNameController.text.trim(),
+                      itemId: selectedItemId!,
+                      itemName: item['name'],
                       quantity: qty,
-                      unit: unitController.text.trim(),
-                      pricePerItem: price,
                     );
                     Navigator.pop(dialogCtx);
                   },
@@ -668,6 +714,7 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                       children: [
                         MoonDropdown(
                           show: showWarehouseDropdown,
+                          constrainWidthToChild: true,
                           onTapOutside: () => setDialogState(
                               () => showWarehouseDropdown = false),
                           content: Column(
@@ -705,6 +752,7 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                         const SizedBox(height: 12),
                         MoonDropdown(
                           show: showItemDropdown,
+                          constrainWidthToChild: true,
                           onTapOutside: () =>
                               setDialogState(() => showItemDropdown = false),
                           content: Column(
@@ -719,14 +767,16 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                                     return MoonMenuItem(
                                       onTap: () {
                                         setDialogState(() {
-                                          selectedItemName = item['item_name'];
+                                          selectedItemName = item['items']
+                                                  ?['name'] ??
+                                              item['item_name'];
                                           unitController.text =
-                                              item['unit'] ?? 'Bags';
+                                              item['items']?['unit'] ?? 'Bags';
                                           showItemDropdown = false;
                                         });
                                       },
                                       label: Text(
-                                          '${item['item_name']} (Qty: ${item['quantity']})'),
+                                          '${item['items']?['name'] ?? item['item_name']} (Qty: ${item['quantity']})'),
                                     );
                                   }).toList(),
                           ),
@@ -811,15 +861,17 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                         return;
                       }
 
-                      final item = inventory.firstWhere((i) =>
+                      final invItem = inventory.firstWhere((i) =>
                           i['warehouse_id'] == selectedWarehouseId &&
-                          i['item_name'] == selectedItemName);
-                      final available = item['quantity'] as num;
+                          (i['items']?['name'] == selectedItemName ||
+                              i['item_name'] == selectedItemName));
+                      final available = invItem['quantity'] as num;
+                      final itemDetails = invItem['items'];
 
                       if (qty > available) {
                         MoonToast.show(context,
                             label: Text(
-                                'Insufficient stock. Available: $available ${item['unit']}'));
+                                'Insufficient stock. Available: $available ${itemDetails?['unit'] ?? ''}'));
                         return;
                       }
 
@@ -863,12 +915,14 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
         value: cubit,
         child: BlocBuilder<InventoryManagementCubit, InventoryManagementState>(
           builder: (context, state) {
+            final itemData = inv['items'];
             final allocations = state.selectedInventoryAllocations;
             final totalAllocated = allocations.fold<num>(
                 0, (sum, item) => sum + (item['quantity'] as num? ?? 0));
 
             return AlertDialog(
-              title: Text('Inventory Detail: ${inv['item_name']}'),
+              title: Text(
+                  'Inventory Detail: ${itemData?['name'] ?? inv['item_name']}'),
               content: SizedBox(
                 width: 600,
                 child: SingleChildScrollView(
@@ -876,7 +930,9 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      DetailInfo(label: 'Item Name', value: inv['item_name']),
+                      DetailInfo(
+                          label: 'Item Name',
+                          value: itemData?['name'] ?? inv['item_name']),
                       DetailInfo(
                           label: 'Warehouse',
                           value: inv['warehouses']?['name'] ??
@@ -892,19 +948,21 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                           Expanded(
                             child: DetailInfo(
                                 label: 'Quantity Available',
-                                value: '${inv['quantity']} ${inv['unit']}'),
+                                value:
+                                    '${inv['quantity']} ${itemData?['unit'] ?? ''}'),
                           ),
                           Expanded(
                             child: DetailInfo(
                                 label: 'Quantity Allocated',
-                                value: '$totalAllocated ${inv['unit']}'),
+                                value:
+                                    '$totalAllocated ${itemData?['unit'] ?? ''}'),
                           ),
                         ],
                       ),
                       DetailInfo(
                           label: 'Price per Item',
-                          value: inv['price_per_item'] != null
-                              ? CurrencyUtils.formatNaira(inv['price_per_item'])
+                          value: itemData?['price'] != null
+                              ? CurrencyUtils.formatNaira(itemData?['price'])
                               : 'Free'),
                       const SizedBox(height: 24),
                       Text('Allocation History & Associated Farmers',
@@ -941,7 +999,7 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                                   ? DateFormat('MMM dd, yyyy HH:mm').format(
                                       DateTime.parse(alloc['created_at']))
                                   : '-';
-                              final price = inv['price_per_item'] ?? 0;
+                              final price = itemData?['price'] ?? 0;
                               final total =
                                   (alloc['quantity'] as num? ?? 0) * price;
 
@@ -960,7 +1018,7 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                                   ],
                                 ),
                                 trailing: Text(
-                                  '${alloc['quantity']} ${inv['unit']}',
+                                  '${alloc['quantity']} ${itemData?['unit'] ?? ''}',
                                   style: context.moonTypography?.heading.text14,
                                 ),
                               );

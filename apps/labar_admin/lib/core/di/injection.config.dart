@@ -31,6 +31,8 @@ import '../../features/dashboard/presentation/cubit/dashboard_overview_cubit.dar
     as _i246;
 import '../../features/dashboard/presentation/cubit/inventory_management_cubit.dart'
     as _i783;
+import '../../features/dashboard/presentation/cubit/item_management_cubit.dart'
+    as _i20;
 import '../../features/dashboard/presentation/cubit/user_management_cubit.dart'
     as _i572;
 import '../session/session_cubit.dart' as _i796;
@@ -67,6 +69,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i1071.AdminRepositoryImpl(gh<_i454.SupabaseClient>()));
     gh.factory<_i783.InventoryManagementCubit>(
         () => _i783.InventoryManagementCubit(gh<_i1071.AdminRepository>()));
+    gh.factory<_i20.ItemManagementCubit>(
+        () => _i20.ItemManagementCubit(gh<_i1071.AdminRepository>()));
     gh.factory<_i481.ApplicationManagementCubit>(
         () => _i481.ApplicationManagementCubit(
               gh<_i1071.AdminRepository>(),

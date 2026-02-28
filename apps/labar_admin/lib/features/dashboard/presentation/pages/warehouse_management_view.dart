@@ -9,7 +9,8 @@ import 'package:labar_admin/features/dashboard/presentation/widgets/detail_info.
 import 'package:ui_library/ui_library.dart';
 
 class WarehouseManagementView extends StatefulWidget {
-  const WarehouseManagementView({super.key});
+  final VoidCallback? onNavigateToInventory;
+  const WarehouseManagementView({super.key, this.onNavigateToInventory});
 
   @override
   State<WarehouseManagementView> createState() =>
@@ -107,9 +108,7 @@ class WarehouseManagementViewState extends State<WarehouseManagementView> {
                           sessionState.status == SessionStatus.authenticated
                               ? sessionState.user?.role
                               : null;
-                      if (role == 'super_admin' ||
-                          role == 'admin' ||
-                          role == 'warehouse_manager') {
+                      if (role == 'super_admin' || role == 'admin') {
                         return AppButton.filled(
                           isFullWidth: false,
                           onTap: () => _showAddWarehouse(context),
@@ -250,9 +249,7 @@ class WarehouseManagementViewState extends State<WarehouseManagementView> {
                         sessionState.status == SessionStatus.authenticated
                             ? sessionState.user?.role
                             : null;
-                    if (role == 'super_admin' ||
-                        role == 'admin' ||
-                        role == 'warehouse_manager') {
+                    if (role == 'super_admin' || role == 'admin') {
                       return AppButton.filled(
                         isFullWidth: false,
                         label: const Text('Edit Warehouse'),
@@ -277,23 +274,73 @@ class WarehouseManagementViewState extends State<WarehouseManagementView> {
     );
   }
 
-  Widget _buildInventoryList(List<Map<String, dynamic>> items) {
-    if (items.isEmpty) {
-      return const Center(child: Text('No inventory in this warehouse.'));
+  Widget _buildInventoryList(List<Map<String, dynamic>> inventory) {
+    if (inventory.isEmpty) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text('No inventory in this warehouse.'),
+          const SizedBox(height: 24),
+          AppButton.filled(
+            isFullWidth: false,
+            label: const Text('Add New Inventory'),
+            onTap: () {
+              Navigator.pop(context);
+              widget.onNavigateToInventory?.call();
+            },
+          ),
+        ],
+      );
     }
-    return ListView.separated(
-      itemCount: items.length,
-      separatorBuilder: (_, __) => const Divider(),
-      itemBuilder: (context, index) {
-        final item = items[index];
-        return ListTile(
-          title: Text(item['item_name'] ?? ''),
-          subtitle: Text('Quantity: ${item['quantity']} ${item['unit']}'),
-          trailing: Text(item['price_per_item'] != null
-              ? CurrencyUtils.formatNaira(item['price_per_item'])
-              : 'Free'),
-        );
-      },
+    return Column(
+      children: [
+        Expanded(
+          child: ListView.separated(
+            itemCount: inventory.length,
+            separatorBuilder: (_, __) => const Divider(),
+            itemBuilder: (context, index) {
+              final inv = inventory[index];
+              final itemDetails = inv['items'];
+              final itemName =
+                  itemDetails?['name'] ?? inv['item_name'] ?? 'Unknown Item';
+              final unit = itemDetails?['unit'] ?? inv['unit'] ?? '';
+              final price = itemDetails?['price'] ?? inv['price_per_item'] ?? 0;
+              final qty = inv['quantity'] ?? 0;
+              final totalValue = qty * price;
+
+              return ListTile(
+                title: Text(itemName),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Quantity: $qty $unit'),
+                    if (price > 0)
+                      Text(
+                        'Total Value: ${CurrencyUtils.formatNaira(totalValue)}',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.orange,
+                        ),
+                      ),
+                  ],
+                ),
+                trailing: Text(price > 0
+                    ? '${CurrencyUtils.formatNaira(price)} / $unit'
+                    : 'Free'),
+              );
+            },
+          ),
+        ),
+        const SizedBox(height: 16),
+        AppButton.filled(
+          isFullWidth: true,
+          label: const Text('Add New Inventory'),
+          onTap: () {
+            Navigator.pop(context);
+            widget.onNavigateToInventory?.call();
+          },
+        ),
+      ],
     );
   }
 
@@ -329,19 +376,35 @@ class WarehouseManagementViewState extends State<WarehouseManagementView> {
       itemBuilder: (context, index) {
         final alloc = allocations[index];
         final inv = alloc['inventory'];
+        final itemDetails = inv != null ? inv['items'] : null;
         final app = alloc['applications'];
         final farmerName = (app != null)
             ? '${app['first_name'] ?? ''} ${app['last_name'] ?? ''}'
             : 'Unknown Farmer';
-        final itemName = (inv != null) ? inv['item_name'] : 'Item';
+
+        final itemName = itemDetails?['name'] ?? inv?['item_name'] ?? 'Item';
+        final unit = itemDetails?['unit'] ?? inv?['unit'] ?? '';
         final date = (alloc['created_at'] != null)
             ? DateFormat('MMM dd, yyyy HH:mm')
                 .format(DateTime.parse(alloc['created_at']))
             : '';
 
+        final price = itemDetails?['price'] ?? inv?['price_per_item'] ?? 0;
+        final total = (alloc['quantity'] as num? ?? 0) * price;
+
         return ListTile(
           title: Text('$farmerName - $itemName'),
-          subtitle: Text('Qty: ${alloc['quantity']} | Date: $date'),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Qty: ${alloc['quantity']} $unit | Date: $date'),
+              if (price > 0)
+                Text(
+                  'Allocated Value: ${CurrencyUtils.formatNaira(total)}',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+            ],
+          ),
         );
       },
     );
@@ -415,6 +478,7 @@ class WarehouseManagementViewState extends State<WarehouseManagementView> {
                 ),
                 const SizedBox(height: 12),
                 MoonDropdown(
+                  constrainWidthToChild: true,
                   show: showStateDropdown,
                   onTapOutside: () => setState(() => showStateDropdown = false),
                   content: Container(
@@ -546,6 +610,7 @@ class WarehouseManagementViewState extends State<WarehouseManagementView> {
                 ),
                 const SizedBox(height: 12),
                 MoonDropdown(
+                  constrainWidthToChild: true,
                   show: showStateDropdown,
                   onTapOutside: () => setState(() => showStateDropdown = false),
                   content: Container(

@@ -226,6 +226,15 @@ class _ResourceTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final isCollected = resource.isCollected == true;
 
+    final inv = resource.inventoryItem;
+    final item = inv?['items'];
+    final price = item?['price'] ?? 0;
+    final total = resource.quantity * price;
+    final unit = item?['unit'] ?? inv?['unit'] ?? '';
+
+    final itemName =
+        inv?['item_name'] ?? item?['name'] ?? resource.item ?? 'Unknown Item';
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -260,34 +269,26 @@ class _ResourceTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  resource.inventoryItem?['item_name'] ??
-                      resource.item ??
-                      'Unknown Item',
+                  itemName,
                   style: context.moonTypography?.body.text16.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
-                  'Quantity: ${resource.quantity} ${resource.inventoryItem?['unit'] ?? ''}'
-                      .trim(),
+                  'Quantity: ${resource.quantity} $unit'.trim(),
                   style: context.moonTypography?.body.text12.copyWith(
                     color: context.moonColors?.trunks,
                   ),
                 ),
-                Builder(builder: (context) {
-                  final inv = resource.inventoryItem;
-                  final price = inv?['price_per_item'] ?? 0;
-                  final total = resource.quantity * price;
-                  return Text(
-                    price > 0
-                        ? 'Price: ${CurrencyUtils.formatNaira(price)} | Total: ${CurrencyUtils.formatNaira(total)}'
-                        : 'Free',
-                    style: context.moonTypography?.body.text12.copyWith(
-                      color: context.moonColors?.roshi ?? Colors.green,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  );
-                }),
+                Text(
+                  price > 0
+                      ? 'Price: ${CurrencyUtils.formatNaira(price)} | Total: ${CurrencyUtils.formatNaira(total)}'
+                      : 'Free',
+                  style: context.moonTypography?.body.text12.copyWith(
+                    color: context.moonColors?.roshi ?? Colors.green,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 Text(
                   resource.collectionAddress ?? '',
                   style: context.moonTypography?.body.text12.copyWith(

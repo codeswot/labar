@@ -30,7 +30,7 @@ class AllocatedResourceRepositoryImpl implements AllocatedResourceRepository {
           if (itemIds.isNotEmpty) {
             final res = await _supabaseClient
                 .from('inventory')
-                .select('*, warehouses(name, state)')
+                .select('*, warehouses(name, state), items(*)')
                 .inFilter('id', itemIds);
             inventoryDocs.addAll(List<Map<String, dynamic>>.from(res));
           }

@@ -46,6 +46,17 @@ class AllocatedResourcesPage extends StatelessWidget {
                       const SizedBox(height: 12),
                   itemBuilder: (context, index) {
                     final resource = resources[index];
+                    final inv = resource.inventoryItem;
+                    final item = inv?['items'];
+                    final price = item?['price'] ?? 0;
+                    final total = resource.quantity * price;
+                    final unit = item?['unit'] ?? inv?['unit'] ?? '';
+
+                    final itemName = inv?['item_name'] ??
+                        item?['name'] ??
+                        resource.item ??
+                        'Unknown Item';
+
                     return Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
@@ -65,9 +76,7 @@ class AllocatedResourcesPage extends StatelessWidget {
                             children: [
                               Expanded(
                                 child: Text(
-                                  resource.inventoryItem?['item_name'] ??
-                                      resource.item ??
-                                      'Unknown Item',
+                                  itemName,
                                   style: context.moonTypography?.heading.text16,
                                 ),
                               ),
@@ -103,52 +112,45 @@ class AllocatedResourcesPage extends StatelessWidget {
                             resource.collectionAddress ?? '',
                             style: context.moonTypography?.body.text12,
                           ),
-                          Builder(builder: (context) {
-                            final inv = resource.inventoryItem;
-                            final price = inv?['price_per_item'] ?? 0;
-                            final total = resource.quantity * price;
-                            final unit = inv?['unit'] ?? '';
-
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Quantity Allocated',
+                                style: context.moonTypography?.body.text12
+                                    .copyWith(
+                                  color: context.moonColors?.trunks,
+                                ),
+                              ),
+                              Text(
+                                '${resource.quantity} $unit'.trim(),
+                                style: context.moonTypography?.body.text14,
+                              ),
+                              if (price > 0) ...[
+                                const SizedBox(height: 8),
                                 Text(
-                                  'Quantity Allocated',
+                                  'Price: ${CurrencyUtils.formatNaira(price)} | Total: ${CurrencyUtils.formatNaira(total)}',
                                   style: context.moonTypography?.body.text12
                                       .copyWith(
-                                    color: context.moonColors?.trunks,
+                                    color: context.moonColors?.roshi ??
+                                        Colors.green,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
+                              ] else ...[
+                                const SizedBox(height: 8),
                                 Text(
-                                  '${resource.quantity} $unit'.trim(),
-                                  style: context.moonTypography?.body.text14,
+                                  'Free',
+                                  style: context.moonTypography?.body.text12
+                                      .copyWith(
+                                    color: context.moonColors?.roshi ??
+                                        Colors.green,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                                if (price > 0) ...[
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    'Price: ${CurrencyUtils.formatNaira(price)} | Total: ${CurrencyUtils.formatNaira(total)}',
-                                    style: context.moonTypography?.body.text12
-                                        .copyWith(
-                                      color: context.moonColors?.roshi ??
-                                          Colors.green,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ] else ...[
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    'Free',
-                                    style: context.moonTypography?.body.text12
-                                        .copyWith(
-                                      color: context.moonColors?.roshi ??
-                                          Colors.green,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
                               ],
-                            );
-                          }),
+                            ],
+                          ),
                         ],
                       ),
                     );

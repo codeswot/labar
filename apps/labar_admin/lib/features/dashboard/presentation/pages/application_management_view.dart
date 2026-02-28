@@ -615,11 +615,11 @@ class ApplicationManagementViewState extends State<ApplicationManagementView> {
                                   const SizedBox(height: 8),
                               itemBuilder: (context, index) {
                                 final res = state.selectedResources[index];
-                                final price =
-                                    res['inventory']?['price_per_item'] ?? 0;
+                                final itemDetails = res['inventory']?['items'];
+                                final price = itemDetails?['price'] ?? 0;
                                 final qty = res['quantity'] ?? 0;
                                 final subtotal = qty * price;
-                                final unit = res['inventory']?['unit'] ?? '';
+                                final unit = itemDetails?['unit'] ?? '';
 
                                 return Container(
                                   padding: const EdgeInsets.all(12),
@@ -639,7 +639,7 @@ class ApplicationManagementViewState extends State<ApplicationManagementView> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                                '${res['inventory']?['item_name'] ?? res['item'] ?? 'Unknown Item'} ($qty $unit)'
+                                                '${itemDetails?['name'] ?? 'Unknown Item'} ($qty $unit)'
                                                     .trim(),
                                                 style: context.moonTypography
                                                     ?.body.text14),
@@ -710,8 +710,8 @@ class ApplicationManagementViewState extends State<ApplicationManagementView> {
                             Builder(builder: (context) {
                               final total = state.selectedResources.fold<num>(0,
                                   (sum, res) {
-                                final price =
-                                    res['inventory']?['price_per_item'] ?? 0;
+                                final itemDetails = res['inventory']?['items'];
+                                final price = itemDetails?['price'] ?? 0;
                                 final qty = res['quantity'] ?? 0;
                                 return sum + (qty * price);
                               });
@@ -1239,55 +1239,59 @@ class ApplicationManagementViewState extends State<ApplicationManagementView> {
           StatefulBuilder(builder: (context, setDialogState) {
         return AlertDialog(
           title: const Text('Allocate Resource'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              MoonDropdown(
-                show: showItemDropdown,
-                onTapOutside: () =>
-                    setDialogState(() => showItemDropdown = false),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: inventory.map((item) {
-                    return MoonMenuItem(
-                      onTap: () {
-                        setDialogState(() {
-                          selectedItemId = item['id'];
-                          showItemDropdown = false;
-                        });
-                      },
-                      label: Text(
-                          '${item['item_name']} - ${item['warehouses']?['name']} (Available: ${item['quantity']} ${item['unit']}${item['price_per_item'] != null ? ' - ${CurrencyUtils.formatNaira(item['price_per_item'])}' : ' - Free'})'),
-                    );
-                  }).toList(),
-                ),
-                child: GestureDetector(
-                  onTap: () => setDialogState(
-                      () => showItemDropdown = !showItemDropdown),
-                  child: AbsorbPointer(
-                    child: MoonTextInput(
-                      hintText: 'Select Resource Item',
-                      readOnly: true,
-                      controller: TextEditingController(
-                          text: selectedItemId != null
-                              ? '${inventory.firstWhere((i) => i['id'] == selectedItemId)['item_name']} - ${inventory.firstWhere((i) => i['id'] == selectedItemId)['warehouses']?['name']}'
-                              : ''),
+          content: SizedBox(
+            width: 400,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                MoonDropdown(
+                  show: showItemDropdown,
+                  constrainWidthToChild: true,
+                  onTapOutside: () =>
+                      setDialogState(() => showItemDropdown = false),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: inventory.map((item) {
+                      return MoonMenuItem(
+                        onTap: () {
+                          setDialogState(() {
+                            selectedItemId = item['id'];
+                            showItemDropdown = false;
+                          });
+                        },
+                        label: Text(
+                            '${item['items']?['name']} - ${item['warehouses']?['name']} (Available: ${item['quantity']} ${item['items']?['unit']}${item['items']?['price'] != null ? ' - ${CurrencyUtils.formatNaira(item['items']?['price'])}' : ' - Free'})'),
+                      );
+                    }).toList(),
+                  ),
+                  child: GestureDetector(
+                    onTap: () => setDialogState(
+                        () => showItemDropdown = !showItemDropdown),
+                    child: AbsorbPointer(
+                      child: MoonTextInput(
+                        hintText: 'Select Resource Item',
+                        readOnly: true,
+                        controller: TextEditingController(
+                            text: selectedItemId != null
+                                ? '${inventory.firstWhere((i) => i['id'] == selectedItemId)['items']?['name']} - ${inventory.firstWhere((i) => i['id'] == selectedItemId)['warehouses']?['name']}'
+                                : ''),
+                      ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 12),
-              MoonTextInput(
-                controller: quantityController,
-                hintText: 'Quantity',
-                keyboardType: TextInputType.number,
-              ),
-              const SizedBox(height: 12),
-              MoonTextInput(
-                controller: addressController,
-                hintText: 'Collection Address',
-              ),
-            ],
+                const SizedBox(height: 12),
+                MoonTextInput(
+                  controller: quantityController,
+                  hintText: 'Quantity',
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 12),
+                MoonTextInput(
+                  controller: addressController,
+                  hintText: 'Collection Address',
+                ),
+              ],
+            ),
           ),
           actions: [
             TextButton(
@@ -1315,7 +1319,7 @@ class ApplicationManagementViewState extends State<ApplicationManagementView> {
                 if (qty > available) {
                   MoonToast.show(context,
                       label: Text(
-                          'Insufficient stock. Available: $available ${item['unit']}'));
+                          'Insufficient stock. Available: $available ${item['items']?['unit']}'));
                   return;
                 }
 

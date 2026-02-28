@@ -22,6 +22,7 @@ mixin _$InventoryManagementState {
   List<Map<String, dynamic>> get waybills => throw _privateConstructorUsedError;
   List<Map<String, dynamic>> get warehouses =>
       throw _privateConstructorUsedError;
+  List<Map<String, dynamic>> get items => throw _privateConstructorUsedError;
   List<Map<String, dynamic>> get selectedInventoryAllocations =>
       throw _privateConstructorUsedError;
   List<Map<String, dynamic>> get selectedWarehouseFarmers =>
@@ -48,6 +49,7 @@ abstract class $InventoryManagementStateCopyWith<$Res> {
       List<Map<String, dynamic>> inventory,
       List<Map<String, dynamic>> waybills,
       List<Map<String, dynamic>> warehouses,
+      List<Map<String, dynamic>> items,
       List<Map<String, dynamic>> selectedInventoryAllocations,
       List<Map<String, dynamic>> selectedWarehouseFarmers,
       List<Map<String, dynamic>> selectedWarehouseAllocations,
@@ -74,6 +76,7 @@ class _$InventoryManagementStateCopyWithImpl<$Res,
     Object? inventory = null,
     Object? waybills = null,
     Object? warehouses = null,
+    Object? items = null,
     Object? selectedInventoryAllocations = null,
     Object? selectedWarehouseFarmers = null,
     Object? selectedWarehouseAllocations = null,
@@ -95,6 +98,10 @@ class _$InventoryManagementStateCopyWithImpl<$Res,
       warehouses: null == warehouses
           ? _value.warehouses
           : warehouses // ignore: cast_nullable_to_non_nullable
+              as List<Map<String, dynamic>>,
+      items: null == items
+          ? _value.items
+          : items // ignore: cast_nullable_to_non_nullable
               as List<Map<String, dynamic>>,
       selectedInventoryAllocations: null == selectedInventoryAllocations
           ? _value.selectedInventoryAllocations
@@ -130,6 +137,7 @@ abstract class _$$InventoryManagementStateImplCopyWith<$Res>
       List<Map<String, dynamic>> inventory,
       List<Map<String, dynamic>> waybills,
       List<Map<String, dynamic>> warehouses,
+      List<Map<String, dynamic>> items,
       List<Map<String, dynamic>> selectedInventoryAllocations,
       List<Map<String, dynamic>> selectedWarehouseFarmers,
       List<Map<String, dynamic>> selectedWarehouseAllocations,
@@ -155,6 +163,7 @@ class __$$InventoryManagementStateImplCopyWithImpl<$Res>
     Object? inventory = null,
     Object? waybills = null,
     Object? warehouses = null,
+    Object? items = null,
     Object? selectedInventoryAllocations = null,
     Object? selectedWarehouseFarmers = null,
     Object? selectedWarehouseAllocations = null,
@@ -176,6 +185,10 @@ class __$$InventoryManagementStateImplCopyWithImpl<$Res>
       warehouses: null == warehouses
           ? _value._warehouses
           : warehouses // ignore: cast_nullable_to_non_nullable
+              as List<Map<String, dynamic>>,
+      items: null == items
+          ? _value._items
+          : items // ignore: cast_nullable_to_non_nullable
               as List<Map<String, dynamic>>,
       selectedInventoryAllocations: null == selectedInventoryAllocations
           ? _value._selectedInventoryAllocations
@@ -205,6 +218,7 @@ class _$InventoryManagementStateImpl implements _InventoryManagementState {
       final List<Map<String, dynamic>> inventory = const [],
       final List<Map<String, dynamic>> waybills = const [],
       final List<Map<String, dynamic>> warehouses = const [],
+      final List<Map<String, dynamic>> items = const [],
       final List<Map<String, dynamic>> selectedInventoryAllocations = const [],
       final List<Map<String, dynamic>> selectedWarehouseFarmers = const [],
       final List<Map<String, dynamic>> selectedWarehouseAllocations = const [],
@@ -212,6 +226,7 @@ class _$InventoryManagementStateImpl implements _InventoryManagementState {
       : _inventory = inventory,
         _waybills = waybills,
         _warehouses = warehouses,
+        _items = items,
         _selectedInventoryAllocations = selectedInventoryAllocations,
         _selectedWarehouseFarmers = selectedWarehouseFarmers,
         _selectedWarehouseAllocations = selectedWarehouseAllocations;
@@ -244,6 +259,15 @@ class _$InventoryManagementStateImpl implements _InventoryManagementState {
     if (_warehouses is EqualUnmodifiableListView) return _warehouses;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_warehouses);
+  }
+
+  final List<Map<String, dynamic>> _items;
+  @override
+  @JsonKey()
+  List<Map<String, dynamic>> get items {
+    if (_items is EqualUnmodifiableListView) return _items;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_items);
   }
 
   final List<Map<String, dynamic>> _selectedInventoryAllocations;
@@ -281,7 +305,7 @@ class _$InventoryManagementStateImpl implements _InventoryManagementState {
 
   @override
   String toString() {
-    return 'InventoryManagementState(isLoading: $isLoading, inventory: $inventory, waybills: $waybills, warehouses: $warehouses, selectedInventoryAllocations: $selectedInventoryAllocations, selectedWarehouseFarmers: $selectedWarehouseFarmers, selectedWarehouseAllocations: $selectedWarehouseAllocations, error: $error)';
+    return 'InventoryManagementState(isLoading: $isLoading, inventory: $inventory, waybills: $waybills, warehouses: $warehouses, items: $items, selectedInventoryAllocations: $selectedInventoryAllocations, selectedWarehouseFarmers: $selectedWarehouseFarmers, selectedWarehouseAllocations: $selectedWarehouseAllocations, error: $error)';
   }
 
   @override
@@ -296,6 +320,7 @@ class _$InventoryManagementStateImpl implements _InventoryManagementState {
             const DeepCollectionEquality().equals(other._waybills, _waybills) &&
             const DeepCollectionEquality()
                 .equals(other._warehouses, _warehouses) &&
+            const DeepCollectionEquality().equals(other._items, _items) &&
             const DeepCollectionEquality().equals(
                 other._selectedInventoryAllocations,
                 _selectedInventoryAllocations) &&
@@ -314,6 +339,7 @@ class _$InventoryManagementStateImpl implements _InventoryManagementState {
       const DeepCollectionEquality().hash(_inventory),
       const DeepCollectionEquality().hash(_waybills),
       const DeepCollectionEquality().hash(_warehouses),
+      const DeepCollectionEquality().hash(_items),
       const DeepCollectionEquality().hash(_selectedInventoryAllocations),
       const DeepCollectionEquality().hash(_selectedWarehouseFarmers),
       const DeepCollectionEquality().hash(_selectedWarehouseAllocations),
@@ -335,6 +361,7 @@ abstract class _InventoryManagementState implements InventoryManagementState {
       final List<Map<String, dynamic>> inventory,
       final List<Map<String, dynamic>> waybills,
       final List<Map<String, dynamic>> warehouses,
+      final List<Map<String, dynamic>> items,
       final List<Map<String, dynamic>> selectedInventoryAllocations,
       final List<Map<String, dynamic>> selectedWarehouseFarmers,
       final List<Map<String, dynamic>> selectedWarehouseAllocations,
@@ -348,6 +375,8 @@ abstract class _InventoryManagementState implements InventoryManagementState {
   List<Map<String, dynamic>> get waybills;
   @override
   List<Map<String, dynamic>> get warehouses;
+  @override
+  List<Map<String, dynamic>> get items;
   @override
   List<Map<String, dynamic>> get selectedInventoryAllocations;
   @override

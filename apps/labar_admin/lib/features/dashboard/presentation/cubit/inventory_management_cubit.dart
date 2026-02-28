@@ -14,6 +14,7 @@ class InventoryManagementState with _$InventoryManagementState {
     @Default([]) List<Map<String, dynamic>> inventory,
     @Default([]) List<Map<String, dynamic>> waybills,
     @Default([]) List<Map<String, dynamic>> warehouses,
+    @Default([]) List<Map<String, dynamic>> items,
     @Default([]) List<Map<String, dynamic>> selectedInventoryAllocations,
     @Default([]) List<Map<String, dynamic>> selectedWarehouseFarmers,
     @Default([]) List<Map<String, dynamic>> selectedWarehouseAllocations,
@@ -38,12 +39,14 @@ class InventoryManagementCubit extends Cubit<InventoryManagementState> {
       final inventory = await _repository.getInventory();
       final waybills = await _repository.getWaybills();
       final warehouses = await _repository.getWarehouses();
+      final items = await _repository.getItems();
 
       emit(state.copyWith(
         isLoading: false,
         inventory: inventory,
         waybills: waybills,
         warehouses: warehouses,
+        items: items,
       ));
 
       // Subscribe for real-time updates
@@ -116,14 +119,17 @@ class InventoryManagementCubit extends Cubit<InventoryManagementState> {
 
   Future<void> addInventory({
     required String warehouseId,
+    required String itemId,
     required String itemName,
     required num quantity,
-    required String unit,
-    num? pricePerItem,
   }) async {
     try {
       await _repository.addOrUpdateInventory(
-          warehouseId, itemName, quantity, unit, pricePerItem);
+        warehouseId: warehouseId,
+        itemId: itemId,
+        itemName: itemName,
+        quantity: quantity,
+      );
       await init(); // Refresh
     } catch (e, stack) {
       AppLogger.error('Failed to add inventory', e, stack);
