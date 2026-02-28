@@ -15,6 +15,7 @@ class FarmDetailsState with _$FarmDetailsState {
     double? longitude,
     @Default([]) List<dynamic> farmPolygon,
     @Default(false) bool isFetchingLocation,
+    @Default('') String userId,
   }) = _FarmDetailsState;
 
   const FarmDetailsState._();

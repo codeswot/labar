@@ -13,6 +13,7 @@ class BankDetailsState with _$BankDetailsState {
     @OptionalTextInputConverter()
     @Default(OptionalTextInput.pure())
     OptionalTextInput accountName,
+    @Default('') String userId,
   }) = _BankDetailsState;
 
   const BankDetailsState._();

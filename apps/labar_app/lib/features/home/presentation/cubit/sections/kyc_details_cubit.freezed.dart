@@ -23,6 +23,7 @@ mixin _$KycDetailsState {
   KycType? get kycType => throw _privateConstructorUsedError;
   @RequiredTextInputConverter()
   RequiredTextInput get kycNumber => throw _privateConstructorUsedError;
+  String get userId => throw _privateConstructorUsedError;
 
   /// Serializes this KycDetailsState to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -42,7 +43,8 @@ abstract class $KycDetailsStateCopyWith<$Res> {
   @useResult
   $Res call(
       {KycType? kycType,
-      @RequiredTextInputConverter() RequiredTextInput kycNumber});
+      @RequiredTextInputConverter() RequiredTextInput kycNumber,
+      String userId});
 }
 
 /// @nodoc
@@ -62,6 +64,7 @@ class _$KycDetailsStateCopyWithImpl<$Res, $Val extends KycDetailsState>
   $Res call({
     Object? kycType = freezed,
     Object? kycNumber = null,
+    Object? userId = null,
   }) {
     return _then(_value.copyWith(
       kycType: freezed == kycType
@@ -72,6 +75,10 @@ class _$KycDetailsStateCopyWithImpl<$Res, $Val extends KycDetailsState>
           ? _value.kycNumber
           : kycNumber // ignore: cast_nullable_to_non_nullable
               as RequiredTextInput,
+      userId: null == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
@@ -86,7 +93,8 @@ abstract class _$$KycDetailsStateImplCopyWith<$Res>
   @useResult
   $Res call(
       {KycType? kycType,
-      @RequiredTextInputConverter() RequiredTextInput kycNumber});
+      @RequiredTextInputConverter() RequiredTextInput kycNumber,
+      String userId});
 }
 
 /// @nodoc
@@ -104,6 +112,7 @@ class __$$KycDetailsStateImplCopyWithImpl<$Res>
   $Res call({
     Object? kycType = freezed,
     Object? kycNumber = null,
+    Object? userId = null,
   }) {
     return _then(_$KycDetailsStateImpl(
       kycType: freezed == kycType
@@ -114,6 +123,10 @@ class __$$KycDetailsStateImplCopyWithImpl<$Res>
           ? _value.kycNumber
           : kycNumber // ignore: cast_nullable_to_non_nullable
               as RequiredTextInput,
+      userId: null == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -125,7 +138,8 @@ class _$KycDetailsStateImpl extends _KycDetailsState {
   const _$KycDetailsStateImpl(
       {this.kycType,
       @RequiredTextInputConverter()
-      this.kycNumber = const RequiredTextInput.pure()})
+      this.kycNumber = const RequiredTextInput.pure(),
+      this.userId = ''})
       : super._();
 
   factory _$KycDetailsStateImpl.fromJson(Map<String, dynamic> json) =>
@@ -137,10 +151,13 @@ class _$KycDetailsStateImpl extends _KycDetailsState {
   @JsonKey()
   @RequiredTextInputConverter()
   final RequiredTextInput kycNumber;
+  @override
+  @JsonKey()
+  final String userId;
 
   @override
   String toString() {
-    return 'KycDetailsState(kycType: $kycType, kycNumber: $kycNumber)';
+    return 'KycDetailsState(kycType: $kycType, kycNumber: $kycNumber, userId: $userId)';
   }
 
   @override
@@ -150,12 +167,13 @@ class _$KycDetailsStateImpl extends _KycDetailsState {
             other is _$KycDetailsStateImpl &&
             (identical(other.kycType, kycType) || other.kycType == kycType) &&
             (identical(other.kycNumber, kycNumber) ||
-                other.kycNumber == kycNumber));
+                other.kycNumber == kycNumber) &&
+            (identical(other.userId, userId) || other.userId == userId));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, kycType, kycNumber);
+  int get hashCode => Object.hash(runtimeType, kycType, kycNumber, userId);
 
   /// Create a copy of KycDetailsState
   /// with the given fields replaced by the non-null parameter values.
@@ -176,9 +194,9 @@ class _$KycDetailsStateImpl extends _KycDetailsState {
 
 abstract class _KycDetailsState extends KycDetailsState {
   const factory _KycDetailsState(
-          {final KycType? kycType,
-          @RequiredTextInputConverter() final RequiredTextInput kycNumber}) =
-      _$KycDetailsStateImpl;
+      {final KycType? kycType,
+      @RequiredTextInputConverter() final RequiredTextInput kycNumber,
+      final String userId}) = _$KycDetailsStateImpl;
   const _KycDetailsState._() : super._();
 
   factory _KycDetailsState.fromJson(Map<String, dynamic> json) =
@@ -189,6 +207,8 @@ abstract class _KycDetailsState extends KycDetailsState {
   @override
   @RequiredTextInputConverter()
   RequiredTextInput get kycNumber;
+  @override
+  String get userId;
 
   /// Create a copy of KycDetailsState
   /// with the given fields replaced by the non-null parameter values.

@@ -1088,13 +1088,23 @@ class ApplicationManagementViewState extends State<ApplicationManagementView> {
                     AppButton.filled(
                       isFullWidth: false,
                       onTap: () {
+                        String phone = phoneController.text.trim();
+                        if (phone.startsWith('0')) {
+                          phone = '+234${phone.substring(1)}';
+                        }
+
+                        String nokPhone = nextOfKinPhoneController.text.trim();
+                        if (nokPhone.startsWith('0')) {
+                          nokPhone = '+234${nokPhone.substring(1)}';
+                        }
+
                         final data = {
                           'first_name': firstNameController.text.trim(),
                           'last_name': lastNameController.text.trim(),
                           'other_names': otherNamesController.text.trim(),
                           'date_of_birth': dobController.text.trim(),
                           'gender': gender,
-                          'phone_number': phoneController.text.trim(),
+                          'phone_number': phone,
                           'state': selectedState,
                           'lga': selectedLga,
                           'town': townController.text.trim(),
@@ -1109,8 +1119,7 @@ class ApplicationManagementViewState extends State<ApplicationManagementView> {
                           'account_name': accountNameController.text.trim(),
                           'next_of_kin_name':
                               nextOfKinNameController.text.trim(),
-                          'next_of_kin_phone':
-                              nextOfKinPhoneController.text.trim(),
+                          'next_of_kin_phone': nokPhone,
                           'next_of_kin_relationship':
                               nextOfKinRelationshipController.text.trim(),
                           'kyc_type': kycType,
@@ -1288,15 +1297,35 @@ class ApplicationManagementViewState extends State<ApplicationManagementView> {
               isFullWidth: false,
               onTap: () {
                 final qty = num.tryParse(quantityController.text) ?? 0;
-                if (selectedItemId != null && qty > 0) {
-                  cubit.allocateResource(
-                    applicationId: applicationId,
-                    item: selectedItemId!,
-                    quantity: qty,
-                    collectionAddress: addressController.text.trim(),
-                  );
-                  Navigator.pop(dialogContext);
+                if (selectedItemId == null) {
+                  MoonToast.show(context,
+                      label: const Text('Please select an item'));
+                  return;
                 }
+                if (qty <= 0) {
+                  MoonToast.show(context,
+                      label: const Text('Quantity must be greater than 0'));
+                  return;
+                }
+
+                final item =
+                    inventory.firstWhere((i) => i['id'] == selectedItemId);
+                final available = item['quantity'] as num;
+
+                if (qty > available) {
+                  MoonToast.show(context,
+                      label: Text(
+                          'Insufficient stock. Available: $available ${item['unit']}'));
+                  return;
+                }
+
+                cubit.allocateResource(
+                  applicationId: applicationId,
+                  item: selectedItemId!,
+                  quantity: qty,
+                  collectionAddress: addressController.text.trim(),
+                );
+                Navigator.pop(dialogContext);
               },
               label: const Text('Allocate'),
             ),

@@ -13,9 +13,16 @@ class KycDetailsCubit extends HydratedCubit<KycDetailsState> {
   KycDetailsCubit() : super(const KycDetailsState());
 
   void init({
+    required String currentUserId,
     KycType? kycType,
     String? kycNumber,
   }) {
+    if (state.userId.isNotEmpty && state.userId != currentUserId) {
+      emit(KycDetailsState(userId: currentUserId));
+    } else if (state.userId.isEmpty) {
+      emit(state.copyWith(userId: currentUserId));
+    }
+
     emit(state.copyWith(
       kycType: kycType,
       kycNumber: kycNumber != null && kycNumber.isNotEmpty

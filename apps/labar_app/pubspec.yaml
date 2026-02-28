@@ -46,6 +46,7 @@ dependencies:
   build_runner: ^2.5.4
   maps_toolkit: ^3.1.0
   latlong2: ^0.9.1
+  http: ^1.2.2
 
 dev_dependencies:
   flutter_test:

@@ -8,6 +8,7 @@ class KycDetailsState with _$KycDetailsState {
     @RequiredTextInputConverter()
     @Default(RequiredTextInput.pure())
     RequiredTextInput kycNumber,
+    @Default('') String userId,
   }) = _KycDetailsState;
 
   const KycDetailsState._();

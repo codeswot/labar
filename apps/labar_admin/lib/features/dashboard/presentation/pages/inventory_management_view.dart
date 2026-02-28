@@ -606,22 +606,24 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                   onTap: () {
                     final qty = num.tryParse(qtyController.text) ?? 0;
                     final price = num.tryParse(priceController.text);
-                    if (qty > 0) {
-                      if (selectedWarehouseId != null) {
-                        cubit.addInventory(
-                          warehouseId: selectedWarehouseId!,
-                          itemName: itemNameController.text.trim(),
-                          quantity: qty,
-                          unit: unitController.text.trim(),
-                          pricePerItem: price,
-                        );
-                        Navigator.pop(dialogCtx);
-                      } else {
-                        // Show slight error for selectedWarehouseId == null
-                      }
-                    } else {
-                      // Show error for qty <= 0
+                    if (selectedWarehouseId == null) {
+                      MoonToast.show(context,
+                          label: const Text('Please select a warehouse'));
+                      return;
                     }
+                    if (qty <= 0) {
+                      MoonToast.show(context,
+                          label: const Text('Quantity must be greater than 0'));
+                      return;
+                    }
+                    cubit.addInventory(
+                      warehouseId: selectedWarehouseId!,
+                      itemName: itemNameController.text.trim(),
+                      quantity: qty,
+                      unit: unitController.text.trim(),
+                      pricePerItem: price,
+                    );
+                    Navigator.pop(dialogCtx);
                   },
                   label: const Text('Save'),
                 ),
@@ -792,25 +794,55 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                       if (createdBy == null) return;
                       final qty = num.tryParse(qtyController.text) ?? 0;
 
-                      if (qty > 0 &&
-                          selectedWarehouseId != null &&
-                          selectedItemName != null) {
-                        final waybill = await cubit.generateWaybill(
-                          warehouseId: selectedWarehouseId!,
-                          destination: destinationController.text.trim(),
-                          driverName: driverNameController.text.trim(),
-                          driverPhone: driverPhoneController.text.trim(),
-                          vehicleNumber: vehicleNumberController.text.trim(),
-                          itemName: selectedItemName!,
-                          quantity: qty,
-                          unit: unitController.text.trim(),
-                          createdBy: createdBy,
-                        );
+                      if (selectedWarehouseId == null) {
+                        MoonToast.show(context,
+                            label: const Text('Please select a warehouse'));
+                        return;
+                      }
+                      if (selectedItemName == null) {
+                        MoonToast.show(context,
+                            label: const Text('Please select an item'));
+                        return;
+                      }
+                      if (qty <= 0) {
+                        MoonToast.show(context,
+                            label:
+                                const Text('Quantity must be greater than 0'));
+                        return;
+                      }
 
-                        Navigator.pop(dialogCtx);
-                        if (waybill != null) {
-                          _downloadWaybillPDF(context, waybill);
-                        }
+                      final item = inventory.firstWhere((i) =>
+                          i['warehouse_id'] == selectedWarehouseId &&
+                          i['item_name'] == selectedItemName);
+                      final available = item['quantity'] as num;
+
+                      if (qty > available) {
+                        MoonToast.show(context,
+                            label: Text(
+                                'Insufficient stock. Available: $available ${item['unit']}'));
+                        return;
+                      }
+
+                      String driverPhone = driverPhoneController.text.trim();
+                      if (driverPhone.startsWith('0')) {
+                        driverPhone = '+234${driverPhone.substring(1)}';
+                      }
+
+                      final waybill = await cubit.generateWaybill(
+                        warehouseId: selectedWarehouseId!,
+                        destination: destinationController.text.trim(),
+                        driverName: driverNameController.text.trim(),
+                        driverPhone: driverPhone,
+                        vehicleNumber: vehicleNumberController.text.trim(),
+                        itemName: selectedItemName!,
+                        quantity: qty,
+                        unit: unitController.text.trim(),
+                        createdBy: createdBy,
+                      );
+
+                      Navigator.pop(dialogCtx);
+                      if (waybill != null) {
+                        _downloadWaybillPDF(context, waybill);
                       }
                     },
                     label: const Text('Generate'),

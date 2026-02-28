@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
@@ -23,6 +24,9 @@ class InventoryManagementState with _$InventoryManagementState {
 @injectable
 class InventoryManagementCubit extends Cubit<InventoryManagementState> {
   final AdminRepository _repository;
+  StreamSubscription? _inventorySubscription;
+  StreamSubscription? _waybillSubscription;
+  StreamSubscription? _warehouseSubscription;
 
   InventoryManagementCubit(this._repository)
       : super(const InventoryManagementState());
@@ -30,6 +34,7 @@ class InventoryManagementCubit extends Cubit<InventoryManagementState> {
   Future<void> init() async {
     emit(state.copyWith(isLoading: true, error: null));
     try {
+      // Initial fetch if needed, but stream will emit too
       final inventory = await _repository.getInventory();
       final waybills = await _repository.getWaybills();
       final warehouses = await _repository.getWarehouses();
@@ -40,10 +45,35 @@ class InventoryManagementCubit extends Cubit<InventoryManagementState> {
         waybills: waybills,
         warehouses: warehouses,
       ));
+
+      // Subscribe for real-time updates
+      _inventorySubscription?.cancel();
+      _inventorySubscription = _repository.inventoryStream.listen((inventory) {
+        emit(state.copyWith(inventory: inventory));
+      });
+
+      _waybillSubscription?.cancel();
+      _waybillSubscription = _repository.waybillsStream.listen((waybills) {
+        emit(state.copyWith(waybills: waybills));
+      });
+
+      _warehouseSubscription?.cancel();
+      _warehouseSubscription =
+          _repository.warehousesStream.listen((warehouses) {
+        emit(state.copyWith(warehouses: warehouses));
+      });
     } catch (e, stack) {
       AppLogger.error('Failed to init inventory', e, stack);
       emit(state.copyWith(isLoading: false, error: e.toString()));
     }
+  }
+
+  @override
+  Future<void> close() {
+    _inventorySubscription?.cancel();
+    _waybillSubscription?.cancel();
+    _warehouseSubscription?.cancel();
+    return super.close();
   }
 
   Future<void> addWarehouse({

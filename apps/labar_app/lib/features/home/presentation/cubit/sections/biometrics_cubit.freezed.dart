@@ -23,6 +23,7 @@ mixin _$BiometricsState {
   List<int>? get signatureBytes => throw _privateConstructorUsedError;
   String? get passportPath => throw _privateConstructorUsedError;
   String? get idCardPath => throw _privateConstructorUsedError;
+  String get userId => throw _privateConstructorUsedError;
 
   /// Serializes this BiometricsState to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -41,7 +42,10 @@ abstract class $BiometricsStateCopyWith<$Res> {
       _$BiometricsStateCopyWithImpl<$Res, BiometricsState>;
   @useResult
   $Res call(
-      {List<int>? signatureBytes, String? passportPath, String? idCardPath});
+      {List<int>? signatureBytes,
+      String? passportPath,
+      String? idCardPath,
+      String userId});
 }
 
 /// @nodoc
@@ -62,6 +66,7 @@ class _$BiometricsStateCopyWithImpl<$Res, $Val extends BiometricsState>
     Object? signatureBytes = freezed,
     Object? passportPath = freezed,
     Object? idCardPath = freezed,
+    Object? userId = null,
   }) {
     return _then(_value.copyWith(
       signatureBytes: freezed == signatureBytes
@@ -76,6 +81,10 @@ class _$BiometricsStateCopyWithImpl<$Res, $Val extends BiometricsState>
           ? _value.idCardPath
           : idCardPath // ignore: cast_nullable_to_non_nullable
               as String?,
+      userId: null == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
@@ -89,7 +98,10 @@ abstract class _$$BiometricsStateImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {List<int>? signatureBytes, String? passportPath, String? idCardPath});
+      {List<int>? signatureBytes,
+      String? passportPath,
+      String? idCardPath,
+      String userId});
 }
 
 /// @nodoc
@@ -108,6 +120,7 @@ class __$$BiometricsStateImplCopyWithImpl<$Res>
     Object? signatureBytes = freezed,
     Object? passportPath = freezed,
     Object? idCardPath = freezed,
+    Object? userId = null,
   }) {
     return _then(_$BiometricsStateImpl(
       signatureBytes: freezed == signatureBytes
@@ -122,6 +135,10 @@ class __$$BiometricsStateImplCopyWithImpl<$Res>
           ? _value.idCardPath
           : idCardPath // ignore: cast_nullable_to_non_nullable
               as String?,
+      userId: null == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -130,7 +147,10 @@ class __$$BiometricsStateImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$BiometricsStateImpl extends _BiometricsState {
   const _$BiometricsStateImpl(
-      {final List<int>? signatureBytes, this.passportPath, this.idCardPath})
+      {final List<int>? signatureBytes,
+      this.passportPath,
+      this.idCardPath,
+      this.userId = ''})
       : _signatureBytes = signatureBytes,
         super._();
 
@@ -151,10 +171,13 @@ class _$BiometricsStateImpl extends _BiometricsState {
   final String? passportPath;
   @override
   final String? idCardPath;
+  @override
+  @JsonKey()
+  final String userId;
 
   @override
   String toString() {
-    return 'BiometricsState(signatureBytes: $signatureBytes, passportPath: $passportPath, idCardPath: $idCardPath)';
+    return 'BiometricsState(signatureBytes: $signatureBytes, passportPath: $passportPath, idCardPath: $idCardPath, userId: $userId)';
   }
 
   @override
@@ -167,7 +190,8 @@ class _$BiometricsStateImpl extends _BiometricsState {
             (identical(other.passportPath, passportPath) ||
                 other.passportPath == passportPath) &&
             (identical(other.idCardPath, idCardPath) ||
-                other.idCardPath == idCardPath));
+                other.idCardPath == idCardPath) &&
+            (identical(other.userId, userId) || other.userId == userId));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -176,7 +200,8 @@ class _$BiometricsStateImpl extends _BiometricsState {
       runtimeType,
       const DeepCollectionEquality().hash(_signatureBytes),
       passportPath,
-      idCardPath);
+      idCardPath,
+      userId);
 
   /// Create a copy of BiometricsState
   /// with the given fields replaced by the non-null parameter values.
@@ -199,7 +224,8 @@ abstract class _BiometricsState extends BiometricsState {
   const factory _BiometricsState(
       {final List<int>? signatureBytes,
       final String? passportPath,
-      final String? idCardPath}) = _$BiometricsStateImpl;
+      final String? idCardPath,
+      final String userId}) = _$BiometricsStateImpl;
   const _BiometricsState._() : super._();
 
   factory _BiometricsState.fromJson(Map<String, dynamic> json) =
@@ -211,6 +237,8 @@ abstract class _BiometricsState extends BiometricsState {
   String? get passportPath;
   @override
   String? get idCardPath;
+  @override
+  String get userId;
 
   /// Create a copy of BiometricsState
   /// with the given fields replaced by the non-null parameter values.

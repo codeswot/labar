@@ -6,7 +6,6 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../data/repositories/admin_repository_impl.dart';
-import '../../data/repositories/warehouse_repository.dart';
 
 part 'application_management_cubit.freezed.dart';
 
@@ -27,13 +26,12 @@ class ApplicationManagementState with _$ApplicationManagementState {
 @injectable
 class ApplicationManagementCubit extends Cubit<ApplicationManagementState> {
   final AdminRepository _adminRepository;
-  final WarehouseRepository _warehouseRepository;
   final SupabaseClient _supabaseClient;
   StreamSubscription? _applicationsSubscription;
+  StreamSubscription? _warehousesSubscription;
 
   ApplicationManagementCubit(
     this._adminRepository,
-    this._warehouseRepository,
     this._supabaseClient,
   ) : super(const ApplicationManagementState());
 
@@ -51,8 +49,11 @@ class ApplicationManagementCubit extends Cubit<ApplicationManagementState> {
 
     try {
       await loadStates();
-      final warehouses = await _warehouseRepository.getWarehouses();
-      emit(state.copyWith(warehouses: warehouses));
+      _warehousesSubscription?.cancel();
+      _warehousesSubscription =
+          _adminRepository.warehousesStream.listen((data) {
+        emit(state.copyWith(warehouses: data));
+      });
 
       _applicationsSubscription?.cancel();
       _applicationsSubscription = _supabaseClient
@@ -293,6 +294,7 @@ class ApplicationManagementCubit extends Cubit<ApplicationManagementState> {
   @override
   Future<void> close() {
     _applicationsSubscription?.cancel();
+    _warehousesSubscription?.cancel();
     return super.close();
   }
 }

@@ -24,6 +24,7 @@ _$FarmDetailsStateImpl _$$FarmDetailsStateImplFromJson(
       longitude: (json['longitude'] as num?)?.toDouble(),
       farmPolygon: json['farm_polygon'] as List<dynamic>? ?? const [],
       isFetchingLocation: json['is_fetching_location'] as bool? ?? false,
+      userId: json['user_id'] as String? ?? '',
     );
 
 Map<String, dynamic> _$$FarmDetailsStateImplToJson(
@@ -37,4 +38,5 @@ Map<String, dynamic> _$$FarmDetailsStateImplToJson(
       'longitude': instance.longitude,
       'farm_polygon': instance.farmPolygon,
       'is_fetching_location': instance.isFetchingLocation,
+      'user_id': instance.userId,
     };

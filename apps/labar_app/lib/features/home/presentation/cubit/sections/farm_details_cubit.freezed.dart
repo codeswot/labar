@@ -30,6 +30,7 @@ mixin _$FarmDetailsState {
   double? get longitude => throw _privateConstructorUsedError;
   List<dynamic> get farmPolygon => throw _privateConstructorUsedError;
   bool get isFetchingLocation => throw _privateConstructorUsedError;
+  String get userId => throw _privateConstructorUsedError;
 
   /// Serializes this FarmDetailsState to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -54,7 +55,8 @@ abstract class $FarmDetailsStateCopyWith<$Res> {
       double? latitude,
       double? longitude,
       List<dynamic> farmPolygon,
-      bool isFetchingLocation});
+      bool isFetchingLocation,
+      String userId});
 }
 
 /// @nodoc
@@ -79,6 +81,7 @@ class _$FarmDetailsStateCopyWithImpl<$Res, $Val extends FarmDetailsState>
     Object? longitude = freezed,
     Object? farmPolygon = null,
     Object? isFetchingLocation = null,
+    Object? userId = null,
   }) {
     return _then(_value.copyWith(
       farmSize: null == farmSize
@@ -109,6 +112,10 @@ class _$FarmDetailsStateCopyWithImpl<$Res, $Val extends FarmDetailsState>
           ? _value.isFetchingLocation
           : isFetchingLocation // ignore: cast_nullable_to_non_nullable
               as bool,
+      userId: null == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
@@ -128,7 +135,8 @@ abstract class _$$FarmDetailsStateImplCopyWith<$Res>
       double? latitude,
       double? longitude,
       List<dynamic> farmPolygon,
-      bool isFetchingLocation});
+      bool isFetchingLocation,
+      String userId});
 }
 
 /// @nodoc
@@ -151,6 +159,7 @@ class __$$FarmDetailsStateImplCopyWithImpl<$Res>
     Object? longitude = freezed,
     Object? farmPolygon = null,
     Object? isFetchingLocation = null,
+    Object? userId = null,
   }) {
     return _then(_$FarmDetailsStateImpl(
       farmSize: null == farmSize
@@ -181,6 +190,10 @@ class __$$FarmDetailsStateImplCopyWithImpl<$Res>
           ? _value.isFetchingLocation
           : isFetchingLocation // ignore: cast_nullable_to_non_nullable
               as bool,
+      userId: null == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -198,7 +211,8 @@ class _$FarmDetailsStateImpl extends _FarmDetailsState {
       this.latitude,
       this.longitude,
       final List<dynamic> farmPolygon = const [],
-      this.isFetchingLocation = false})
+      this.isFetchingLocation = false,
+      this.userId = ''})
       : _farmPolygon = farmPolygon,
         super._();
 
@@ -233,10 +247,13 @@ class _$FarmDetailsStateImpl extends _FarmDetailsState {
   @override
   @JsonKey()
   final bool isFetchingLocation;
+  @override
+  @JsonKey()
+  final String userId;
 
   @override
   String toString() {
-    return 'FarmDetailsState(farmSize: $farmSize, farmLocation: $farmLocation, cropType: $cropType, latitude: $latitude, longitude: $longitude, farmPolygon: $farmPolygon, isFetchingLocation: $isFetchingLocation)';
+    return 'FarmDetailsState(farmSize: $farmSize, farmLocation: $farmLocation, cropType: $cropType, latitude: $latitude, longitude: $longitude, farmPolygon: $farmPolygon, isFetchingLocation: $isFetchingLocation, userId: $userId)';
   }
 
   @override
@@ -257,7 +274,8 @@ class _$FarmDetailsStateImpl extends _FarmDetailsState {
             const DeepCollectionEquality()
                 .equals(other._farmPolygon, _farmPolygon) &&
             (identical(other.isFetchingLocation, isFetchingLocation) ||
-                other.isFetchingLocation == isFetchingLocation));
+                other.isFetchingLocation == isFetchingLocation) &&
+            (identical(other.userId, userId) || other.userId == userId));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -270,7 +288,8 @@ class _$FarmDetailsStateImpl extends _FarmDetailsState {
       latitude,
       longitude,
       const DeepCollectionEquality().hash(_farmPolygon),
-      isFetchingLocation);
+      isFetchingLocation,
+      userId);
 
   /// Create a copy of FarmDetailsState
   /// with the given fields replaced by the non-null parameter values.
@@ -297,7 +316,8 @@ abstract class _FarmDetailsState extends FarmDetailsState {
       final double? latitude,
       final double? longitude,
       final List<dynamic> farmPolygon,
-      final bool isFetchingLocation}) = _$FarmDetailsStateImpl;
+      final bool isFetchingLocation,
+      final String userId}) = _$FarmDetailsStateImpl;
   const _FarmDetailsState._() : super._();
 
   factory _FarmDetailsState.fromJson(Map<String, dynamic> json) =
@@ -320,6 +340,8 @@ abstract class _FarmDetailsState extends FarmDetailsState {
   List<dynamic> get farmPolygon;
   @override
   bool get isFetchingLocation;
+  @override
+  String get userId;
 
   /// Create a copy of FarmDetailsState
   /// with the given fields replaced by the non-null parameter values.

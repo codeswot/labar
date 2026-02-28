@@ -44,6 +44,7 @@ _$PersonalInfoStateImpl _$$PersonalInfoStateImplFromJson(
               ?.map((e) => e as String)
               .toList() ??
           const [],
+      userId: json['user_id'] as String? ?? '',
     );
 
 Map<String, dynamic> _$$PersonalInfoStateImplToJson(
@@ -61,4 +62,5 @@ Map<String, dynamic> _$$PersonalInfoStateImplToJson(
       'date_of_birth': instance.dateOfBirth?.toIso8601String(),
       'available_states': instance.availableStates,
       'current_lgas': instance.currentLgas,
+      'user_id': instance.userId,
     };

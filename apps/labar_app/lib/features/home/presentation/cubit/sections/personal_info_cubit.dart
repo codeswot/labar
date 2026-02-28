@@ -21,6 +21,7 @@ class PersonalInfoCubit extends HydratedCubit<PersonalInfoState> {
   ) : super(const PersonalInfoState());
 
   void init({
+    required String currentUserId,
     String? firstName,
     String? lastName,
     String? otherNames,
@@ -30,6 +31,12 @@ class PersonalInfoCubit extends HydratedCubit<PersonalInfoState> {
     String? town,
     DateTime? dateOfBirth,
   }) {
+    if (state.userId.isNotEmpty && state.userId != currentUserId) {
+      emit(PersonalInfoState(userId: currentUserId));
+    } else if (state.userId.isEmpty) {
+      emit(state.copyWith(userId: currentUserId));
+    }
+
     if (state.availableStates.isEmpty) {
       _loadStates();
     }

@@ -29,6 +29,7 @@ mixin _$ContactInfoState {
   @RequiredTextInputConverter()
   RequiredTextInput get nextOfKinRelationship =>
       throw _privateConstructorUsedError;
+  String get userId => throw _privateConstructorUsedError;
 
   /// Serializes this ContactInfoState to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -50,7 +51,8 @@ abstract class $ContactInfoStateCopyWith<$Res> {
       {@PhoneNumberInputConverter() PhoneNumberInput phoneNumber,
       @NameInputConverter() NameInput nextOfKinName,
       @PhoneNumberInputConverter() PhoneNumberInput nextOfKinPhone,
-      @RequiredTextInputConverter() RequiredTextInput nextOfKinRelationship});
+      @RequiredTextInputConverter() RequiredTextInput nextOfKinRelationship,
+      String userId});
 }
 
 /// @nodoc
@@ -72,6 +74,7 @@ class _$ContactInfoStateCopyWithImpl<$Res, $Val extends ContactInfoState>
     Object? nextOfKinName = null,
     Object? nextOfKinPhone = null,
     Object? nextOfKinRelationship = null,
+    Object? userId = null,
   }) {
     return _then(_value.copyWith(
       phoneNumber: null == phoneNumber
@@ -90,6 +93,10 @@ class _$ContactInfoStateCopyWithImpl<$Res, $Val extends ContactInfoState>
           ? _value.nextOfKinRelationship
           : nextOfKinRelationship // ignore: cast_nullable_to_non_nullable
               as RequiredTextInput,
+      userId: null == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
@@ -106,7 +113,8 @@ abstract class _$$ContactInfoStateImplCopyWith<$Res>
       {@PhoneNumberInputConverter() PhoneNumberInput phoneNumber,
       @NameInputConverter() NameInput nextOfKinName,
       @PhoneNumberInputConverter() PhoneNumberInput nextOfKinPhone,
-      @RequiredTextInputConverter() RequiredTextInput nextOfKinRelationship});
+      @RequiredTextInputConverter() RequiredTextInput nextOfKinRelationship,
+      String userId});
 }
 
 /// @nodoc
@@ -126,6 +134,7 @@ class __$$ContactInfoStateImplCopyWithImpl<$Res>
     Object? nextOfKinName = null,
     Object? nextOfKinPhone = null,
     Object? nextOfKinRelationship = null,
+    Object? userId = null,
   }) {
     return _then(_$ContactInfoStateImpl(
       phoneNumber: null == phoneNumber
@@ -144,6 +153,10 @@ class __$$ContactInfoStateImplCopyWithImpl<$Res>
           ? _value.nextOfKinRelationship
           : nextOfKinRelationship // ignore: cast_nullable_to_non_nullable
               as RequiredTextInput,
+      userId: null == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -159,7 +172,8 @@ class _$ContactInfoStateImpl extends _ContactInfoState {
       @PhoneNumberInputConverter()
       this.nextOfKinPhone = const PhoneNumberInput.pure(),
       @RequiredTextInputConverter()
-      this.nextOfKinRelationship = const RequiredTextInput.pure()})
+      this.nextOfKinRelationship = const RequiredTextInput.pure(),
+      this.userId = ''})
       : super._();
 
   factory _$ContactInfoStateImpl.fromJson(Map<String, dynamic> json) =>
@@ -181,10 +195,13 @@ class _$ContactInfoStateImpl extends _ContactInfoState {
   @JsonKey()
   @RequiredTextInputConverter()
   final RequiredTextInput nextOfKinRelationship;
+  @override
+  @JsonKey()
+  final String userId;
 
   @override
   String toString() {
-    return 'ContactInfoState(phoneNumber: $phoneNumber, nextOfKinName: $nextOfKinName, nextOfKinPhone: $nextOfKinPhone, nextOfKinRelationship: $nextOfKinRelationship)';
+    return 'ContactInfoState(phoneNumber: $phoneNumber, nextOfKinName: $nextOfKinName, nextOfKinPhone: $nextOfKinPhone, nextOfKinRelationship: $nextOfKinRelationship, userId: $userId)';
   }
 
   @override
@@ -199,13 +216,14 @@ class _$ContactInfoStateImpl extends _ContactInfoState {
             (identical(other.nextOfKinPhone, nextOfKinPhone) ||
                 other.nextOfKinPhone == nextOfKinPhone) &&
             (identical(other.nextOfKinRelationship, nextOfKinRelationship) ||
-                other.nextOfKinRelationship == nextOfKinRelationship));
+                other.nextOfKinRelationship == nextOfKinRelationship) &&
+            (identical(other.userId, userId) || other.userId == userId));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, phoneNumber, nextOfKinName,
-      nextOfKinPhone, nextOfKinRelationship);
+      nextOfKinPhone, nextOfKinRelationship, userId);
 
   /// Create a copy of ContactInfoState
   /// with the given fields replaced by the non-null parameter values.
@@ -230,7 +248,8 @@ abstract class _ContactInfoState extends ContactInfoState {
       @NameInputConverter() final NameInput nextOfKinName,
       @PhoneNumberInputConverter() final PhoneNumberInput nextOfKinPhone,
       @RequiredTextInputConverter()
-      final RequiredTextInput nextOfKinRelationship}) = _$ContactInfoStateImpl;
+      final RequiredTextInput nextOfKinRelationship,
+      final String userId}) = _$ContactInfoStateImpl;
   const _ContactInfoState._() : super._();
 
   factory _ContactInfoState.fromJson(Map<String, dynamic> json) =
@@ -248,6 +267,8 @@ abstract class _ContactInfoState extends ContactInfoState {
   @override
   @RequiredTextInputConverter()
   RequiredTextInput get nextOfKinRelationship;
+  @override
+  String get userId;
 
   /// Create a copy of ContactInfoState
   /// with the given fields replaced by the non-null parameter values.

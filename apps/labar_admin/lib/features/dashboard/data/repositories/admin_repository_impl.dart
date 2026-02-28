@@ -67,6 +67,11 @@ abstract class AdminRepository {
   Future<List<Map<String, dynamic>>> getWarehouseFarmers(String warehouseId);
   Future<List<Map<String, dynamic>>> getWarehouseAllocations(
       String warehouseId);
+
+  // Streams for real-time
+  Stream<List<Map<String, dynamic>>> get inventoryStream;
+  Stream<List<Map<String, dynamic>>> get waybillsStream;
+  Stream<List<Map<String, dynamic>>> get warehousesStream;
 }
 
 @LazySingleton(as: AdminRepository)
@@ -383,4 +388,31 @@ class AdminRepositoryImpl implements AdminRepository {
         .order('created_at', ascending: false);
     return List<Map<String, dynamic>>.from(response);
   }
+
+  @override
+  Stream<List<Map<String, dynamic>>> get inventoryStream => _supabaseClient
+      .from('inventory')
+      .stream(primaryKey: ['id'])
+      .order('created_at', ascending: false)
+      .asyncMap((event) async {
+        // We need the joins, stream doesn't support them directly easily
+        // but we can fetch the latest list when stream emits
+        return await getInventory();
+      });
+
+  @override
+  Stream<List<Map<String, dynamic>>> get waybillsStream => _supabaseClient
+      .from('waybills')
+      .stream(primaryKey: ['id'])
+      .order('created_at', ascending: false)
+      .asyncMap((event) async {
+        return await getWaybills();
+      });
+
+  @override
+  Stream<List<Map<String, dynamic>>> get warehousesStream => _supabaseClient
+          .from('warehouses')
+          .stream(primaryKey: ['id']).asyncMap((event) async {
+        return await getWarehouses();
+      });
 }

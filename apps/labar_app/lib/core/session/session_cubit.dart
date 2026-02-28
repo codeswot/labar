@@ -26,8 +26,11 @@ class SessionCubit extends Cubit<SessionState> {
   }
 
   Future<void> signOut() async {
-    await _authRepository.signOut();
-    await HydratedBloc.storage.clear();
+    try {
+      await _authRepository.signOut();
+    } finally {
+      await HydratedBloc.storage.clear();
+    }
   }
 
   @override

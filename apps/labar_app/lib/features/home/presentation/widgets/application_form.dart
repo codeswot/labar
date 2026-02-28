@@ -54,10 +54,11 @@ class _ApplicationFormState extends State<ApplicationForm> {
       providers: [
         BlocProvider(
           create: (_) {
-            final app =
-                context.read<ApplicationFormCubit>().state.initialApplication;
+            final cubit = context.read<ApplicationFormCubit>();
+            final app = cubit.state.initialApplication;
             return getIt<PersonalInfoCubit>()
               ..init(
+                currentUserId: cubit.state.userId,
                 firstName: app?.firstName,
                 lastName: app?.lastName,
                 otherNames: app?.otherNames,
@@ -70,10 +71,11 @@ class _ApplicationFormState extends State<ApplicationForm> {
         ),
         BlocProvider(
           create: (_) {
-            final app =
-                context.read<ApplicationFormCubit>().state.initialApplication;
+            final cubit = context.read<ApplicationFormCubit>();
+            final app = cubit.state.initialApplication;
             return getIt<ContactInfoCubit>()
               ..init(
+                currentUserId: cubit.state.userId,
                 phoneNumber: app?.phoneNumber,
                 nextOfKinName: app?.nextOfKinName,
                 nextOfKinPhone: app?.nextOfKinPhone,
@@ -83,10 +85,11 @@ class _ApplicationFormState extends State<ApplicationForm> {
         ),
         BlocProvider(
           create: (_) {
-            final app =
-                context.read<ApplicationFormCubit>().state.initialApplication;
+            final cubit = context.read<ApplicationFormCubit>();
+            final app = cubit.state.initialApplication;
             return getIt<KycDetailsCubit>()
               ..init(
+                currentUserId: cubit.state.userId,
                 kycType: app?.kycType,
                 kycNumber: app?.kycNumber,
               );
@@ -94,10 +97,11 @@ class _ApplicationFormState extends State<ApplicationForm> {
         ),
         BlocProvider(
           create: (_) {
-            final app =
-                context.read<ApplicationFormCubit>().state.initialApplication;
+            final cubit = context.read<ApplicationFormCubit>();
+            final app = cubit.state.initialApplication;
             return getIt<FarmDetailsCubit>()
               ..init(
+                currentUserId: cubit.state.userId,
                 farmSize: app?.farmSize,
                 farmLocation: app?.farmLocation,
                 cropType: app?.cropType,
@@ -108,10 +112,11 @@ class _ApplicationFormState extends State<ApplicationForm> {
         ),
         BlocProvider(
           create: (_) {
-            final app =
-                context.read<ApplicationFormCubit>().state.initialApplication;
+            final cubit = context.read<ApplicationFormCubit>();
+            final app = cubit.state.initialApplication;
             return getIt<BankDetailsCubit>()
               ..init(
+                currentUserId: cubit.state.userId,
                 bankName: app?.bankName,
                 accountNumber: app?.accountNumber,
                 accountName: app?.accountName,
@@ -120,8 +125,10 @@ class _ApplicationFormState extends State<ApplicationForm> {
         ),
         BlocProvider(
           create: (_) {
-            return getIt<
-                BiometricsCubit>(); // Biometrics are not pre-filled for now
+            return getIt<BiometricsCubit>()
+              ..init(
+                  currentUserId:
+                      context.read<ApplicationFormCubit>().state.userId);
           },
         ),
       ],
@@ -131,6 +138,15 @@ class _ApplicationFormState extends State<ApplicationForm> {
             previous.status != current.status,
         listener: (context, state) {
           if (state.status == ApplicationFormStatus.success) {
+            // Clear all hydrated cubits involved in the form
+            context.read<PersonalInfoCubit>().clear();
+            context.read<ContactInfoCubit>().clear();
+            context.read<KycDetailsCubit>().clear();
+            context.read<FarmDetailsCubit>().clear();
+            context.read<BankDetailsCubit>().clear();
+            context.read<BiometricsCubit>().reset();
+            context.read<ApplicationFormCubit>().clear();
+
             try {
               context.read<HomeCubit>().setView(HomeView.submitted);
             } catch (_) {

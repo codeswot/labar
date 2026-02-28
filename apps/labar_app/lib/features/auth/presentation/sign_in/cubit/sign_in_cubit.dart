@@ -57,9 +57,14 @@ class SignInCubit extends Cubit<SignInState> {
 
     emit(state.copyWith(status: SignInStatus.inProgress));
 
+    String? formattedPhone = state.phone.value;
+    if (state.usePhone && formattedPhone.startsWith('0')) {
+      formattedPhone = '+234${formattedPhone.substring(1)}';
+    }
+
     final result = await _signInUseCase(SignInParams(
       email: state.usePhone ? null : state.email.value,
-      phone: state.usePhone ? state.phone.value : null,
+      phone: state.usePhone ? formattedPhone : null,
       password: state.password.value,
     ));
 

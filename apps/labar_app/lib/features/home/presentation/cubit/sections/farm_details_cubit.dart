@@ -13,12 +13,19 @@ class FarmDetailsCubit extends HydratedCubit<FarmDetailsState> {
   FarmDetailsCubit() : super(const FarmDetailsState());
 
   void init({
+    required String currentUserId,
     String? farmSize,
     String? farmLocation,
     String? cropType,
     double? latitude,
     double? longitude,
   }) {
+    if (state.userId.isNotEmpty && state.userId != currentUserId) {
+      emit(FarmDetailsState(userId: currentUserId));
+    } else if (state.userId.isEmpty) {
+      emit(state.copyWith(userId: currentUserId));
+    }
+
     emit(state.copyWith(
       farmSize: farmSize != null && farmSize.isNotEmpty
           ? NumberInput.dirty(farmSize)

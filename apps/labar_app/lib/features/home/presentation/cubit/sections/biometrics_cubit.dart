@@ -11,6 +11,7 @@ class BiometricsState with _$BiometricsState {
     List<int>? signatureBytes,
     String? passportPath,
     String? idCardPath,
+    @Default('') String userId,
   }) = _BiometricsState;
 
   const BiometricsState._();
@@ -28,6 +29,14 @@ class BiometricsState with _$BiometricsState {
 class BiometricsCubit extends Cubit<BiometricsState> {
   BiometricsCubit() : super(const BiometricsState());
 
+  void init({required String currentUserId}) {
+    if (state.userId.isNotEmpty && state.userId != currentUserId) {
+      emit(BiometricsState(userId: currentUserId));
+    } else if (state.userId.isEmpty) {
+      emit(state.copyWith(userId: currentUserId));
+    }
+  }
+
   void setSignature(List<int>? bytes) {
     emit(state.copyWith(signatureBytes: bytes));
   }
@@ -38,5 +47,9 @@ class BiometricsCubit extends Cubit<BiometricsState> {
 
   void setIDCard(String? path) {
     emit(state.copyWith(idCardPath: path));
+  }
+
+  void reset() {
+    emit(BiometricsState(userId: state.userId));
   }
 }

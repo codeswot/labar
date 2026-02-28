@@ -26,6 +26,7 @@ mixin _$BankDetailsState {
   BankAccountInput get accountNumber => throw _privateConstructorUsedError;
   @OptionalTextInputConverter()
   OptionalTextInput get accountName => throw _privateConstructorUsedError;
+  String get userId => throw _privateConstructorUsedError;
 
   /// Serializes this BankDetailsState to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -46,7 +47,8 @@ abstract class $BankDetailsStateCopyWith<$Res> {
   $Res call(
       {@OptionalTextInputConverter() OptionalTextInput bankName,
       @BankAccountInputConverter() BankAccountInput accountNumber,
-      @OptionalTextInputConverter() OptionalTextInput accountName});
+      @OptionalTextInputConverter() OptionalTextInput accountName,
+      String userId});
 }
 
 /// @nodoc
@@ -67,6 +69,7 @@ class _$BankDetailsStateCopyWithImpl<$Res, $Val extends BankDetailsState>
     Object? bankName = null,
     Object? accountNumber = null,
     Object? accountName = null,
+    Object? userId = null,
   }) {
     return _then(_value.copyWith(
       bankName: null == bankName
@@ -81,6 +84,10 @@ class _$BankDetailsStateCopyWithImpl<$Res, $Val extends BankDetailsState>
           ? _value.accountName
           : accountName // ignore: cast_nullable_to_non_nullable
               as OptionalTextInput,
+      userId: null == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
@@ -96,7 +103,8 @@ abstract class _$$BankDetailsStateImplCopyWith<$Res>
   $Res call(
       {@OptionalTextInputConverter() OptionalTextInput bankName,
       @BankAccountInputConverter() BankAccountInput accountNumber,
-      @OptionalTextInputConverter() OptionalTextInput accountName});
+      @OptionalTextInputConverter() OptionalTextInput accountName,
+      String userId});
 }
 
 /// @nodoc
@@ -115,6 +123,7 @@ class __$$BankDetailsStateImplCopyWithImpl<$Res>
     Object? bankName = null,
     Object? accountNumber = null,
     Object? accountName = null,
+    Object? userId = null,
   }) {
     return _then(_$BankDetailsStateImpl(
       bankName: null == bankName
@@ -129,6 +138,10 @@ class __$$BankDetailsStateImplCopyWithImpl<$Res>
           ? _value.accountName
           : accountName // ignore: cast_nullable_to_non_nullable
               as OptionalTextInput,
+      userId: null == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -143,7 +156,8 @@ class _$BankDetailsStateImpl extends _BankDetailsState {
       @BankAccountInputConverter()
       this.accountNumber = const BankAccountInput.pure(),
       @OptionalTextInputConverter()
-      this.accountName = const OptionalTextInput.pure()})
+      this.accountName = const OptionalTextInput.pure(),
+      this.userId = ''})
       : super._();
 
   factory _$BankDetailsStateImpl.fromJson(Map<String, dynamic> json) =>
@@ -161,10 +175,13 @@ class _$BankDetailsStateImpl extends _BankDetailsState {
   @JsonKey()
   @OptionalTextInputConverter()
   final OptionalTextInput accountName;
+  @override
+  @JsonKey()
+  final String userId;
 
   @override
   String toString() {
-    return 'BankDetailsState(bankName: $bankName, accountNumber: $accountNumber, accountName: $accountName)';
+    return 'BankDetailsState(bankName: $bankName, accountNumber: $accountNumber, accountName: $accountName, userId: $userId)';
   }
 
   @override
@@ -177,13 +194,14 @@ class _$BankDetailsStateImpl extends _BankDetailsState {
             (identical(other.accountNumber, accountNumber) ||
                 other.accountNumber == accountNumber) &&
             (identical(other.accountName, accountName) ||
-                other.accountName == accountName));
+                other.accountName == accountName) &&
+            (identical(other.userId, userId) || other.userId == userId));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, bankName, accountNumber, accountName);
+      Object.hash(runtimeType, bankName, accountNumber, accountName, userId);
 
   /// Create a copy of BankDetailsState
   /// with the given fields replaced by the non-null parameter values.
@@ -204,10 +222,10 @@ class _$BankDetailsStateImpl extends _BankDetailsState {
 
 abstract class _BankDetailsState extends BankDetailsState {
   const factory _BankDetailsState(
-          {@OptionalTextInputConverter() final OptionalTextInput bankName,
-          @BankAccountInputConverter() final BankAccountInput accountNumber,
-          @OptionalTextInputConverter() final OptionalTextInput accountName}) =
-      _$BankDetailsStateImpl;
+      {@OptionalTextInputConverter() final OptionalTextInput bankName,
+      @BankAccountInputConverter() final BankAccountInput accountNumber,
+      @OptionalTextInputConverter() final OptionalTextInput accountName,
+      final String userId}) = _$BankDetailsStateImpl;
   const _BankDetailsState._() : super._();
 
   factory _BankDetailsState.fromJson(Map<String, dynamic> json) =
@@ -222,6 +240,8 @@ abstract class _BankDetailsState extends BankDetailsState {
   @override
   @OptionalTextInputConverter()
   OptionalTextInput get accountName;
+  @override
+  String get userId;
 
   /// Create a copy of BankDetailsState
   /// with the given fields replaced by the non-null parameter values.

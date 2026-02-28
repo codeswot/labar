@@ -14,6 +14,7 @@ class ContactInfoState with _$ContactInfoState {
     @RequiredTextInputConverter()
     @Default(RequiredTextInput.pure())
     RequiredTextInput nextOfKinRelationship,
+    @Default('') String userId,
   }) = _ContactInfoState;
 
   const ContactInfoState._();

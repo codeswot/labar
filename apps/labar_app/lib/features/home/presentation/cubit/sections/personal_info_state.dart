@@ -24,6 +24,7 @@ class PersonalInfoState with _$PersonalInfoState {
     DateTime? dateOfBirth,
     @Default([]) List<String> availableStates,
     @Default([]) List<String> currentLgas,
+    @Default('') String userId,
   }) = _PersonalInfoState;
 
   const PersonalInfoState._();

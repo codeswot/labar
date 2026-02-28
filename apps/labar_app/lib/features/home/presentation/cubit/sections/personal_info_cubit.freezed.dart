@@ -37,6 +37,7 @@ mixin _$PersonalInfoState {
   DateTime? get dateOfBirth => throw _privateConstructorUsedError;
   List<String> get availableStates => throw _privateConstructorUsedError;
   List<String> get currentLgas => throw _privateConstructorUsedError;
+  String get userId => throw _privateConstructorUsedError;
 
   /// Serializes this PersonalInfoState to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -64,7 +65,8 @@ abstract class $PersonalInfoStateCopyWith<$Res> {
       @RequiredTextInputConverter() RequiredTextInput town,
       DateTime? dateOfBirth,
       List<String> availableStates,
-      List<String> currentLgas});
+      List<String> currentLgas,
+      String userId});
 }
 
 /// @nodoc
@@ -92,6 +94,7 @@ class _$PersonalInfoStateCopyWithImpl<$Res, $Val extends PersonalInfoState>
     Object? dateOfBirth = freezed,
     Object? availableStates = null,
     Object? currentLgas = null,
+    Object? userId = null,
   }) {
     return _then(_value.copyWith(
       firstName: null == firstName
@@ -134,6 +137,10 @@ class _$PersonalInfoStateCopyWithImpl<$Res, $Val extends PersonalInfoState>
           ? _value.currentLgas
           : currentLgas // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      userId: null == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
@@ -156,7 +163,8 @@ abstract class _$$PersonalInfoStateImplCopyWith<$Res>
       @RequiredTextInputConverter() RequiredTextInput town,
       DateTime? dateOfBirth,
       List<String> availableStates,
-      List<String> currentLgas});
+      List<String> currentLgas,
+      String userId});
 }
 
 /// @nodoc
@@ -182,6 +190,7 @@ class __$$PersonalInfoStateImplCopyWithImpl<$Res>
     Object? dateOfBirth = freezed,
     Object? availableStates = null,
     Object? currentLgas = null,
+    Object? userId = null,
   }) {
     return _then(_$PersonalInfoStateImpl(
       firstName: null == firstName
@@ -224,6 +233,10 @@ class __$$PersonalInfoStateImplCopyWithImpl<$Res>
           ? _value._currentLgas
           : currentLgas // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      userId: null == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -245,7 +258,8 @@ class _$PersonalInfoStateImpl extends _PersonalInfoState {
       @RequiredTextInputConverter() this.town = const RequiredTextInput.pure(),
       this.dateOfBirth,
       final List<String> availableStates = const [],
-      final List<String> currentLgas = const []})
+      final List<String> currentLgas = const [],
+      this.userId = ''})
       : _availableStates = availableStates,
         _currentLgas = currentLgas,
         super._();
@@ -302,8 +316,12 @@ class _$PersonalInfoStateImpl extends _PersonalInfoState {
   }
 
   @override
+  @JsonKey()
+  final String userId;
+
+  @override
   String toString() {
-    return 'PersonalInfoState(firstName: $firstName, lastName: $lastName, otherNames: $otherNames, gender: $gender, stateOfOrigin: $stateOfOrigin, lga: $lga, town: $town, dateOfBirth: $dateOfBirth, availableStates: $availableStates, currentLgas: $currentLgas)';
+    return 'PersonalInfoState(firstName: $firstName, lastName: $lastName, otherNames: $otherNames, gender: $gender, stateOfOrigin: $stateOfOrigin, lga: $lga, town: $town, dateOfBirth: $dateOfBirth, availableStates: $availableStates, currentLgas: $currentLgas, userId: $userId)';
   }
 
   @override
@@ -327,7 +345,8 @@ class _$PersonalInfoStateImpl extends _PersonalInfoState {
             const DeepCollectionEquality()
                 .equals(other._availableStates, _availableStates) &&
             const DeepCollectionEquality()
-                .equals(other._currentLgas, _currentLgas));
+                .equals(other._currentLgas, _currentLgas) &&
+            (identical(other.userId, userId) || other.userId == userId));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -343,7 +362,8 @@ class _$PersonalInfoStateImpl extends _PersonalInfoState {
       town,
       dateOfBirth,
       const DeepCollectionEquality().hash(_availableStates),
-      const DeepCollectionEquality().hash(_currentLgas));
+      const DeepCollectionEquality().hash(_currentLgas),
+      userId);
 
   /// Create a copy of PersonalInfoState
   /// with the given fields replaced by the non-null parameter values.
@@ -373,7 +393,8 @@ abstract class _PersonalInfoState extends PersonalInfoState {
       @RequiredTextInputConverter() final RequiredTextInput town,
       final DateTime? dateOfBirth,
       final List<String> availableStates,
-      final List<String> currentLgas}) = _$PersonalInfoStateImpl;
+      final List<String> currentLgas,
+      final String userId}) = _$PersonalInfoStateImpl;
   const _PersonalInfoState._() : super._();
 
   factory _PersonalInfoState.fromJson(Map<String, dynamic> json) =
@@ -406,6 +427,8 @@ abstract class _PersonalInfoState extends PersonalInfoState {
   List<String> get availableStates;
   @override
   List<String> get currentLgas;
+  @override
+  String get userId;
 
   /// Create a copy of PersonalInfoState
   /// with the given fields replaced by the non-null parameter values.

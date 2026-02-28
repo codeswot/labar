@@ -21,6 +21,7 @@ _$BankDetailsStateImpl _$$BankDetailsStateImplFromJson(
           ? const OptionalTextInput.pure()
           : const OptionalTextInputConverter()
               .fromJson(json['account_name'] as String),
+      userId: json['user_id'] as String? ?? '',
     );
 
 Map<String, dynamic> _$$BankDetailsStateImplToJson(
@@ -31,4 +32,5 @@ Map<String, dynamic> _$$BankDetailsStateImplToJson(
           const BankAccountInputConverter().toJson(instance.accountNumber),
       'account_name':
           const OptionalTextInputConverter().toJson(instance.accountName),
+      'user_id': instance.userId,
     };

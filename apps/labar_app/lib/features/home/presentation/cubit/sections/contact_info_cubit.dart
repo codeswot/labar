@@ -12,11 +12,18 @@ class ContactInfoCubit extends HydratedCubit<ContactInfoState> {
   ContactInfoCubit() : super(const ContactInfoState());
 
   void init({
+    required String currentUserId,
     String? phoneNumber,
     String? nextOfKinName,
     String? nextOfKinPhone,
     String? nextOfKinRelationship,
   }) {
+    if (state.userId.isNotEmpty && state.userId != currentUserId) {
+      emit(ContactInfoState(userId: currentUserId));
+    } else if (state.userId.isEmpty) {
+      emit(state.copyWith(userId: currentUserId));
+    }
+
     emit(state.copyWith(
       phoneNumber: phoneNumber != null && phoneNumber.isNotEmpty
           ? PhoneNumberInput.dirty(phoneNumber)

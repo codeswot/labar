@@ -25,6 +25,7 @@ _$ContactInfoStateImpl _$$ContactInfoStateImplFromJson(
           ? const RequiredTextInput.pure()
           : const RequiredTextInputConverter()
               .fromJson(json['next_of_kin_relationship'] as String),
+      userId: json['user_id'] as String? ?? '',
     );
 
 Map<String, dynamic> _$$ContactInfoStateImplToJson(
@@ -38,4 +39,5 @@ Map<String, dynamic> _$$ContactInfoStateImplToJson(
           const PhoneNumberInputConverter().toJson(instance.nextOfKinPhone),
       'next_of_kin_relationship': const RequiredTextInputConverter()
           .toJson(instance.nextOfKinRelationship),
+      'user_id': instance.userId,
     };

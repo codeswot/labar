@@ -27,7 +27,7 @@ class ApplicationFormCubit extends HydratedCubit<ApplicationFormState> {
 
   void init(String userId) {
     if (state.userId != userId) {
-      emit(state.copyWith(userId: userId));
+      emit(ApplicationFormState(userId: userId));
     }
   }
 
@@ -149,9 +149,9 @@ class ApplicationFormCubit extends HydratedCubit<ApplicationFormState> {
         passportPath: passportPath,
         idCardPath: idCardPath,
         // Contact
-        phoneNumber: contactInfo.phoneNumber.value,
+        phoneNumber: _formatPhoneNumber(contactInfo.phoneNumber.value),
         nextOfKinName: contactInfo.nextOfKinName.value,
-        nextOfKinPhone: contactInfo.nextOfKinPhone.value,
+        nextOfKinPhone: _formatPhoneNumber(contactInfo.nextOfKinPhone.value),
         nextOfKinRelationship: contactInfo.nextOfKinRelationship.value,
         // Farm
         farmSize: farmDetails.farmSize.value,
@@ -184,6 +184,13 @@ class ApplicationFormCubit extends HydratedCubit<ApplicationFormState> {
         errorMessage: e.toString(),
       ));
     }
+  }
+
+  String _formatPhoneNumber(String phone) {
+    if (phone.startsWith('0')) {
+      return '+234${phone.substring(1)}';
+    }
+    return phone;
   }
 
   @override

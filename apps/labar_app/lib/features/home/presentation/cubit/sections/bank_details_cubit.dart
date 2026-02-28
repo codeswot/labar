@@ -12,10 +12,17 @@ class BankDetailsCubit extends HydratedCubit<BankDetailsState> {
   BankDetailsCubit() : super(const BankDetailsState());
 
   void init({
+    required String currentUserId,
     String? bankName,
     String? accountNumber,
     String? accountName,
   }) {
+    if (state.userId.isNotEmpty && state.userId != currentUserId) {
+      emit(BankDetailsState(userId: currentUserId));
+    } else if (state.userId.isEmpty) {
+      emit(state.copyWith(userId: currentUserId));
+    }
+
     emit(state.copyWith(
       bankName: bankName != null && bankName.isNotEmpty
           ? OptionalTextInput.dirty(bankName)

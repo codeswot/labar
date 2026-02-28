@@ -14,6 +14,7 @@ _$KycDetailsStateImpl _$$KycDetailsStateImplFromJson(
           ? const RequiredTextInput.pure()
           : const RequiredTextInputConverter()
               .fromJson(json['kyc_number'] as String),
+      userId: json['user_id'] as String? ?? '',
     );
 
 Map<String, dynamic> _$$KycDetailsStateImplToJson(
@@ -22,6 +23,7 @@ Map<String, dynamic> _$$KycDetailsStateImplToJson(
       'kyc_type': _$KycTypeEnumMap[instance.kycType],
       'kyc_number':
           const RequiredTextInputConverter().toJson(instance.kycNumber),
+      'user_id': instance.userId,
     };
 
 const _$KycTypeEnumMap = {
