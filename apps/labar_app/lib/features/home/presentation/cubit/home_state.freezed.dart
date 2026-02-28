@@ -18,6 +18,8 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$HomeState {
   HomeView get view => throw _privateConstructorUsedError;
   ApplicationEntity? get application => throw _privateConstructorUsedError;
+  List<AllocatedResourceEntity> get allocatedResources =>
+      throw _privateConstructorUsedError;
   bool get isLoading => throw _privateConstructorUsedError;
   String? get errorMessage => throw _privateConstructorUsedError;
 
@@ -36,6 +38,7 @@ abstract class $HomeStateCopyWith<$Res> {
   $Res call(
       {HomeView view,
       ApplicationEntity? application,
+      List<AllocatedResourceEntity> allocatedResources,
       bool isLoading,
       String? errorMessage});
 }
@@ -57,6 +60,7 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
   $Res call({
     Object? view = null,
     Object? application = freezed,
+    Object? allocatedResources = null,
     Object? isLoading = null,
     Object? errorMessage = freezed,
   }) {
@@ -69,6 +73,10 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
           ? _value.application
           : application // ignore: cast_nullable_to_non_nullable
               as ApplicationEntity?,
+      allocatedResources: null == allocatedResources
+          ? _value.allocatedResources
+          : allocatedResources // ignore: cast_nullable_to_non_nullable
+              as List<AllocatedResourceEntity>,
       isLoading: null == isLoading
           ? _value.isLoading
           : isLoading // ignore: cast_nullable_to_non_nullable
@@ -92,6 +100,7 @@ abstract class _$$HomeStateImplCopyWith<$Res>
   $Res call(
       {HomeView view,
       ApplicationEntity? application,
+      List<AllocatedResourceEntity> allocatedResources,
       bool isLoading,
       String? errorMessage});
 }
@@ -111,6 +120,7 @@ class __$$HomeStateImplCopyWithImpl<$Res>
   $Res call({
     Object? view = null,
     Object? application = freezed,
+    Object? allocatedResources = null,
     Object? isLoading = null,
     Object? errorMessage = freezed,
   }) {
@@ -123,6 +133,10 @@ class __$$HomeStateImplCopyWithImpl<$Res>
           ? _value.application
           : application // ignore: cast_nullable_to_non_nullable
               as ApplicationEntity?,
+      allocatedResources: null == allocatedResources
+          ? _value._allocatedResources
+          : allocatedResources // ignore: cast_nullable_to_non_nullable
+              as List<AllocatedResourceEntity>,
       isLoading: null == isLoading
           ? _value.isLoading
           : isLoading // ignore: cast_nullable_to_non_nullable
@@ -141,14 +155,26 @@ class _$HomeStateImpl implements _HomeState {
   const _$HomeStateImpl(
       {this.view = HomeView.form,
       this.application,
+      final List<AllocatedResourceEntity> allocatedResources = const [],
       this.isLoading = true,
-      this.errorMessage});
+      this.errorMessage})
+      : _allocatedResources = allocatedResources;
 
   @override
   @JsonKey()
   final HomeView view;
   @override
   final ApplicationEntity? application;
+  final List<AllocatedResourceEntity> _allocatedResources;
+  @override
+  @JsonKey()
+  List<AllocatedResourceEntity> get allocatedResources {
+    if (_allocatedResources is EqualUnmodifiableListView)
+      return _allocatedResources;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_allocatedResources);
+  }
+
   @override
   @JsonKey()
   final bool isLoading;
@@ -157,7 +183,7 @@ class _$HomeStateImpl implements _HomeState {
 
   @override
   String toString() {
-    return 'HomeState(view: $view, application: $application, isLoading: $isLoading, errorMessage: $errorMessage)';
+    return 'HomeState(view: $view, application: $application, allocatedResources: $allocatedResources, isLoading: $isLoading, errorMessage: $errorMessage)';
   }
 
   @override
@@ -168,6 +194,8 @@ class _$HomeStateImpl implements _HomeState {
             (identical(other.view, view) || other.view == view) &&
             (identical(other.application, application) ||
                 other.application == application) &&
+            const DeepCollectionEquality()
+                .equals(other._allocatedResources, _allocatedResources) &&
             (identical(other.isLoading, isLoading) ||
                 other.isLoading == isLoading) &&
             (identical(other.errorMessage, errorMessage) ||
@@ -175,8 +203,13 @@ class _$HomeStateImpl implements _HomeState {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, view, application, isLoading, errorMessage);
+  int get hashCode => Object.hash(
+      runtimeType,
+      view,
+      application,
+      const DeepCollectionEquality().hash(_allocatedResources),
+      isLoading,
+      errorMessage);
 
   /// Create a copy of HomeState
   /// with the given fields replaced by the non-null parameter values.
@@ -191,6 +224,7 @@ abstract class _HomeState implements HomeState {
   const factory _HomeState(
       {final HomeView view,
       final ApplicationEntity? application,
+      final List<AllocatedResourceEntity> allocatedResources,
       final bool isLoading,
       final String? errorMessage}) = _$HomeStateImpl;
 
@@ -198,6 +232,8 @@ abstract class _HomeState implements HomeState {
   HomeView get view;
   @override
   ApplicationEntity? get application;
+  @override
+  List<AllocatedResourceEntity> get allocatedResources;
   @override
   bool get isLoading;
   @override

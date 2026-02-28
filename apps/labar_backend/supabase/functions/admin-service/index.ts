@@ -93,7 +93,7 @@ serve(async (req) => {
         if (action === 'create_user') {
             const targetRole = role ?? 'farmer'
             const isAuthorized = callerRole === 'super_admin' ||
-                (callerRole === 'admin' && (targetRole === 'admin' || targetRole === 'agent' || targetRole === 'farmer'));
+                (callerRole === 'admin' && (targetRole === 'admin' || targetRole === 'agent' || targetRole === 'farmer' || targetRole === 'warehouse_manager'));
 
             if (!isAuthorized) {
                 return new Response(JSON.stringify({ error: 'Unauthorized role creation' }), {

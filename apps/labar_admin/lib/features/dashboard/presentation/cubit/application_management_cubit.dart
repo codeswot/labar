@@ -50,6 +50,7 @@ class ApplicationManagementCubit extends Cubit<ApplicationManagementState> {
     emit(state.copyWith(isLoading: true, error: null));
 
     try {
+      await loadStates();
       final warehouses = await _warehouseRepository.getWarehouses();
       emit(state.copyWith(warehouses: warehouses));
 

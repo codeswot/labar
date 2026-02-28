@@ -121,12 +121,14 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i153.AuthRepositoryImpl(gh<_i107.AuthRemoteDataSource>()));
     gh.factory<_i948.AssignedWarehouseCubit>(
         () => _i948.AssignedWarehouseCubit(gh<_i503.WarehouseRepository>()));
+    gh.factory<_i9.HomeCubit>(() => _i9.HomeCubit(
+          gh<_i508.ApplicationRepository>(),
+          gh<_i204.AllocatedResourceRepository>(),
+        ));
     gh.factory<_i801.WarehouseSelectionCubit>(
         () => _i801.WarehouseSelectionCubit(gh<_i503.WarehouseRepository>()));
     gh.lazySingleton<_i124.ApplicationFormCubit>(
         () => _i124.ApplicationFormCubit(gh<_i508.ApplicationRepository>()));
-    gh.factory<_i9.HomeCubit>(
-        () => _i9.HomeCubit(gh<_i508.ApplicationRepository>()));
     gh.factory<_i774.AgentSelectionCubit>(
         () => _i774.AgentSelectionCubit(gh<_i508.ApplicationRepository>()));
     gh.lazySingleton<_i796.SessionCubit>(

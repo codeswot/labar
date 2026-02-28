@@ -97,7 +97,8 @@ class _SignUpVerificationPageState extends State<SignUpVerificationPage> {
                             onTap: state.resendCountdown > 0
                                 ? null
                                 : () {
-                                    BlocProvider.of<SignUpVerificationCubit>(context)
+                                    BlocProvider.of<SignUpVerificationCubit>(
+                                            context)
                                         .resendOtp(widget.email);
                                     MoonToast.show(
                                       context,
@@ -138,7 +139,8 @@ class _SignUpVerificationPageState extends State<SignUpVerificationPage> {
                                 icon: const Icon(
                                     MoonIcons.controls_close_24_regular),
                                 onPressed: () {
-                                  BlocProvider.of<SignUpVerificationCubit>(context)
+                                  BlocProvider.of<SignUpVerificationCubit>(
+                                          context)
                                       .clearError();
                                 },
                               ),

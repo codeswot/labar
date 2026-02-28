@@ -83,7 +83,8 @@ class SignInPage extends StatelessWidget {
                             icon:
                                 const Icon(MoonIcons.controls_close_24_regular),
                             onPressed: () {
-                              BlocProvider.of<SignInCubit>(context).clearError();
+                              BlocProvider.of<SignInCubit>(context)
+                                  .clearError();
                             },
                           ),
                         ),

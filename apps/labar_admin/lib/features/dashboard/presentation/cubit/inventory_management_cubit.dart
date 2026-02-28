@@ -14,6 +14,8 @@ class InventoryManagementState with _$InventoryManagementState {
     @Default([]) List<Map<String, dynamic>> waybills,
     @Default([]) List<Map<String, dynamic>> warehouses,
     @Default([]) List<Map<String, dynamic>> selectedInventoryAllocations,
+    @Default([]) List<Map<String, dynamic>> selectedWarehouseFarmers,
+    @Default([]) List<Map<String, dynamic>> selectedWarehouseAllocations,
     String? error,
   }) = _InventoryManagementState;
 }
@@ -44,15 +46,54 @@ class InventoryManagementCubit extends Cubit<InventoryManagementState> {
     }
   }
 
+  Future<void> addWarehouse({
+    required String name,
+    required String address,
+    String? state,
+  }) async {
+    try {
+      await _repository.addWarehouse(
+        name: name,
+        address: address,
+        state: state,
+      );
+      await init(); // Refresh
+    } catch (e, stack) {
+      AppLogger.error('Failed to add warehouse', e, stack);
+      emit(this.state.copyWith(error: e.toString()));
+    }
+  }
+
+  Future<void> updateWarehouse({
+    required String id,
+    required String name,
+    required String address,
+    String? state,
+  }) async {
+    try {
+      await _repository.updateWarehouse(
+        id: id,
+        name: name,
+        address: address,
+        state: state,
+      );
+      await init(); // Refresh
+    } catch (e, stack) {
+      AppLogger.error('Failed to update warehouse', e, stack);
+      emit(this.state.copyWith(error: e.toString()));
+    }
+  }
+
   Future<void> addInventory({
     required String warehouseId,
     required String itemName,
     required num quantity,
     required String unit,
+    num? pricePerItem,
   }) async {
     try {
       await _repository.addOrUpdateInventory(
-          warehouseId, itemName, quantity, unit);
+          warehouseId, itemName, quantity, unit, pricePerItem);
       await init(); // Refresh
     } catch (e, stack) {
       AppLogger.error('Failed to add inventory', e, stack);
@@ -106,6 +147,27 @@ class InventoryManagementCubit extends Cubit<InventoryManagementState> {
       ));
     } catch (e, stack) {
       AppLogger.error('Failed to fetch inventory details', e, stack);
+      emit(state.copyWith(isLoading: false, error: e.toString()));
+    }
+  }
+
+  Future<void> fetchWarehouseDetails(String warehouseId) async {
+    emit(state.copyWith(
+        isLoading: true,
+        error: null,
+        selectedWarehouseFarmers: [],
+        selectedWarehouseAllocations: []));
+    try {
+      final farmers = await _repository.getWarehouseFarmers(warehouseId);
+      final allocations =
+          await _repository.getWarehouseAllocations(warehouseId);
+      emit(state.copyWith(
+        isLoading: false,
+        selectedWarehouseFarmers: farmers,
+        selectedWarehouseAllocations: allocations,
+      ));
+    } catch (e, stack) {
+      AppLogger.error('Failed to fetch warehouse details', e, stack);
       emit(state.copyWith(isLoading: false, error: e.toString()));
     }
   }

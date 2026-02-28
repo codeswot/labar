@@ -58,21 +58,24 @@ class _ThemeSectionState extends State<_ThemeSection> {
         children: [
           MoonMenuItem(
             onTap: () {
-              BlocProvider.of<ThemeCubit>(context).setThemeMode(AppThemeMode.system);
+              BlocProvider.of<ThemeCubit>(context)
+                  .setThemeMode(AppThemeMode.system);
               setState(() => _showDropdown = false);
             },
             label: Text(context.l10n.system),
           ),
           MoonMenuItem(
             onTap: () {
-              BlocProvider.of<ThemeCubit>(context).setThemeMode(AppThemeMode.light);
+              BlocProvider.of<ThemeCubit>(context)
+                  .setThemeMode(AppThemeMode.light);
               setState(() => _showDropdown = false);
             },
             label: Text(context.l10n.light),
           ),
           MoonMenuItem(
             onTap: () {
-              BlocProvider.of<ThemeCubit>(context).setThemeMode(AppThemeMode.dark);
+              BlocProvider.of<ThemeCubit>(context)
+                  .setThemeMode(AppThemeMode.dark);
               setState(() => _showDropdown = false);
             },
             label: Text(context.l10n.dark),
@@ -109,14 +112,16 @@ class _LanguageSectionState extends State<_LanguageSection> {
         children: [
           MoonMenuItem(
             onTap: () {
-              BlocProvider.of<LanguageCubit>(context).setLocale(const Locale('en'));
+              BlocProvider.of<LanguageCubit>(context)
+                  .setLocale(const Locale('en'));
               setState(() => _showDropdown = false);
             },
             label: const Text('English'),
           ),
           MoonMenuItem(
             onTap: () {
-              BlocProvider.of<LanguageCubit>(context).setLocale(const Locale('ha'));
+              BlocProvider.of<LanguageCubit>(context)
+                  .setLocale(const Locale('ha'));
               setState(() => _showDropdown = false);
             },
             label: const Text('Hausa'),
@@ -234,7 +239,8 @@ class _LogoutButton extends StatelessWidget {
                               ),
                               onTap: () {
                                 Navigator.of(context).pop();
-                                BlocProvider.of<SessionCubit>(context).signOut();
+                                BlocProvider.of<SessionCubit>(context)
+                                    .signOut();
                               },
                             ),
                           ),

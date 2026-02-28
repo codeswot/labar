@@ -19,7 +19,10 @@ class AuthGuard extends AutoRouteGuard {
     final state = sessionCubit.state;
     if (state.status == SessionStatus.authenticated) {
       final role = state.user?.role;
-      if (role == 'admin' || role == 'super_admin' || role == 'agent') {
+      if (role == 'admin' ||
+          role == 'super_admin' ||
+          role == 'agent' ||
+          role == 'warehouse_manager') {
         resolver.next(true);
       } else {
         router.push(const NotAuthorizedRoute());

@@ -58,7 +58,8 @@ class SignUpPage extends StatelessWidget {
                             icon:
                                 const Icon(MoonIcons.controls_close_24_regular),
                             onPressed: () {
-                              BlocProvider.of<SignUpCubit>(context).clearError();
+                              BlocProvider.of<SignUpCubit>(context)
+                                  .clearError();
                             },
                           ),
                         ),

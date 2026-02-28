@@ -3,15 +3,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:injectable/injectable.dart';
 import 'package:labar_app/features/home/domain/repositories/application_repository.dart';
+import 'package:labar_app/features/home/domain/repositories/allocated_resource_repository.dart';
 import 'package:labar_app/features/home/presentation/cubit/home_state.dart';
 
 @injectable
 class HomeCubit extends Cubit<HomeState> {
   final ApplicationRepository _applicationRepository;
+  final AllocatedResourceRepository _resourceRepository;
   StreamSubscription? _applicationSubscription;
+  StreamSubscription? _resourceSubscription;
   final ImagePicker _imagePicker = ImagePicker();
 
-  HomeCubit(this._applicationRepository) : super(const HomeState()) {
+  HomeCubit(this._applicationRepository, this._resourceRepository)
+      : super(const HomeState()) {
     _init();
   }
 
@@ -27,6 +31,7 @@ class HomeCubit extends Cubit<HomeState> {
             isLoading: false,
             errorMessage: null,
           ));
+          _watchResources(application.id);
         } else {
           emit(state.copyWith(
             application: null,
@@ -84,12 +89,26 @@ class HomeCubit extends Cubit<HomeState> {
     }
   }
 
+  void _watchResources(String applicationId) {
+    _resourceSubscription?.cancel();
+    _resourceSubscription =
+        _resourceRepository.watchAllocatedResources(applicationId).listen(
+      (resources) {
+        emit(state.copyWith(allocatedResources: resources));
+      },
+      onError: (e) {
+        // AppLogger.error('Failed to watch resources', e);
+      },
+    );
+  }
+
   void setView(HomeView view) {
     emit(state.copyWith(view: view));
   }
 
   void reset() {
     _applicationSubscription?.cancel();
+    _resourceSubscription?.cancel();
     emit(const HomeState(isLoading: true));
     _init();
   }
@@ -97,6 +116,7 @@ class HomeCubit extends Cubit<HomeState> {
   @override
   Future<void> close() {
     _applicationSubscription?.cancel();
+    _resourceSubscription?.cancel();
     return super.close();
   }
 }

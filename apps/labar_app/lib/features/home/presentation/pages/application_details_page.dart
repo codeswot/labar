@@ -8,6 +8,7 @@ import 'package:labar_app/features/home/domain/entities/enums.dart';
 import 'package:labar_app/features/home/presentation/cubit/application_form_cubit.dart';
 import 'package:labar_app/features/home/presentation/cubit/home_cubit.dart';
 import 'package:labar_app/features/home/presentation/cubit/home_state.dart';
+import 'package:labar_app/core/utils/currency_utils.dart';
 import 'package:labar_app/features/home/presentation/widgets/supabase_image.dart';
 import 'package:ui_library/ui_library.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -166,6 +167,110 @@ class ApplicationDetailsPage extends StatelessWidget {
                           context.read<HomeCubit>().refreshApplication(),
                     ),
                   ),
+                ],
+                if (state.allocatedResources.isNotEmpty) ...[
+                  const SizedBox(height: 32),
+                  _SectionTitle(title: 'Allocated Resources'),
+                  const SizedBox(height: 8),
+                  for (final res in state.allocatedResources)
+                    Builder(builder: (context) {
+                      final inv = res.inventoryItem;
+                      final price = inv?['price_per_item'] ?? 0;
+                      final total = res.quantity * price;
+                      final unit = inv?['unit'] ?? '';
+
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: context.moonColors?.goku,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                              color: context.moonColors?.beerus ?? Colors.grey),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  inv?['item_name'] ?? 'Item',
+                                  style: context.moonTypography?.heading.text14,
+                                ),
+                                Text(
+                                  '${res.quantity} $unit',
+                                  style: context.moonTypography?.heading.text14,
+                                ),
+                              ],
+                            ),
+                            if (price > 0) ...[
+                              const SizedBox(height: 4),
+                              Text(
+                                'Price: ${CurrencyUtils.formatNaira(price)} | Total: ${CurrencyUtils.formatNaira(total)}',
+                                style: context.moonTypography?.body.text12
+                                    .copyWith(
+                                  color:
+                                      context.moonColors?.roshi ?? Colors.green,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                            const SizedBox(height: 4),
+                            Text(
+                              'Collection: ${res.collectionAddress}',
+                              style: context.moonTypography?.body.text12,
+                            ),
+                            if (inv?['warehouses'] != null)
+                              Text(
+                                'Warehouse: ${inv?['warehouses']?['name']} (${inv?['warehouses']?['state']})',
+                                style: context.moonTypography?.body.text12
+                                    .copyWith(
+                                        color: context.moonColors?.trunks),
+                              ),
+                            if (res.isCollected) ...[
+                              const SizedBox(height: 8),
+                              MoonTag(
+                                label: const Text('COLLECTED'),
+                                tagSize: MoonTagSize.xs,
+                                backgroundColor:
+                                    Colors.green.withValues(alpha: 0.2),
+                              ),
+                            ],
+                          ],
+                        ),
+                      );
+                    }),
+                  const SizedBox(height: 12),
+                  if (state.allocatedResources.any(
+                      (res) => (res.inventoryItem?['price_per_item'] ?? 0) > 0))
+                    Builder(builder: (context) {
+                      final grandTotal = state.allocatedResources.fold<num>(
+                          0,
+                          (sum, res) =>
+                              sum +
+                              (res.quantity *
+                                  (res.inventoryItem?['price_per_item'] ?? 0)));
+                      return Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: context.moonColors?.beerus ??
+                              Colors.grey.shade200,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Grand Total (Resources)',
+                                style: context.moonTypography?.heading.text14),
+                            Text(CurrencyUtils.formatNaira(grandTotal),
+                                style: context.moonTypography?.heading.text16
+                                    .copyWith(
+                                        color: context.moonColors?.piccolo)),
+                          ],
+                        ),
+                      );
+                    }),
                 ],
               ],
             ),

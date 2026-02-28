@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:labar_admin/core/session/session_cubit.dart';
+import 'package:labar_admin/core/utils/currency_utils.dart';
 import 'package:labar_admin/features/dashboard/presentation/cubit/inventory_management_cubit.dart';
+import 'package:labar_admin/features/dashboard/presentation/widgets/detail_info.dart';
 import 'package:ui_library/ui_library.dart';
 import 'pdf_waybill_generator.dart';
 import 'package:intl/intl.dart';
@@ -17,6 +19,10 @@ class InventoryManagementView extends StatefulWidget {
 class _InventoryManagementViewState extends State<InventoryManagementView> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
+  String? _invWarehouseFilter;
+  String? _invStateFilter;
+  bool _invLowStockFilter = false;
+  String? _wbWarehouseFilter;
 
   @override
   void dispose() {
@@ -85,7 +91,13 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                             _showAddInventory(context, state.warehouses),
                         label: const Text('Add Inventory'),
                       ),
-                      const SizedBox(width: 16),
+                      const SizedBox(width: 12),
+                      AppButton.filled(
+                        isFullWidth: false,
+                        onTap: () => _showAddWarehouse(context),
+                        label: const Text('Add Warehouse'),
+                      ),
+                      const SizedBox(width: 12),
                       AppButton.filled(
                         isFullWidth: false,
                         onTap: () => _showGenerateWaybill(
@@ -112,12 +124,86 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(24.0),
-                      child: Text('Current Inventory Levels',
-                          style: context.moonTypography?.heading.text18),
+                      child: Row(
+                        children: [
+                          Text('Current Inventory Levels',
+                              style: context.moonTypography?.heading.text18),
+                          const Spacer(),
+                          SizedBox(
+                            width: 150,
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<String>(
+                                value: _invWarehouseFilter,
+                                hint: const Text('Warehouse'),
+                                isExpanded: true,
+                                onChanged: (v) =>
+                                    setState(() => _invWarehouseFilter = v),
+                                items: [
+                                  const DropdownMenuItem(
+                                      value: null,
+                                      child: Text('All Warehouses')),
+                                  ...state.warehouses.map((w) =>
+                                      DropdownMenuItem(
+                                          value: w['id'],
+                                          child: Text(w['name']))),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          SizedBox(
+                            width: 150,
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<String>(
+                                value: _invStateFilter,
+                                hint: const Text('State'),
+                                isExpanded: true,
+                                onChanged: (v) =>
+                                    setState(() => _invStateFilter = v),
+                                items: [
+                                  const DropdownMenuItem(
+                                      value: null, child: Text('All States')),
+                                  ...state.warehouses
+                                      .map((w) => w['state'])
+                                      .toSet()
+                                      .where((s) => s != null)
+                                      .map((s) => DropdownMenuItem(
+                                          value: s, child: Text(s!))),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          MoonChip(
+                            label: const Text('Low Stock'),
+                            isActive: _invLowStockFilter,
+                            onTap: () => setState(
+                                () => _invLowStockFilter = !_invLowStockFilter),
+                          ),
+                        ],
+                      ),
                     ),
                     const Divider(height: 0),
                     Builder(builder: (context) {
                       final filteredInventory = state.inventory.where((inv) {
+                        // Filter by Warehouse
+                        if (_invWarehouseFilter != null &&
+                            inv['warehouse_id'] != _invWarehouseFilter) {
+                          return false;
+                        }
+
+                        // Filter by State
+                        if (_invStateFilter != null &&
+                            inv['warehouses']?['state'] != _invStateFilter) {
+                          return false;
+                        }
+
+                        // Filter by Low Stock (e.g. < 50)
+                        if (_invLowStockFilter &&
+                            (inv['quantity'] as num) >= 50) {
+                          return false;
+                        }
+
                         if (_searchQuery.isEmpty) return true;
                         final itemName =
                             (inv['item_name'] ?? '').toString().toLowerCase();
@@ -143,17 +229,28 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                         columns: const [
                           DataColumn(label: Text('Item Name')),
                           DataColumn(label: Text('Warehouse')),
+                          DataColumn(label: Text('State')),
                           DataColumn(label: Text('Quantity')),
                           DataColumn(label: Text('Unit')),
+                          DataColumn(label: Text('Price per Item')),
                         ],
                         rows: filteredInventory.map((inv) {
-                          return DataRow(cells: [
-                            DataCell(Text(inv['item_name'] ?? '')),
-                            DataCell(Text(inv['warehouses']?['name'] ??
-                                'Unknown Warehouse')),
-                            DataCell(Text(inv['quantity'].toString())),
-                            DataCell(Text(inv['unit'] ?? '')),
-                          ]);
+                          return DataRow(
+                              onSelectChanged: (_) =>
+                                  _showInventoryDetailDialog(context, inv),
+                              cells: [
+                                DataCell(Text(inv['item_name'] ?? '')),
+                                DataCell(Text(inv['warehouses']?['name'] ??
+                                    'Unknown Warehouse')),
+                                DataCell(
+                                    Text(inv['warehouses']?['state'] ?? 'N/A')),
+                                DataCell(Text(inv['quantity'].toString())),
+                                DataCell(Text(inv['unit'] ?? '')),
+                                DataCell(Text(inv['price_per_item'] != null
+                                    ? CurrencyUtils.formatNaira(
+                                        inv['price_per_item'])
+                                    : 'Free')),
+                              ]);
                         }).toList(),
                       );
                     }),
@@ -177,12 +274,44 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(24.0),
-                      child: Text('Waybills Generated',
-                          style: context.moonTypography?.heading.text18),
+                      child: Row(
+                        children: [
+                          Text('Waybills Generated',
+                              style: context.moonTypography?.heading.text18),
+                          const Spacer(),
+                          SizedBox(
+                            width: 200,
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<String>(
+                                value: _wbWarehouseFilter,
+                                hint: const Text('Source Warehouse'),
+                                isExpanded: true,
+                                onChanged: (v) =>
+                                    setState(() => _wbWarehouseFilter = v),
+                                items: [
+                                  const DropdownMenuItem(
+                                      value: null,
+                                      child: Text('All Warehouses')),
+                                  ...state.warehouses.map((w) =>
+                                      DropdownMenuItem(
+                                          value: w['id'],
+                                          child: Text(w['name']))),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     const Divider(height: 0),
                     Builder(builder: (context) {
                       final filteredWaybills = state.waybills.where((wb) {
+                        // Filter by Source Warehouse
+                        if (_wbWarehouseFilter != null &&
+                            wb['warehouse_id'] != _wbWarehouseFilter) {
+                          return false;
+                        }
+
                         if (_searchQuery.isEmpty) return true;
                         final waybillNumber = (wb['waybill_number'] ?? '')
                             .toString()
@@ -252,6 +381,136 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
     );
   }
 
+  void _showAddWarehouse(BuildContext context) {
+    final nameController = TextEditingController();
+    final addressController = TextEditingController();
+    String? selectedState;
+    bool showStateDropdown = false;
+
+    final nigeriaStates = [
+      "Abia",
+      "Adamawa",
+      "Akwa Ibom",
+      "Anambra",
+      "Bauchi",
+      "Bayelsa",
+      "Benue",
+      "Borno",
+      "Cross River",
+      "Delta",
+      "Ebonyi",
+      "Edo",
+      "Ekiti",
+      "Enugu",
+      "FCT",
+      "Gombe",
+      "Imo",
+      "Jigawa",
+      "Kaduna",
+      "Kano",
+      "Katsina",
+      "Kebbi",
+      "Kogi",
+      "Kwara",
+      "Lagos",
+      "Nasarawa",
+      "Niger",
+      "Ogun",
+      "Ondo",
+      "Osun",
+      "Oyo",
+      "Plateau",
+      "Rivers",
+      "Sokoto",
+      "Taraba",
+      "Yobe",
+      "Zamfara"
+    ];
+
+    final cubit = context.read<InventoryManagementCubit>();
+    showDialog(
+      context: context,
+      builder: (dialogContext) => BlocProvider.value(
+        value: cubit,
+        child: StatefulBuilder(
+          builder: (context, setState) => AlertDialog(
+            title: const Text('Add New Warehouse'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                MoonTextInput(
+                  controller: nameController,
+                  hintText: 'Warehouse Name',
+                ),
+                const SizedBox(height: 12),
+                MoonTextInput(
+                  controller: addressController,
+                  hintText: 'Address',
+                ),
+                const SizedBox(height: 12),
+                MoonDropdown(
+                  show: showStateDropdown,
+                  onTapOutside: () => setState(() => showStateDropdown = false),
+                  content: Container(
+                    constraints: const BoxConstraints(maxHeight: 300),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: nigeriaStates
+                            .map((s) => MoonMenuItem(
+                                  onTap: () {
+                                    setState(() {
+                                      selectedState = s;
+                                      showStateDropdown = false;
+                                    });
+                                  },
+                                  label: Text(s),
+                                ))
+                            .toList(),
+                      ),
+                    ),
+                  ),
+                  child: GestureDetector(
+                    onTap: () => setState(() => showStateDropdown = true),
+                    child: AbsorbPointer(
+                      child: MoonTextInput(
+                        hintText: 'Select State',
+                        controller: TextEditingController(text: selectedState),
+                        trailing: const Icon(Icons.arrow_drop_down),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(dialogContext),
+                child: const Text('Cancel'),
+              ),
+              AppButton.filled(
+                isFullWidth: false,
+                label: const Text('Add Warehouse'),
+                onTap: () {
+                  if (nameController.text.isNotEmpty &&
+                      selectedState != null &&
+                      addressController.text.isNotEmpty) {
+                    context.read<InventoryManagementCubit>().addWarehouse(
+                          name: nameController.text,
+                          address: addressController.text,
+                          state: selectedState,
+                        );
+                    Navigator.pop(dialogContext);
+                  }
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   void _showAddInventory(
       BuildContext context, List<Map<String, dynamic>> warehouses) {
     final cubit = context.read<InventoryManagementCubit>();
@@ -259,6 +518,7 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
     final itemNameController = TextEditingController();
     final qtyController = TextEditingController();
     final unitController = TextEditingController();
+    final priceController = TextEditingController();
 
     showDialog(
         context: context,
@@ -289,7 +549,8 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                                   });
                                   setState(() {});
                                 },
-                                label: Text(w['name'] ?? 'Unknown'),
+                                label: Text(
+                                    '${w['name']} (${w['state'] ?? 'N/A'})'),
                               );
                             }).toList(),
                           ),
@@ -326,6 +587,13 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                       controller: unitController,
                       hintText: 'Unit (e.g. Bags)',
                     ),
+                    const SizedBox(height: 12),
+                    MoonTextInput(
+                      controller: priceController,
+                      hintText: 'Price per Item (Optional, blank = Free)',
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                    ),
                   ],
                 ),
               ),
@@ -337,6 +605,7 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                 AppButton.filled(
                   onTap: () {
                     final qty = num.tryParse(qtyController.text) ?? 0;
+                    final price = num.tryParse(priceController.text);
                     if (qty > 0) {
                       if (selectedWarehouseId != null) {
                         cubit.addInventory(
@@ -344,6 +613,7 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                           itemName: itemNameController.text.trim(),
                           quantity: qty,
                           unit: unitController.text.trim(),
+                          pricePerItem: price,
                         );
                         Navigator.pop(dialogCtx);
                       } else {
@@ -410,7 +680,8 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                                     showWarehouseDropdown = false;
                                   });
                                 },
-                                label: Text(w['name'] ?? 'Unknown'),
+                                label: Text(
+                                    '${w['name']} (${w['state'] ?? 'N/A'})'),
                               );
                             }).toList(),
                           ),
@@ -547,6 +818,138 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                 ],
               );
             }));
+  }
+
+  void _showInventoryDetailDialog(
+      BuildContext context, Map<String, dynamic> inv) {
+    final cubit = context.read<InventoryManagementCubit>();
+    cubit.fetchInventoryDetails(inv['id']);
+
+    showDialog(
+      context: context,
+      builder: (dialogCtx) => BlocProvider.value(
+        value: cubit,
+        child: BlocBuilder<InventoryManagementCubit, InventoryManagementState>(
+          builder: (context, state) {
+            final allocations = state.selectedInventoryAllocations;
+            final totalAllocated = allocations.fold<num>(
+                0, (sum, item) => sum + (item['quantity'] as num? ?? 0));
+
+            return AlertDialog(
+              title: Text('Inventory Detail: ${inv['item_name']}'),
+              content: SizedBox(
+                width: 600,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      DetailInfo(label: 'Item Name', value: inv['item_name']),
+                      DetailInfo(
+                          label: 'Warehouse',
+                          value: inv['warehouses']?['name'] ??
+                              'Unknown Warehouse'),
+                      DetailInfo(
+                          label: 'State',
+                          value: inv['warehouses']?['state'] ?? 'N/A'),
+                      DetailInfo(
+                          label: 'Address',
+                          value: inv['warehouses']?['address'] ?? 'N/A'),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: DetailInfo(
+                                label: 'Quantity Available',
+                                value: '${inv['quantity']} ${inv['unit']}'),
+                          ),
+                          Expanded(
+                            child: DetailInfo(
+                                label: 'Quantity Allocated',
+                                value: '$totalAllocated ${inv['unit']}'),
+                          ),
+                        ],
+                      ),
+                      DetailInfo(
+                          label: 'Price per Item',
+                          value: inv['price_per_item'] != null
+                              ? CurrencyUtils.formatNaira(inv['price_per_item'])
+                              : 'Free'),
+                      const SizedBox(height: 24),
+                      Text('Allocation History & Associated Farmers',
+                          style: context.moonTypography?.heading.text16),
+                      const SizedBox(height: 12),
+                      if (state.isLoading)
+                        const Center(child: MoonCircularLoader())
+                      else if (allocations.isEmpty)
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 24.0),
+                          child: Center(child: Text('No allocations found.')),
+                        )
+                      else
+                        Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                                color:
+                                    context.moonColors?.beerus ?? Colors.grey),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: ListView.separated(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: allocations.length,
+                            separatorBuilder: (context, index) =>
+                                const Divider(height: 0),
+                            itemBuilder: (context, index) {
+                              final alloc = allocations[index];
+                              final app = alloc['applications'];
+                              final farmerName = app != null
+                                  ? '${app['first_name'] ?? ''} ${app['last_name'] ?? ''}'
+                                  : 'Unknown Farmer';
+                              final date = alloc['created_at'] != null
+                                  ? DateFormat('MMM dd, yyyy HH:mm').format(
+                                      DateTime.parse(alloc['created_at']))
+                                  : '-';
+                              final price = inv['price_per_item'] ?? 0;
+                              final total =
+                                  (alloc['quantity'] as num? ?? 0) * price;
+
+                              return ListTile(
+                                title: Text(farmerName),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('Allocated on: $date'),
+                                    if (price > 0)
+                                      Text(
+                                          'Total Value: ${CurrencyUtils.formatNaira(total)}',
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.orange)),
+                                  ],
+                                ),
+                                trailing: Text(
+                                  '${alloc['quantity']} ${inv['unit']}',
+                                  style: context.moonTypography?.heading.text14,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(dialogCtx),
+                  child: const Text('Close'),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
   }
 
   void _downloadWaybillPDF(

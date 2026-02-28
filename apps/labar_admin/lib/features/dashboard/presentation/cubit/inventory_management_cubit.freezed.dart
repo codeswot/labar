@@ -24,6 +24,10 @@ mixin _$InventoryManagementState {
       throw _privateConstructorUsedError;
   List<Map<String, dynamic>> get selectedInventoryAllocations =>
       throw _privateConstructorUsedError;
+  List<Map<String, dynamic>> get selectedWarehouseFarmers =>
+      throw _privateConstructorUsedError;
+  List<Map<String, dynamic>> get selectedWarehouseAllocations =>
+      throw _privateConstructorUsedError;
   String? get error => throw _privateConstructorUsedError;
 
   /// Create a copy of InventoryManagementState
@@ -45,6 +49,8 @@ abstract class $InventoryManagementStateCopyWith<$Res> {
       List<Map<String, dynamic>> waybills,
       List<Map<String, dynamic>> warehouses,
       List<Map<String, dynamic>> selectedInventoryAllocations,
+      List<Map<String, dynamic>> selectedWarehouseFarmers,
+      List<Map<String, dynamic>> selectedWarehouseAllocations,
       String? error});
 }
 
@@ -69,6 +75,8 @@ class _$InventoryManagementStateCopyWithImpl<$Res,
     Object? waybills = null,
     Object? warehouses = null,
     Object? selectedInventoryAllocations = null,
+    Object? selectedWarehouseFarmers = null,
+    Object? selectedWarehouseAllocations = null,
     Object? error = freezed,
   }) {
     return _then(_value.copyWith(
@@ -91,6 +99,14 @@ class _$InventoryManagementStateCopyWithImpl<$Res,
       selectedInventoryAllocations: null == selectedInventoryAllocations
           ? _value.selectedInventoryAllocations
           : selectedInventoryAllocations // ignore: cast_nullable_to_non_nullable
+              as List<Map<String, dynamic>>,
+      selectedWarehouseFarmers: null == selectedWarehouseFarmers
+          ? _value.selectedWarehouseFarmers
+          : selectedWarehouseFarmers // ignore: cast_nullable_to_non_nullable
+              as List<Map<String, dynamic>>,
+      selectedWarehouseAllocations: null == selectedWarehouseAllocations
+          ? _value.selectedWarehouseAllocations
+          : selectedWarehouseAllocations // ignore: cast_nullable_to_non_nullable
               as List<Map<String, dynamic>>,
       error: freezed == error
           ? _value.error
@@ -115,6 +131,8 @@ abstract class _$$InventoryManagementStateImplCopyWith<$Res>
       List<Map<String, dynamic>> waybills,
       List<Map<String, dynamic>> warehouses,
       List<Map<String, dynamic>> selectedInventoryAllocations,
+      List<Map<String, dynamic>> selectedWarehouseFarmers,
+      List<Map<String, dynamic>> selectedWarehouseAllocations,
       String? error});
 }
 
@@ -138,6 +156,8 @@ class __$$InventoryManagementStateImplCopyWithImpl<$Res>
     Object? waybills = null,
     Object? warehouses = null,
     Object? selectedInventoryAllocations = null,
+    Object? selectedWarehouseFarmers = null,
+    Object? selectedWarehouseAllocations = null,
     Object? error = freezed,
   }) {
     return _then(_$InventoryManagementStateImpl(
@@ -161,6 +181,14 @@ class __$$InventoryManagementStateImplCopyWithImpl<$Res>
           ? _value._selectedInventoryAllocations
           : selectedInventoryAllocations // ignore: cast_nullable_to_non_nullable
               as List<Map<String, dynamic>>,
+      selectedWarehouseFarmers: null == selectedWarehouseFarmers
+          ? _value._selectedWarehouseFarmers
+          : selectedWarehouseFarmers // ignore: cast_nullable_to_non_nullable
+              as List<Map<String, dynamic>>,
+      selectedWarehouseAllocations: null == selectedWarehouseAllocations
+          ? _value._selectedWarehouseAllocations
+          : selectedWarehouseAllocations // ignore: cast_nullable_to_non_nullable
+              as List<Map<String, dynamic>>,
       error: freezed == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
@@ -178,11 +206,15 @@ class _$InventoryManagementStateImpl implements _InventoryManagementState {
       final List<Map<String, dynamic>> waybills = const [],
       final List<Map<String, dynamic>> warehouses = const [],
       final List<Map<String, dynamic>> selectedInventoryAllocations = const [],
+      final List<Map<String, dynamic>> selectedWarehouseFarmers = const [],
+      final List<Map<String, dynamic>> selectedWarehouseAllocations = const [],
       this.error})
       : _inventory = inventory,
         _waybills = waybills,
         _warehouses = warehouses,
-        _selectedInventoryAllocations = selectedInventoryAllocations;
+        _selectedInventoryAllocations = selectedInventoryAllocations,
+        _selectedWarehouseFarmers = selectedWarehouseFarmers,
+        _selectedWarehouseAllocations = selectedWarehouseAllocations;
 
   @override
   @JsonKey()
@@ -224,12 +256,32 @@ class _$InventoryManagementStateImpl implements _InventoryManagementState {
     return EqualUnmodifiableListView(_selectedInventoryAllocations);
   }
 
+  final List<Map<String, dynamic>> _selectedWarehouseFarmers;
+  @override
+  @JsonKey()
+  List<Map<String, dynamic>> get selectedWarehouseFarmers {
+    if (_selectedWarehouseFarmers is EqualUnmodifiableListView)
+      return _selectedWarehouseFarmers;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_selectedWarehouseFarmers);
+  }
+
+  final List<Map<String, dynamic>> _selectedWarehouseAllocations;
+  @override
+  @JsonKey()
+  List<Map<String, dynamic>> get selectedWarehouseAllocations {
+    if (_selectedWarehouseAllocations is EqualUnmodifiableListView)
+      return _selectedWarehouseAllocations;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_selectedWarehouseAllocations);
+  }
+
   @override
   final String? error;
 
   @override
   String toString() {
-    return 'InventoryManagementState(isLoading: $isLoading, inventory: $inventory, waybills: $waybills, warehouses: $warehouses, selectedInventoryAllocations: $selectedInventoryAllocations, error: $error)';
+    return 'InventoryManagementState(isLoading: $isLoading, inventory: $inventory, waybills: $waybills, warehouses: $warehouses, selectedInventoryAllocations: $selectedInventoryAllocations, selectedWarehouseFarmers: $selectedWarehouseFarmers, selectedWarehouseAllocations: $selectedWarehouseAllocations, error: $error)';
   }
 
   @override
@@ -247,6 +299,11 @@ class _$InventoryManagementStateImpl implements _InventoryManagementState {
             const DeepCollectionEquality().equals(
                 other._selectedInventoryAllocations,
                 _selectedInventoryAllocations) &&
+            const DeepCollectionEquality().equals(
+                other._selectedWarehouseFarmers, _selectedWarehouseFarmers) &&
+            const DeepCollectionEquality().equals(
+                other._selectedWarehouseAllocations,
+                _selectedWarehouseAllocations) &&
             (identical(other.error, error) || other.error == error));
   }
 
@@ -258,6 +315,8 @@ class _$InventoryManagementStateImpl implements _InventoryManagementState {
       const DeepCollectionEquality().hash(_waybills),
       const DeepCollectionEquality().hash(_warehouses),
       const DeepCollectionEquality().hash(_selectedInventoryAllocations),
+      const DeepCollectionEquality().hash(_selectedWarehouseFarmers),
+      const DeepCollectionEquality().hash(_selectedWarehouseAllocations),
       error);
 
   /// Create a copy of InventoryManagementState
@@ -277,6 +336,8 @@ abstract class _InventoryManagementState implements InventoryManagementState {
       final List<Map<String, dynamic>> waybills,
       final List<Map<String, dynamic>> warehouses,
       final List<Map<String, dynamic>> selectedInventoryAllocations,
+      final List<Map<String, dynamic>> selectedWarehouseFarmers,
+      final List<Map<String, dynamic>> selectedWarehouseAllocations,
       final String? error}) = _$InventoryManagementStateImpl;
 
   @override
@@ -289,6 +350,10 @@ abstract class _InventoryManagementState implements InventoryManagementState {
   List<Map<String, dynamic>> get warehouses;
   @override
   List<Map<String, dynamic>> get selectedInventoryAllocations;
+  @override
+  List<Map<String, dynamic>> get selectedWarehouseFarmers;
+  @override
+  List<Map<String, dynamic>> get selectedWarehouseAllocations;
   @override
   String? get error;
 

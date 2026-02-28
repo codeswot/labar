@@ -1,6 +1,6 @@
 -- 1. Create a custom enum for roles
 -- MIGRATION NOTE: If you have an existing DB, run: ALTER TYPE public.app_role ADD VALUE 'super_admin' BEFORE 'admin';
-create type public.app_role as enum ('super_admin', 'admin', 'farmer', 'agent');
+create type public.app_role as enum ('super_admin', 'admin', 'farmer', 'agent', 'warehouse_manager');
 
 -- 2. Create the user_roles table
 create table if not exists public.user_roles (

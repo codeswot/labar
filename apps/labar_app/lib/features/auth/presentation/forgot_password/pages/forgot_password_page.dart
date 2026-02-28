@@ -109,7 +109,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                   icon: const Icon(
                                       MoonIcons.controls_close_24_regular),
                                   onPressed: () {
-                                    BlocProvider.of<ForgotPasswordCubit>(context)
+                                    BlocProvider.of<ForgotPasswordCubit>(
+                                            context)
                                         .clearError();
                                   },
                                 ),

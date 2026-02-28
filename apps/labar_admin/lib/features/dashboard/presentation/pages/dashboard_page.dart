@@ -16,7 +16,18 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  int _selectedIndex = 0;
+  late int _selectedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    final user = context.read<SessionCubit>().state.user;
+    if (user?.role == 'warehouse_manager') {
+      _selectedIndex = 4;
+    } else {
+      _selectedIndex = 0;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,14 +35,16 @@ class _DashboardPageState extends State<DashboardPage> {
       builder: (context, state) {
         final user = state.user;
         final role = user?.role;
-        final isAdmin = role == 'admin' || role == 'super_admin';
+        final isSuperAdmin = role == 'super_admin';
+        final isAdmin = role == 'admin' || isSuperAdmin;
+        final isWarehouseManager = role == 'warehouse_manager';
 
         return Scaffold(
           body: Row(
             children: [
               // Sidebar
               Container(
-                width: 260,
+                width: 275,
                 color: context.moonColors?.gohan,
                 child: Column(
                   children: [
@@ -53,30 +66,38 @@ class _DashboardPageState extends State<DashboardPage> {
                       ),
                     ),
                     const SizedBox(height: 32),
-                    if (isAdmin) ...[
+                    if (isAdmin || isWarehouseManager) ...[
                       _SidebarItem(
                         label: 'Overview',
                         icon: Icons.grid_view_rounded,
                         selected: _selectedIndex == 0,
                         onTap: () => setState(() => _selectedIndex = 0),
                       ),
-                      _SidebarItem(
-                        label: 'Applications',
-                        icon: Icons.assignment_rounded,
-                        selected: _selectedIndex == 1,
-                        onTap: () => setState(() => _selectedIndex = 1),
-                      ),
-                      _SidebarItem(
-                        label: 'User Management',
-                        icon: Icons.people_alt_rounded,
-                        selected: _selectedIndex == 2,
-                        onTap: () => setState(() => _selectedIndex = 2),
-                      ),
+                      if (isAdmin)
+                        _SidebarItem(
+                          label: 'Applications',
+                          icon: Icons.assignment_rounded,
+                          selected: _selectedIndex == 1,
+                          onTap: () => setState(() => _selectedIndex = 1),
+                        ),
+                      if (isSuperAdmin)
+                        _SidebarItem(
+                          label: 'User Management',
+                          icon: Icons.people_alt_rounded,
+                          selected: _selectedIndex == 2,
+                          onTap: () => setState(() => _selectedIndex = 2),
+                        ),
                       _SidebarItem(
                         label: 'Inventory',
                         icon: Icons.inventory_2_rounded,
                         selected: _selectedIndex == 3,
                         onTap: () => setState(() => _selectedIndex = 3),
+                      ),
+                      _SidebarItem(
+                        label: 'Warehouses',
+                        icon: Icons.warehouse_rounded,
+                        selected: _selectedIndex == 4,
+                        onTap: () => setState(() => _selectedIndex = 4),
                       ),
                     ] else ...[
                       _SidebarItem(
@@ -137,7 +158,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   color: context.moonColors?.goku,
                   child: AnimatedSwitcher(
                     duration: const Duration(milliseconds: 200),
-                    child: isAdmin
+                    child: (isAdmin || isWarehouseManager)
                         ? AdminDashboardView(index: _selectedIndex)
                         : const AgentDashboardView(),
                   ),
