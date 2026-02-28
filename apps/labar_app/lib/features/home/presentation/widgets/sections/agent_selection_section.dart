@@ -89,19 +89,21 @@ class _AgentSelectionContent extends StatelessWidget {
                 separatorBuilder: (context, index) =>
                     const SizedBox(height: 12),
                 itemBuilder: (context, index) {
-                  final agent = state.filteredAgents[index];
-                  final isSelected = context.select(
-                    (ApplicationFormCubit cubit) =>
-                        cubit.state.selectedAgent?.id == agent.id,
-                  );
+                  return Builder(builder: (context) {
+                    final agent = state.filteredAgents[index];
+                    final isSelected = context.select(
+                      (ApplicationFormCubit cubit) =>
+                          cubit.state.selectedAgent?.id == agent.id,
+                    );
 
-                  return _AgentCard(
-                    agent: agent,
-                    isSelected: isSelected,
-                    onTap: () {
-                      context.read<ApplicationFormCubit>().selectAgent(agent);
-                    },
-                  );
+                    return _AgentCard(
+                      agent: agent,
+                      isSelected: isSelected,
+                      onTap: () {
+                        context.read<ApplicationFormCubit>().selectAgent(agent);
+                      },
+                    );
+                  });
                 },
               );
             },

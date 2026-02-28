@@ -91,21 +91,23 @@ class _WarehouseSelectionContent extends StatelessWidget {
                 separatorBuilder: (context, index) =>
                     const SizedBox(height: 12),
                 itemBuilder: (context, index) {
-                  final warehouse = state.filteredWarehouses[index];
-                  final isSelected = context.select(
-                    (ApplicationFormCubit cubit) =>
-                        cubit.state.selectedWarehouse?.id == warehouse.id,
-                  );
+                  return Builder(builder: (context) {
+                    final warehouse = state.filteredWarehouses[index];
+                    final isSelected = context.select(
+                      (ApplicationFormCubit cubit) =>
+                          cubit.state.selectedWarehouse?.id == warehouse.id,
+                    );
 
-                  return _WarehouseCard(
-                    warehouse: warehouse,
-                    isSelected: isSelected,
-                    onTap: () {
-                      context
-                          .read<ApplicationFormCubit>()
-                          .selectWarehouse(warehouse);
-                    },
-                  );
+                    return _WarehouseCard(
+                      warehouse: warehouse,
+                      isSelected: isSelected,
+                      onTap: () {
+                        context
+                            .read<ApplicationFormCubit>()
+                            .selectWarehouse(warehouse);
+                      },
+                    );
+                  });
                 },
               );
             },

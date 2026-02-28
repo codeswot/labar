@@ -156,14 +156,25 @@ class ApplicationRepositoryImpl implements ApplicationRepository {
 
   @override
   Future<List<AgentEntity>> getAgents() async {
-    // We join profiles with user_roles to get only agents
-    final response = await _supabaseClient
-        .from('profiles')
-        .select('*, user_roles!inner(role, active)')
-        .eq('user_roles.role', 'agent')
-        .eq('user_roles.active', true);
+    // 1. Get user IDs of active agents from user_roles table
+    final rolesResponse = await _supabaseClient
+        .from('user_roles')
+        .select('id')
+        .eq('role', 'agent')
+        .eq('active', true);
 
-    return (response as List)
+    final agentIds =
+        (rolesResponse as List).map((r) => r['id'] as String).toList();
+
+    if (agentIds.isEmpty) return [];
+
+    // 2. Fetch profiles for those IDs
+    final profilesResponse = await _supabaseClient
+        .from('profiles')
+        .select()
+        .inFilter('id', agentIds);
+
+    return (profilesResponse as List)
         .map((json) => AgentEntity.fromJson(json))
         .toList();
   }
