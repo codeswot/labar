@@ -15,6 +15,17 @@ abstract class AuthRepository {
     Map<String, dynamic>? data,
   });
 
+  Future<Either<AppError, UserEntity>> signInWithPhonePassword({
+    required String phone,
+    required String password,
+  });
+
+  Future<Either<AppError, UserEntity?>> signUpWithPhonePassword({
+    required String phone,
+    required String password,
+    Map<String, dynamic>? data,
+  });
+
   Future<Either<AppError, void>> signOut();
 
   Future<Either<AppError, void>> forgotPassword(String email);

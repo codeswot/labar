@@ -249,6 +249,10 @@
   "@invalidEmail": {
     "description": "Saƙon tabbatarwa na imel mara inganci"
   },
+  "invalidPhone": "Lambar waya ba ta da inganci",
+  "phoneLabel": "Lambar Waya",
+  "usePhone": "Yi amfani da Lambar Waya",
+  "useEmail": "Yi amfani da Imel",
   "passwordTooShort": "Kalmar sirri dole ta kasance aƙalla haruffa 8",
   "@passwordTooShort": {
     "description": "Saƙon tabbatarwa na kalmar sirri mai gajarta"

@@ -14,6 +14,17 @@ abstract class AuthRemoteDataSource {
     Map<String, dynamic>? data,
   });
 
+  Future<UserEntity> signInWithPhonePassword({
+    required String phone,
+    required String password,
+  });
+
+  Future<UserEntity?> signUpWithPhonePassword({
+    required String phone,
+    required String password,
+    Map<String, dynamic>? data,
+  });
+
   Future<void> signOut();
 
   Future<void> forgotPassword(String email);
@@ -65,6 +76,40 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }) async {
     final response = await _supabaseClient.auth.signUp(
       email: email,
+      password: password,
+      data: data,
+    );
+    if (response.user != null) {
+      return _mapUser(response.user!);
+    }
+    return null;
+  }
+
+  @override
+  Future<UserEntity> signInWithPhonePassword({
+    required String phone,
+    required String password,
+  }) async {
+    final response = await _supabaseClient.auth.signInWithPassword(
+      phone: phone,
+      password: password,
+    );
+
+    if (response.user == null) {
+      throw const AuthException('Sign in failed: User is null');
+    }
+
+    return _mapUser(response.user!);
+  }
+
+  @override
+  Future<UserEntity?> signUpWithPhonePassword({
+    required String phone,
+    required String password,
+    Map<String, dynamic>? data,
+  }) async {
+    final response = await _supabaseClient.auth.signUp(
+      phone: phone,
       password: password,
       data: data,
     );

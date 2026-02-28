@@ -22,8 +22,17 @@ class SignUpPage extends StatelessWidget {
       child: BlocConsumer<SignUpCubit, SignUpState>(
         listener: (context, state) {
           if (state.status.isSuccess) {
-            context.router
-                .replace(SignUpVerificationRoute(email: state.email.value));
+            if (state.usePhone) {
+              MoonToast.show(
+                context,
+                label:
+                    const Text('Account created successfully! Please sign in.'),
+              );
+              context.router.replace(SignInRoute());
+            } else {
+              context.router
+                  .replace(SignUpVerificationRoute(email: state.email.value));
+            }
           }
         },
         builder: (context, state) {

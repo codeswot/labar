@@ -27,17 +27,30 @@ class _SignUpFormState extends State<SignUpForm> {
             MoonTextInputGroup(
               orientation: MoonTextInputGroupOrientation.vertical,
               children: [
-                AppFormTextInput(
-                  initialValue: state.email.value,
-                  onChanged: (value) =>
-                      BlocProvider.of<SignUpCubit>(context).emailChanged(value),
-                  hintText: context.l10n.emailLabel,
-                  keyboardType: TextInputType.emailAddress,
-                  errorText: state.email.displayError != null
-                      ? context.l10n.invalidEmail
-                      : null,
-                  leading: const Icon(MoonIcons.mail_envelope_24_regular),
-                ),
+                if (!state.usePhone)
+                  AppFormTextInput(
+                    initialValue: state.email.value,
+                    onChanged: (value) => BlocProvider.of<SignUpCubit>(context)
+                        .emailChanged(value),
+                    hintText: context.l10n.emailLabel,
+                    keyboardType: TextInputType.emailAddress,
+                    errorText: state.email.displayError != null
+                        ? context.l10n.invalidEmail
+                        : null,
+                    leading: const Icon(MoonIcons.mail_envelope_24_regular),
+                  )
+                else
+                  AppFormTextInput(
+                    initialValue: state.phone.value,
+                    onChanged: (value) => BlocProvider.of<SignUpCubit>(context)
+                        .phoneChanged(value),
+                    hintText: context.l10n.phoneLabel,
+                    keyboardType: TextInputType.phone,
+                    errorText: state.phone.displayError != null
+                        ? context.l10n.invalidPhone
+                        : null,
+                    leading: const Icon(MoonIcons.devices_phone_24_regular),
+                  ),
                 AppFormTextInput(
                   initialValue: state.password.value,
                   onChanged: (value) => BlocProvider.of<SignUpCubit>(context)
@@ -68,6 +81,21 @@ class _SignUpFormState extends State<SignUpForm> {
                   leading: const Icon(MoonIcons.security_lock_24_regular),
                 ),
               ],
+            ),
+            const SizedBox(height: 12),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: AppButton.plain(
+                onTap: () =>
+                    BlocProvider.of<SignUpCubit>(context).toggleAuthMode(),
+                label: Text(
+                  state.usePhone
+                      ? context.l10n.useEmail
+                      : context.l10n.usePhone,
+                  style: TextStyle(color: context.moonColors?.piccolo),
+                ),
+                isFullWidth: false,
+              ),
             ),
             const SizedBox(height: 32),
             AppButton.filled(

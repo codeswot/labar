@@ -17,7 +17,27 @@ class SignInCubit extends Cubit<SignInState> {
     emit(state.copyWith(
       email: email,
       status: SignInStatus.initial,
-      isValid: Formz.validate([email, state.password]),
+      isValid: !state.usePhone && Formz.validate([email, state.password]),
+    ));
+  }
+
+  void phoneChanged(String value) {
+    final phone = Phone.dirty(value);
+    emit(state.copyWith(
+      phone: phone,
+      status: SignInStatus.initial,
+      isValid: state.usePhone && Formz.validate([phone, state.password]),
+    ));
+  }
+
+  void toggleAuthMode() {
+    final newUsePhone = !state.usePhone;
+    emit(state.copyWith(
+      usePhone: newUsePhone,
+      status: SignInStatus.initial,
+      isValid: newUsePhone
+          ? Formz.validate([state.phone, state.password])
+          : Formz.validate([state.email, state.password]),
     ));
   }
 
@@ -26,7 +46,9 @@ class SignInCubit extends Cubit<SignInState> {
     emit(state.copyWith(
       password: password,
       status: SignInStatus.initial,
-      isValid: Formz.validate([state.email, password]),
+      isValid: state.usePhone
+          ? Formz.validate([state.phone, password])
+          : Formz.validate([state.email, password]),
     ));
   }
 
@@ -36,7 +58,8 @@ class SignInCubit extends Cubit<SignInState> {
     emit(state.copyWith(status: SignInStatus.inProgress));
 
     final result = await _signInUseCase(SignInParams(
-      email: state.email.value,
+      email: state.usePhone ? null : state.email.value,
+      phone: state.usePhone ? state.phone.value : null,
       password: state.password.value,
     ));
 

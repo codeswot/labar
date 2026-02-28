@@ -290,6 +290,30 @@ abstract class AppLocalizations {
   /// **'Please enter a valid email address'**
   String get invalidEmail;
 
+  /// No description provided for @invalidPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid phone number'**
+  String get invalidPhone;
+
+  /// No description provided for @phoneLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get phoneLabel;
+
+  /// No description provided for @usePhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Use Phone Number'**
+  String get usePhone;
+
+  /// No description provided for @useEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Use Email Address'**
+  String get useEmail;
+
   /// No description provided for @invalidPassword.
   ///
   /// In en, this message translates to:

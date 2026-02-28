@@ -109,6 +109,18 @@ class AppLocalizationsHa extends AppLocalizations {
       'Da fatan za a shigar da adireshin imel mai inganci';
 
   @override
+  String get invalidPhone => 'Lambar waya ba ta da inganci';
+
+  @override
+  String get phoneLabel => 'Lambar Waya';
+
+  @override
+  String get usePhone => 'Yi amfani da Lambar Waya';
+
+  @override
+  String get useEmail => 'Yi amfani da Imel';
+
+  @override
   String get invalidPassword => 'Invalid password';
 
   @override

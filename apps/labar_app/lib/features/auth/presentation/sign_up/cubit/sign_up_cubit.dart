@@ -17,7 +17,31 @@ class SignUpCubit extends Cubit<SignUpState> {
     emit(state.copyWith(
       email: email,
       status: FormzSubmissionStatus.initial,
-      isValid: Formz.validate([email, state.password, state.confirmedPassword]),
+      isValid: !state.usePhone &&
+          Formz.validate([email, state.password, state.confirmedPassword]),
+    ));
+  }
+
+  void phoneChanged(String value) {
+    final phone = Phone.dirty(value);
+    emit(state.copyWith(
+      phone: phone,
+      status: FormzSubmissionStatus.initial,
+      isValid: state.usePhone &&
+          Formz.validate([phone, state.password, state.confirmedPassword]),
+    ));
+  }
+
+  void toggleAuthMode() {
+    final newUsePhone = !state.usePhone;
+    emit(state.copyWith(
+      usePhone: newUsePhone,
+      status: FormzSubmissionStatus.initial,
+      isValid: newUsePhone
+          ? Formz.validate(
+              [state.phone, state.password, state.confirmedPassword])
+          : Formz.validate(
+              [state.email, state.password, state.confirmedPassword]),
     ));
   }
 
@@ -31,7 +55,9 @@ class SignUpCubit extends Cubit<SignUpState> {
       password: password,
       confirmedPassword: confirmedPassword,
       status: FormzSubmissionStatus.initial,
-      isValid: Formz.validate([state.email, password, confirmedPassword]),
+      isValid: state.usePhone
+          ? Formz.validate([state.phone, password, confirmedPassword])
+          : Formz.validate([state.email, password, confirmedPassword]),
     ));
   }
 
@@ -43,7 +69,9 @@ class SignUpCubit extends Cubit<SignUpState> {
     emit(state.copyWith(
       confirmedPassword: confirmedPassword,
       status: FormzSubmissionStatus.initial,
-      isValid: Formz.validate([state.email, state.password, confirmedPassword]),
+      isValid: state.usePhone
+          ? Formz.validate([state.phone, state.password, confirmedPassword])
+          : Formz.validate([state.email, state.password, confirmedPassword]),
     ));
   }
 
@@ -53,7 +81,8 @@ class SignUpCubit extends Cubit<SignUpState> {
     emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
 
     final result = await _signUpUseCase(SignUpParams(
-      email: state.email.value,
+      email: state.usePhone ? null : state.email.value,
+      phone: state.usePhone ? state.phone.value : null,
       password: state.password.value,
     ));
 

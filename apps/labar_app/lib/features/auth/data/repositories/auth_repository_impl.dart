@@ -51,6 +51,44 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<Either<AppError, UserEntity>> signInWithPhonePassword({
+    required String phone,
+    required String password,
+  }) async {
+    try {
+      final user = await _remoteDataSource.signInWithPhonePassword(
+        phone: phone,
+        password: password,
+      );
+      return Right(user);
+    } on AuthException catch (e) {
+      return Left(AuthError(message: e.message, code: e.statusCode));
+    } catch (e) {
+      return Left(GenericError(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<AppError, UserEntity?>> signUpWithPhonePassword({
+    required String phone,
+    required String password,
+    Map<String, dynamic>? data,
+  }) async {
+    try {
+      final user = await _remoteDataSource.signUpWithPhonePassword(
+        phone: phone,
+        password: password,
+        data: data,
+      );
+      return Right(user);
+    } on AuthException catch (e) {
+      return Left(AuthError(message: e.message, code: e.statusCode));
+    } catch (e) {
+      return Left(GenericError(message: e.toString()));
+    }
+  }
+
+  @override
   Future<Either<AppError, void>> signOut() async {
     try {
       await _remoteDataSource.signOut();

@@ -108,6 +108,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invalidEmail => 'Please enter a valid email address';
 
   @override
+  String get invalidPhone => 'Invalid phone number';
+
+  @override
+  String get phoneLabel => 'Phone Number';
+
+  @override
+  String get usePhone => 'Use Phone Number';
+
+  @override
+  String get useEmail => 'Use Email Address';
+
+  @override
   String get invalidPassword => 'Invalid password';
 
   @override
