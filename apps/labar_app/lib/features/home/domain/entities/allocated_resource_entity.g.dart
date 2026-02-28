@@ -13,7 +13,7 @@ AllocatedResourceEntity _$AllocatedResourceEntityFromJson(
       application: json['application'] as String,
       item: json['item'] as String?,
       quantity: json['quantity'] as num? ?? 0,
-      collectionAddress: json['collection_address'] as String,
+      collectionAddress: json['collection_address'] as String?,
       isCollected: json['is_collected'] as bool,
       createdAt: DateTime.parse(json['created_at'] as String),
       inventoryItem: json['inventory_item'] as Map<String, dynamic>?,

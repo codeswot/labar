@@ -17,14 +17,14 @@ class SubmittedApplicationEntity extends Equatable {
   final ApplicationStatus status;
 
   // Personal Info
-  final String firstName;
-  final String lastName;
+  final String? firstName;
+  final String? lastName;
   final String? otherNames;
   final DateTime? dateOfBirth;
-  final String gender;
-  final String state;
-  final String lga;
-  final String town;
+  final String? gender;
+  final String? state;
+  final String? lga;
+  final String? town;
 
   // Bank Details
   final String? bankName;
@@ -32,15 +32,15 @@ class SubmittedApplicationEntity extends Equatable {
   final String? accountName;
 
   // Contact Info
-  final String phoneNumber;
-  final String nextOfKinName;
-  final String nextOfKinPhone;
-  final String nextOfKinRelationship;
+  final String? phoneNumber;
+  final String? nextOfKinName;
+  final String? nextOfKinPhone;
+  final String? nextOfKinRelationship;
 
   // Farm Info
   final String? farmSize;
   final String? farmLocation;
-  final String cropType;
+  final String? cropType;
   final double? latitude;
   final double? longitude;
 
@@ -67,24 +67,24 @@ class SubmittedApplicationEntity extends Equatable {
     this.warehouseId,
     this.agentId,
     this.status = ApplicationStatus.initial,
-    required this.firstName,
-    required this.lastName,
+    this.firstName,
+    this.lastName,
     this.otherNames,
     this.dateOfBirth,
-    required this.gender,
-    required this.state,
-    required this.lga,
-    required this.town,
+    this.gender,
+    this.state,
+    this.lga,
+    this.town,
     this.bankName,
     this.accountNumber,
     this.accountName,
-    required this.phoneNumber,
-    required this.nextOfKinName,
-    required this.nextOfKinPhone,
-    required this.nextOfKinRelationship,
+    this.phoneNumber,
+    this.nextOfKinName,
+    this.nextOfKinPhone,
+    this.nextOfKinRelationship,
     this.farmSize,
     this.farmLocation,
-    required this.cropType,
+    this.cropType,
     this.latitude,
     this.longitude,
     this.passportPath,
@@ -148,24 +148,24 @@ class SubmittedApplicationEntity extends Equatable {
       warehouseId: warehouseId,
       agentId: agentId,
       status: status,
-      firstName: firstName,
-      lastName: lastName,
+      firstName: firstName ?? '',
+      lastName: lastName ?? '',
       otherNames: otherNames,
       dateOfBirth: dateOfBirth,
-      gender: gender,
-      state: state,
-      lga: lga,
-      town: town,
+      gender: gender ?? '',
+      state: state ?? '',
+      lga: lga ?? '',
+      town: town ?? '',
       bankName: bankName,
       accountNumber: accountNumber,
       accountName: accountName,
-      phoneNumber: phoneNumber,
-      nextOfKinName: nextOfKinName,
-      nextOfKinPhone: nextOfKinPhone,
-      nextOfKinRelationship: nextOfKinRelationship,
+      phoneNumber: phoneNumber ?? '',
+      nextOfKinName: nextOfKinName ?? '',
+      nextOfKinPhone: nextOfKinPhone ?? '',
+      nextOfKinRelationship: nextOfKinRelationship ?? '',
       farmSize: farmSize,
       farmLocation: farmLocation,
-      cropType: cropType,
+      cropType: cropType ?? '',
       latitude: latitude,
       longitude: longitude,
       passportPath: passportPath,

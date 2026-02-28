@@ -99,7 +99,7 @@ class AllocatedResourcesPage extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            resource.collectionAddress,
+                            resource.collectionAddress ?? '',
                             style: context.moonTypography?.body.text12,
                           ),
                           const SizedBox(height: 8),
@@ -121,7 +121,7 @@ class AllocatedResourcesPage extends StatelessWidget {
                 );
               },
               error: (message) => AppErrorView(
-                subtitle: message,
+                subtitle: context.l10n.errorOccurred,
                 onRetry: () => context
                     .read<AllocatedResourcesCubit>()
                     .watchResources(applicationId),

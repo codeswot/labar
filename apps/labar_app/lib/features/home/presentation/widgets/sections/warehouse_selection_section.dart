@@ -71,6 +71,7 @@ class _WarehouseSelectionContent extends StatelessWidget {
               if (state.error != null) {
                 return Center(
                   child: AppErrorView(
+                    subtitle: context.l10n.errorOccurred,
                     onRetry: () => context
                         .read<WarehouseSelectionCubit>()
                         .loadWarehouses(),

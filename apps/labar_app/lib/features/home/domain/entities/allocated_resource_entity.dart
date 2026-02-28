@@ -9,7 +9,7 @@ class AllocatedResourceEntity extends Equatable {
   final String application;
   final String? item; // Contains the UUID
   final num quantity;
-  final String collectionAddress;
+  final String? collectionAddress;
   final bool isCollected;
   final DateTime createdAt;
   final Map<String, dynamic>? inventoryItem;
@@ -19,7 +19,7 @@ class AllocatedResourceEntity extends Equatable {
     required this.application,
     this.item,
     this.quantity = 0,
-    required this.collectionAddress,
+    this.collectionAddress,
     required this.isCollected,
     required this.createdAt,
     this.inventoryItem,

@@ -91,7 +91,7 @@ class _HomeView extends StatelessWidget {
 
           if (state.errorMessage != null) {
             return AppErrorView(
-              subtitle: state.errorMessage!,
+              subtitle: context.l10n.errorOccurred,
               onRetry: () => context.read<HomeCubit>().reset(),
             );
           }

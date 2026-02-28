@@ -201,7 +201,7 @@ class AssignedWarehousePage extends StatelessWidget {
                 );
               },
               error: (message) => AppErrorView(
-                subtitle: message,
+                subtitle: context.l10n.errorOccurred,
                 onRetry: () => context
                     .read<AssignedWarehouseCubit>()
                     .watchDesignation(applicationId),
