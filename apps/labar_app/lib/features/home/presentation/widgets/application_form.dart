@@ -322,25 +322,29 @@ class _AttestationBottomSheetState extends State<_AttestationBottomSheet> {
                 ),
               ),
               const SizedBox(height: 16),
-              MoonMenuItem(
-                onTap: () {
-                  setState(() {
-                    _accepted = !_accepted;
-                  });
-                },
-                label: Expanded(
-                  child: Text(
-                    context.l10n.iAgreeToTermsAndAttestation,
-                    style: context.moonTypography?.body.text14,
-                  ),
-                ),
-                leading: Checkbox(
-                  value: _accepted,
-                  onChanged: (val) {
+              SizedBox(
+                width: double.infinity,
+                height: 70,
+                child: MoonMenuItem(
+                  onTap: () {
                     setState(() {
-                      _accepted = val ?? false;
+                      _accepted = !_accepted;
                     });
                   },
+                  label: Expanded(
+                    child: Text(
+                      context.l10n.iAgreeToTermsAndAttestation,
+                      style: context.moonTypography?.body.text14,
+                    ),
+                  ),
+                  leading: Checkbox(
+                    value: _accepted,
+                    onChanged: (val) {
+                      setState(() {
+                        _accepted = val ?? false;
+                      });
+                    },
+                  ),
                 ),
               ),
               const SizedBox(height: 24),

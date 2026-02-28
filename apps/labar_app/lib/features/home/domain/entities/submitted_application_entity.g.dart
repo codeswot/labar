@@ -12,7 +12,7 @@ SubmittedApplicationEntity _$SubmittedApplicationEntityFromJson(
       id: json['id'] as String?,
       userId: json['user_id'] as String,
       warehouseId: json['warehouse_id'] as String?,
-      agentId: json['agent_id'] as String?,
+      agentId: json['created_by'] as String?,
       status: $enumDecodeNullable(_$ApplicationStatusEnumMap, json['status']) ??
           ApplicationStatus.initial,
       firstName: json['first_name'] as String?,
@@ -57,7 +57,7 @@ Map<String, dynamic> _$SubmittedApplicationEntityToJson(
       if (instance.id case final value?) 'id': value,
       'user_id': instance.userId,
       'warehouse_id': instance.warehouseId,
-      'agent_id': instance.agentId,
+      'created_by': instance.agentId,
       'status': _$ApplicationStatusEnumMap[instance.status]!,
       'first_name': instance.firstName,
       'last_name': instance.lastName,

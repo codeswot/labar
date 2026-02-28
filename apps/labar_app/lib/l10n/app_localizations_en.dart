@@ -588,7 +588,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Record the number of bags received with the admin upon submission.';
 
   @override
-  String get selectAgent => 'Select Agent/Sub-Agent';
+  String get selectAgent => 'Select Agent';
 
   @override
   String get agentSelectionSubtitle =>

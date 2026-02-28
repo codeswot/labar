@@ -596,7 +596,7 @@
   "instruction": "Instruction",
   "warehouseProceedInstruction": "Please proceed to this warehouse with your produce for submission. Ensure you have your application ID ready.",
   "warehouseBagRecordInstruction": "Record the number of bags received with the admin upon submission.",
-  "selectAgent": "Select Agent/Sub-Agent",
+  "selectAgent": "Select Agent",
   "agentSelectionSubtitle": "Please select the agent you are registering under",
   "searchAgents": "Search agents...",
   "noAgentsFound": "No agents found",

@@ -105,19 +105,19 @@ class ApplicationRepositoryImpl implements ApplicationRepository {
   Future<void> saveApplication(ApplicationEntity application) async {
     final submittedEntity =
         SubmittedApplicationEntity.fromApplicationEntity(application);
-
-    await _supabaseClient.from('applications').upsert(submittedEntity.toJson());
+    final resolved = submittedEntity.toJson()..remove('warehouse_id');
+    await _supabaseClient.from('applications').upsert(resolved);
   }
 
   @override
   Future<void> submitApplication(ApplicationEntity application) async {
     final submittedEntity =
         SubmittedApplicationEntity.fromApplicationEntity(application);
-
+    final resolved = submittedEntity.toJson()..remove('warehouse_id');
     // 1. Upsert to applications and get the ID
     final response = await _supabaseClient
         .from('applications')
-        .upsert(submittedEntity.toJson())
+        .upsert(resolved)
         .select('id')
         .single();
 

@@ -1211,7 +1211,7 @@ abstract class AppLocalizations {
   /// No description provided for @selectAgent.
   ///
   /// In en, this message translates to:
-  /// **'Select Agent/Sub-Agent'**
+  /// **'Select Agent'**
   String get selectAgent;
 
   /// No description provided for @agentSelectionSubtitle.

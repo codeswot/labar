@@ -12,7 +12,7 @@ class SubmittedApplicationEntity extends Equatable {
   final String userId;
   @JsonKey(name: 'warehouse_id')
   final String? warehouseId;
-  @JsonKey(name: 'agent_id')
+  @JsonKey(name: 'created_by')
   final String? agentId;
   final ApplicationStatus status;
 
@@ -102,7 +102,6 @@ class SubmittedApplicationEntity extends Equatable {
     return SubmittedApplicationEntity(
       id: entity.id.isEmpty ? null : entity.id,
       userId: entity.userId,
-      warehouseId: entity.warehouseId,
       agentId: entity.agentId,
       status: entity.status,
       firstName: entity.firstName,
@@ -145,7 +144,6 @@ class SubmittedApplicationEntity extends Equatable {
     return ApplicationEntity(
       id: id ?? '',
       userId: userId,
-      warehouseId: warehouseId,
       agentId: agentId,
       status: status,
       firstName: firstName ?? '',

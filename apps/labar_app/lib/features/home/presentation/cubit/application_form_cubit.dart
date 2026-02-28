@@ -58,7 +58,7 @@ class ApplicationFormCubit extends HydratedCubit<ApplicationFormState> {
   }
 
   void nextStep() {
-    if (state.currentStep < 6) {
+    if (state.currentStep < 7) {
       emit(state.copyWith(currentStep: state.currentStep + 1));
     }
   }
