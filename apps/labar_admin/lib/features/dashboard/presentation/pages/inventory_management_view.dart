@@ -553,20 +553,23 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                         constrainWidthToChild: true,
                         onTapOutside: () =>
                             setDialogState(() => showWHDropdown = false),
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: warehouses.map((w) {
-                            return MoonMenuItem(
-                              onTap: () {
-                                setDialogState(() {
-                                  selectedWarehouseId = w['id'];
-                                  showWHDropdown = false;
-                                });
-                              },
-                              label:
-                                  Text('${w['name']} (${w['state'] ?? 'N/A'})'),
-                            );
-                          }).toList(),
+                        content: Container(
+                          constraints: const BoxConstraints(maxHeight: 250),
+                          child: ListView(
+                            shrinkWrap: true,
+                            children: warehouses.map((w) {
+                              return MoonMenuItem(
+                                onTap: () {
+                                  setDialogState(() {
+                                    selectedWarehouseId = w['id'];
+                                    showWHDropdown = false;
+                                  });
+                                },
+                                label: Text(
+                                    '${w['name']} (${w['state'] ?? 'N/A'})'),
+                              );
+                            }).toList(),
+                          ),
                         ),
                         child: GestureDetector(
                           onTap: () => setDialogState(
@@ -593,21 +596,19 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                             setDialogState(() => showItemDropdown = false),
                         content: Container(
                           constraints: const BoxConstraints(maxHeight: 250),
-                          child: SingleChildScrollView(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: items.map((i) {
-                                return MoonMenuItem(
-                                  onTap: () {
-                                    setDialogState(() {
-                                      selectedItemId = i['id'];
-                                      showItemDropdown = false;
-                                    });
-                                  },
-                                  label: Text('${i['name']} (${i['unit']})'),
-                                );
-                              }).toList(),
-                            ),
+                          child: ListView(
+                            shrinkWrap: true,
+                            children: items.map((i) {
+                              return MoonMenuItem(
+                                onTap: () {
+                                  setDialogState(() {
+                                    selectedItemId = i['id'];
+                                    showItemDropdown = false;
+                                  });
+                                },
+                                label: Text('${i['name']} (${i['unit']})'),
+                              );
+                            }).toList(),
                           ),
                         ),
                         child: GestureDetector(
@@ -717,22 +718,25 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                           constrainWidthToChild: true,
                           onTapOutside: () => setDialogState(
                               () => showWarehouseDropdown = false),
-                          content: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: warehouses.map((w) {
-                              return MoonMenuItem(
-                                onTap: () {
-                                  setDialogState(() {
-                                    selectedWarehouseId = w['id'];
-                                    selectedItemName = null;
-                                    unitController.text = '';
-                                    showWarehouseDropdown = false;
-                                  });
-                                },
-                                label: Text(
-                                    '${w['name']} (${w['state'] ?? 'N/A'})'),
-                              );
-                            }).toList(),
+                          content: Container(
+                            constraints: const BoxConstraints(maxHeight: 250),
+                            child: ListView(
+                              shrinkWrap: true,
+                              children: warehouses.map((w) {
+                                return MoonMenuItem(
+                                  onTap: () {
+                                    setDialogState(() {
+                                      selectedWarehouseId = w['id'];
+                                      selectedItemName = null;
+                                      unitController.text = '';
+                                      showWarehouseDropdown = false;
+                                    });
+                                  },
+                                  label: Text(
+                                      '${w['name']} (${w['state'] ?? 'N/A'})'),
+                                );
+                              }).toList(),
+                            ),
                           ),
                           child: GestureDetector(
                             onTap: () => setDialogState(() =>
@@ -755,30 +759,34 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                           constrainWidthToChild: true,
                           onTapOutside: () =>
                               setDialogState(() => showItemDropdown = false),
-                          content: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: availableItems.isEmpty
-                                ? [
-                                    const Padding(
-                                        padding: EdgeInsets.all(8.0),
-                                        child: Text('No items available'))
-                                  ]
-                                : availableItems.map((item) {
-                                    return MoonMenuItem(
-                                      onTap: () {
-                                        setDialogState(() {
-                                          selectedItemName = item['items']
-                                                  ?['name'] ??
-                                              item['item_name'];
-                                          unitController.text =
-                                              item['items']?['unit'] ?? 'Bags';
-                                          showItemDropdown = false;
-                                        });
-                                      },
-                                      label: Text(
-                                          '${item['items']?['name'] ?? item['item_name']} (Qty: ${item['quantity']})'),
-                                    );
-                                  }).toList(),
+                          content: Container(
+                            constraints: const BoxConstraints(maxHeight: 250),
+                            child: ListView(
+                              shrinkWrap: true,
+                              children: availableItems.isEmpty
+                                  ? [
+                                      const Padding(
+                                          padding: EdgeInsets.all(8.0),
+                                          child: Text('No items available'))
+                                    ]
+                                  : availableItems.map((item) {
+                                      return MoonMenuItem(
+                                        onTap: () {
+                                          setDialogState(() {
+                                            selectedItemName = item['items']
+                                                    ?['name'] ??
+                                                item['item_name'];
+                                            unitController.text = item['items']
+                                                    ?['unit'] ??
+                                                'Bags';
+                                            showItemDropdown = false;
+                                          });
+                                        },
+                                        label: Text(
+                                            '${item['items']?['name'] ?? item['item_name']} (Qty: ${item['quantity']})'),
+                                      );
+                                    }).toList(),
+                            ),
                           ),
                           child: GestureDetector(
                             onTap: () {

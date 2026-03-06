@@ -87,6 +87,10 @@ class _AgentApplicationsList extends StatelessWidget {
               metadata: {
                 'first_name': firstNameController.text.trim(),
                 'last_name': lastNameController.text.trim(),
+                if (otherNamesController.text.trim().isNotEmpty)
+                  'other_names': otherNamesController.text.trim(),
+                if (phoneController.text.trim().isNotEmpty)
+                  'phone_number': phoneController.text.trim(),
               },
               applicationData: _buildAppData(
                 firstNameController: firstNameController,
@@ -330,16 +334,19 @@ class _AgentApplicationsList extends StatelessWidget {
                       MoonFormTextInput(
                           controller: townController, hintText: 'Town/Village'),
                       const SizedBox(height: 8),
-                      DropdownButtonFormField<String>(
-                        value: currentGender,
-                        hint: const Text('Gender'),
-                        items: ['Male', 'Female', 'Other']
-                            .map((g) =>
-                                DropdownMenuItem(value: g, child: Text(g)))
-                            .toList(),
-                        onChanged: (v) => setState(() => currentGender = v),
-                        decoration:
-                            const InputDecoration(border: OutlineInputBorder()),
+                      Container(
+                        constraints: const BoxConstraints(maxHeight: 200),
+                        child: DropdownButtonFormField<String>(
+                          initialValue: currentGender,
+                          hint: const Text('Gender'),
+                          items: ['Male', 'Female', 'Other']
+                              .map((g) =>
+                                  DropdownMenuItem(value: g, child: Text(g)))
+                              .toList(),
+                          onChanged: (v) => setState(() => currentGender = v),
+                          decoration: const InputDecoration(
+                              border: OutlineInputBorder()),
+                        ),
                       ),
                       const SizedBox(height: 8),
                       MoonFormTextInput(
@@ -418,17 +425,27 @@ class _AgentApplicationsList extends StatelessWidget {
                       sectionTitle('KYC'),
                       Row(children: [
                         Expanded(
+                          child: Container(
+                            constraints: const BoxConstraints(maxHeight: 200),
                             child: DropdownButtonFormField<String>(
-                          value: currentKycType,
-                          hint: const Text('KYC Type'),
-                          items: ['nin', 'bvn', 'passport', 'drivers_license']
-                              .map((t) => DropdownMenuItem(
-                                  value: t, child: Text(t.toUpperCase())))
-                              .toList(),
-                          onChanged: (v) => setState(() => currentKycType = v),
-                          decoration: const InputDecoration(
-                              border: OutlineInputBorder()),
-                        )),
+                              initialValue: currentKycType,
+                              hint: const Text('KYC Type'),
+                              items: [
+                                'nin',
+                                'bvn',
+                                'passport',
+                                'drivers_license'
+                              ]
+                                  .map((t) => DropdownMenuItem(
+                                      value: t, child: Text(t.toUpperCase())))
+                                  .toList(),
+                              onChanged: (v) =>
+                                  setState(() => currentKycType = v),
+                              decoration: const InputDecoration(
+                                  border: OutlineInputBorder()),
+                            ),
+                          ),
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
                             child: MoonFormTextInput(

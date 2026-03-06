@@ -79,6 +79,13 @@ class _SignUpFormState extends State<SignUpForm> {
                       ? context.l10n.passwordMismatch
                       : null,
                   leading: const Icon(MoonIcons.security_lock_24_regular),
+                  trailing: GestureDetector(
+                    onTap: () =>
+                        setState(() => _obscurePassword = !_obscurePassword),
+                    child: Icon(_obscurePassword
+                        ? MoonIcons.controls_eye_24_regular
+                        : MoonIcons.controls_eye_crossed_24_regular),
+                  ),
                 ),
               ],
             ),

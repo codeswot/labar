@@ -415,7 +415,7 @@ class UserManagementViewState extends State<UserManagementView> {
     final lastNameController = TextEditingController();
     String selectedRole = 'agent';
     final callerRole = context.read<SessionCubit>().state.user?.role;
-
+    bool obscurePassword = true;
     showDialog(
       context: context,
       builder: (dialogContext) => BlocProvider.value(
@@ -436,9 +436,17 @@ class UserManagementViewState extends State<UserManagementView> {
                   MoonTextInput(controller: emailController, hintText: 'Email'),
                   const SizedBox(height: 12),
                   MoonTextInput(
-                      controller: passwordController,
-                      hintText: 'Password',
-                      obscureText: true),
+                    controller: passwordController,
+                    hintText: 'Password',
+                    obscureText: obscurePassword,
+                    trailing: GestureDetector(
+                      onTap: () =>
+                          setState(() => obscurePassword = !obscurePassword),
+                      child: Icon(obscurePassword
+                          ? MoonIcons.controls_eye_24_regular
+                          : MoonIcons.controls_eye_crossed_24_regular),
+                    ),
+                  ),
                   const SizedBox(height: 12),
                   DropdownButtonHideUnderline(
                     child: DropdownButton<String>(

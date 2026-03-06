@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:labar_admin/core/session/session_cubit.dart';
 import 'package:labar_admin/core/session/session_state.dart';
+import 'package:labar_admin/core/theme/theme_cubit.dart';
+import 'package:labar_admin/core/theme/app_theme_mode.dart';
 import 'package:labar_admin/features/dashboard/presentation/pages/admin_dashboard_view.dart';
 import 'package:labar_admin/features/dashboard/presentation/pages/agent_dashboard_view.dart';
 import 'package:ui_library/ui_library.dart';
@@ -117,6 +119,37 @@ class _DashboardPageState extends State<DashboardPage> {
                       ),
                     ],
                     const Spacer(),
+                    BlocBuilder<ThemeCubit, AppThemeMode>(
+                      builder: (context, themeMode) {
+                        final isDark = themeMode == AppThemeMode.dark ||
+                            (themeMode == AppThemeMode.system &&
+                                MediaQuery.platformBrightnessOf(context) ==
+                                    Brightness.dark);
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Theme',
+                                style: context.moonTypography?.body.text14,
+                              ),
+                              IconButton(
+                                icon: Icon(
+                                  isDark
+                                      ? Icons.light_mode_rounded
+                                      : Icons.dark_mode_rounded,
+                                  color: context.moonColors?.bulma,
+                                ),
+                                onPressed: () =>
+                                    context.read<ThemeCubit>().cycleThemeMode(),
+                                tooltip: 'Toggle Theme',
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
                     Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Container(

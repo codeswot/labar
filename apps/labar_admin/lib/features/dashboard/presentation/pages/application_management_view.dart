@@ -1132,6 +1132,10 @@ class ApplicationManagementViewState extends State<ApplicationManagementView> {
                               metadata: {
                                 'first_name': firstNameController.text.trim(),
                                 'last_name': lastNameController.text.trim(),
+                                if (otherNamesController.text.trim().isNotEmpty)
+                                  'other_names':
+                                      otherNamesController.text.trim(),
+                                if (phone.isNotEmpty) 'phone_number': phone,
                               },
                               applicationData: data,
                               passportBase64: passportBase64,
@@ -1249,20 +1253,23 @@ class ApplicationManagementViewState extends State<ApplicationManagementView> {
                   constrainWidthToChild: true,
                   onTapOutside: () =>
                       setDialogState(() => showItemDropdown = false),
-                  content: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: inventory.map((item) {
-                      return MoonMenuItem(
-                        onTap: () {
-                          setDialogState(() {
-                            selectedItemId = item['id'];
-                            showItemDropdown = false;
-                          });
-                        },
-                        label: Text(
-                            '${item['items']?['name']} - ${item['warehouses']?['name']} (Available: ${item['quantity']} ${item['items']?['unit']}${item['items']?['price'] != null ? ' - ${CurrencyUtils.formatNaira(item['items']?['price'])}' : ' - Free'})'),
-                      );
-                    }).toList(),
+                  content: Container(
+                    constraints: const BoxConstraints(maxHeight: 250),
+                    child: ListView(
+                      shrinkWrap: true,
+                      children: inventory.map((item) {
+                        return MoonMenuItem(
+                          onTap: () {
+                            setDialogState(() {
+                              selectedItemId = item['id'];
+                              showItemDropdown = false;
+                            });
+                          },
+                          label: Text(
+                              '${item['items']?['name']} - ${item['warehouses']?['name']} (Available: ${item['quantity']} ${item['items']?['unit']}${item['items']?['price'] != null ? ' - ${CurrencyUtils.formatNaira(item['items']?['price'])}' : ' - Free'})'),
+                        );
+                      }).toList(),
+                    ),
                   ),
                   child: GestureDetector(
                     onTap: () => setDialogState(

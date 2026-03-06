@@ -4,6 +4,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:labar_admin/core/utils/app_logger.dart';
 import 'package:labar_admin/features/dashboard/data/repositories/admin_repository_impl.dart';
+import '../../../auth/domain/entities/user_entity.dart';
 
 part 'inventory_management_cubit.freezed.dart';
 
@@ -16,8 +17,9 @@ class InventoryManagementState with _$InventoryManagementState {
     @Default([]) List<Map<String, dynamic>> warehouses,
     @Default([]) List<Map<String, dynamic>> items,
     @Default([]) List<Map<String, dynamic>> selectedInventoryAllocations,
-    @Default([]) List<Map<String, dynamic>> selectedWarehouseFarmers,
     @Default([]) List<Map<String, dynamic>> selectedWarehouseAllocations,
+    @Default([]) List<Map<String, dynamic>> selectedWarehouseFarmers,
+    @Default([]) List<UserEntity> managers,
     String? error,
   }) = _InventoryManagementState;
 }
@@ -41,12 +43,17 @@ class InventoryManagementCubit extends Cubit<InventoryManagementState> {
       final warehouses = await _repository.getWarehouses();
       final items = await _repository.getItems();
 
+      final users = await _repository.getUsers();
+      final managers =
+          users.where((u) => u.role == 'warehouse_manager').toList();
+
       emit(state.copyWith(
         isLoading: false,
         inventory: inventory,
         waybills: waybills,
         warehouses: warehouses,
         items: items,
+        managers: managers,
       ));
 
       // Subscribe for real-time updates
@@ -83,17 +90,19 @@ class InventoryManagementCubit extends Cubit<InventoryManagementState> {
     required String name,
     required String address,
     String? state,
+    String? managerId,
   }) async {
     try {
       await _repository.addWarehouse(
         name: name,
         address: address,
         state: state,
+        managerId: managerId,
       );
       await init(); // Refresh
     } catch (e, stack) {
       AppLogger.error('Failed to add warehouse', e, stack);
-      emit(this.state.copyWith(error: e.toString()));
+      if (!isClosed) emit(this.state.copyWith(error: e.toString()));
     }
   }
 
@@ -102,6 +111,7 @@ class InventoryManagementCubit extends Cubit<InventoryManagementState> {
     required String name,
     required String address,
     String? state,
+    String? managerId,
   }) async {
     try {
       await _repository.updateWarehouse(
@@ -109,11 +119,12 @@ class InventoryManagementCubit extends Cubit<InventoryManagementState> {
         name: name,
         address: address,
         state: state,
+        managerId: managerId,
       );
       await init(); // Refresh
     } catch (e, stack) {
       AppLogger.error('Failed to update warehouse', e, stack);
-      emit(this.state.copyWith(error: e.toString()));
+      if (!isClosed) emit(this.state.copyWith(error: e.toString()));
     }
   }
 

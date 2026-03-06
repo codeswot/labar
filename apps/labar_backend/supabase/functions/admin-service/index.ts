@@ -6,7 +6,8 @@ const corsHeaders = {
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-serve(async (req) => {
+// @ts-ignore
+serve(async (req: Request) => {
     if (req.method === 'OPTIONS') {
         return new Response('ok', { headers: corsHeaders })
     }
@@ -20,8 +21,11 @@ serve(async (req) => {
             })
         }
 
+        // @ts-ignore
         const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
+        // @ts-ignore
         const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+        // @ts-ignore
         const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? ''
 
         // Create a user client to verify the token
@@ -207,6 +211,16 @@ serve(async (req) => {
                 throw profileError;
             }
 
+            console.log(`[agent_create_farmer_application] Updating auth metadata for farmer ${farmerId}...`);
+            const { error: userUpdateError } = await supabaseClient.auth.admin.updateUserById(
+                farmerId,
+                { user_metadata: { ...metadata, role: 'farmer' } }
+            );
+            if (userUpdateError) {
+                console.error(`[agent_create_farmer_application] Auth metadata update error:`, userUpdateError);
+                throw userUpdateError;
+            }
+
             let passportPath = null;
             let signaturePath = null;
             if (passportBase64) {
@@ -325,8 +339,14 @@ serve(async (req) => {
         }
 
         if (action === 'delete_user') {
-            if (callerRole !== 'super_admin') {
-                return new Response(JSON.stringify({ error: 'Only super_admin can delete users' }), {
+            const { data: targetUser } = await supabaseClient.from('user_roles').select('role').eq('id', userId).single();
+            const targetRole = targetUser?.role;
+
+            const isAuthorized = callerRole === 'super_admin' ||
+                (callerRole === 'admin' && targetRole && ['admin', 'agent', 'farmer', 'warehouse_manager'].includes(targetRole));
+
+            if (!isAuthorized) {
+                return new Response(JSON.stringify({ error: 'Only super_admin or admin can delete users' }), {
                     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
                     status: 403,
                 })

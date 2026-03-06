@@ -7,6 +7,7 @@ import 'package:labar_admin/core/utils/currency_utils.dart';
 import 'package:labar_admin/features/dashboard/presentation/cubit/inventory_management_cubit.dart';
 import 'package:labar_admin/features/dashboard/presentation/widgets/detail_info.dart';
 import 'package:ui_library/ui_library.dart';
+import 'package:labar_admin/features/auth/domain/entities/user_entity.dart';
 
 class WarehouseManagementView extends StatefulWidget {
   final VoidCallback? onNavigateToInventory;
@@ -414,7 +415,9 @@ class WarehouseManagementViewState extends State<WarehouseManagementView> {
     final nameController = TextEditingController();
     final addressController = TextEditingController();
     String? selectedState;
+    String? selectedManagerId;
     bool showStateDropdown = false;
+    bool showManagerDropdown = false;
 
     final nigeriaStates = [
       "Abia",
@@ -464,28 +467,30 @@ class WarehouseManagementViewState extends State<WarehouseManagementView> {
         child: StatefulBuilder(
           builder: (context, setState) => AlertDialog(
             title: const Text('Add New Warehouse'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                MoonTextInput(
-                  controller: nameController,
-                  hintText: 'Warehouse Name',
-                ),
-                const SizedBox(height: 12),
-                MoonTextInput(
-                  controller: addressController,
-                  hintText: 'Address',
-                ),
-                const SizedBox(height: 12),
-                MoonDropdown(
-                  constrainWidthToChild: true,
-                  show: showStateDropdown,
-                  onTapOutside: () => setState(() => showStateDropdown = false),
-                  content: Container(
-                    constraints: const BoxConstraints(maxHeight: 300),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
+            content: SizedBox(
+              width: 400,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  MoonTextInput(
+                    controller: nameController,
+                    hintText: 'Warehouse Name',
+                  ),
+                  const SizedBox(height: 12),
+                  MoonTextInput(
+                    controller: addressController,
+                    hintText: 'Address',
+                  ),
+                  const SizedBox(height: 12),
+                  MoonDropdown(
+                    constrainWidthToChild: true,
+                    show: showStateDropdown,
+                    onTapOutside: () =>
+                        setState(() => showStateDropdown = false),
+                    content: Container(
+                      constraints: const BoxConstraints(maxHeight: 250),
+                      child: ListView(
+                        shrinkWrap: true,
                         children: nigeriaStates
                             .map((s) => MoonMenuItem(
                                   onTap: () {
@@ -499,19 +504,82 @@ class WarehouseManagementViewState extends State<WarehouseManagementView> {
                             .toList(),
                       ),
                     ),
-                  ),
-                  child: GestureDetector(
-                    onTap: () => setState(() => showStateDropdown = true),
-                    child: AbsorbPointer(
-                      child: MoonTextInput(
-                        hintText: 'Select State',
-                        controller: TextEditingController(text: selectedState),
-                        trailing: const Icon(Icons.arrow_drop_down),
+                    child: GestureDetector(
+                      onTap: () => setState(
+                          () => showStateDropdown = !showStateDropdown),
+                      child: AbsorbPointer(
+                        child: MoonTextInput(
+                          hintText: 'Select State',
+                          controller:
+                              TextEditingController(text: selectedState),
+                          trailing: const Icon(Icons.arrow_drop_down),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 12),
+                  BlocBuilder<InventoryManagementCubit,
+                      InventoryManagementState>(
+                    builder: (context, state) {
+                      final managers = state.managers;
+                      return MoonDropdown(
+                        constrainWidthToChild: true,
+                        show: showManagerDropdown,
+                        onTapOutside: () =>
+                            setState(() => showManagerDropdown = false),
+                        content: Container(
+                          constraints: const BoxConstraints(maxHeight: 250),
+                          child: ListView(
+                            shrinkWrap: true,
+                            children: [
+                              MoonMenuItem(
+                                onTap: () {
+                                  setState(() {
+                                    selectedManagerId = null;
+                                    showManagerDropdown = false;
+                                  });
+                                },
+                                label: const Text('No Manager'),
+                              ),
+                              ...managers.map((m) => MoonMenuItem(
+                                    onTap: () {
+                                      setState(() {
+                                        selectedManagerId = m.id;
+                                        showManagerDropdown = false;
+                                      });
+                                    },
+                                    label: Text(
+                                        '${m.firstName ?? ''} ${m.lastName ?? ''} (${m.email})'),
+                                  )),
+                            ],
+                          ),
+                        ),
+                        child: GestureDetector(
+                          onTap: () => setState(
+                              () => showManagerDropdown = !showManagerDropdown),
+                          child: AbsorbPointer(
+                            child: MoonTextInput(
+                              hintText: 'Assign Manager',
+                              controller: TextEditingController(
+                                text: selectedManagerId == null
+                                    ? 'No Manager'
+                                    : managers
+                                        .firstWhere(
+                                            (m) => m.id == selectedManagerId,
+                                            orElse: () => UserEntity(
+                                                id: '',
+                                                createdAt: DateTime(0)))
+                                        .email,
+                              ),
+                              trailing: const Icon(Icons.arrow_drop_down),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
             actions: [
               TextButton(
@@ -529,6 +597,7 @@ class WarehouseManagementViewState extends State<WarehouseManagementView> {
                           name: nameController.text,
                           address: addressController.text,
                           state: selectedState,
+                          managerId: selectedManagerId,
                         );
                     Navigator.pop(dialogContext);
                   }

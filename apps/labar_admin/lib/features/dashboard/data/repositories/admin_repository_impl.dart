@@ -81,12 +81,14 @@ abstract class AdminRepository {
     required String name,
     required String address,
     String? state,
+    String? managerId,
   });
   Future<void> updateWarehouse({
     required String id,
     required String name,
     required String address,
     String? state,
+    String? managerId,
   });
   Future<List<Map<String, dynamic>>> getInventoryAllocations(
       String inventoryId);
@@ -423,11 +425,13 @@ class AdminRepositoryImpl implements AdminRepository {
     required String name,
     required String address,
     String? state,
+    String? managerId,
   }) async {
     await _supabaseClient.from('warehouses').insert({
       'name': name,
       'address': address,
       'state': state,
+      'manager_id': managerId,
     });
   }
 
@@ -437,11 +441,13 @@ class AdminRepositoryImpl implements AdminRepository {
     required String name,
     required String address,
     String? state,
+    String? managerId,
   }) async {
     await _supabaseClient.from('warehouses').update({
       'name': name,
       'address': address,
       'state': state,
+      'manager_id': managerId,
     }).eq('id', id);
   }
 

@@ -138,6 +138,24 @@ class ApplicationRepositoryImpl implements ApplicationRepository {
           .from('farmer_designation')
           .upsert(designationData, onConflict: 'application');
     }
+
+    try {
+      final metadataUpdates = {
+        'first_name': application.firstName,
+        'last_name': application.lastName,
+        if (application.otherNames != null &&
+            application.otherNames!.isNotEmpty)
+          'other_names': application.otherNames,
+        if (application.phoneNumber.isNotEmpty)
+          'phone_number': application.phoneNumber,
+      };
+
+      await _supabaseClient.auth.updateUser(
+        UserAttributes(data: metadataUpdates),
+      );
+    } catch (e) {
+      AppLogger.error('Failed to update user profile metadata: $e', e);
+    }
   }
 
   @override

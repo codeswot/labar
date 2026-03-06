@@ -24,6 +24,7 @@ class _SignInPageState extends State<SignInPage> {
   bool _showOtpEntry = false;
   bool _isResending = false;
   String? _successMessage;
+  bool _obscurePassword = true;
 
   Future<void> _signIn() async {
     setState(() {
@@ -152,7 +153,14 @@ class _SignInPageState extends State<SignInPage> {
                 MoonTextInput(
                   controller: _passwordController,
                   hintText: 'Password',
-                  obscureText: true,
+                  obscureText: _obscurePassword,
+                  trailing: GestureDetector(
+                    onTap: () =>
+                        setState(() => _obscurePassword = !_obscurePassword),
+                    child: Icon(_obscurePassword
+                        ? MoonIcons.controls_eye_24_regular
+                        : MoonIcons.controls_eye_crossed_24_regular),
+                  ),
                 ),
               ] else ...[
                 Text(
