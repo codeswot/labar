@@ -65,7 +65,9 @@ class _HomeView extends StatelessWidget {
           BlocBuilder<SessionCubit, SessionState>(
             builder: (context, state) {
               final user = state.user;
-              final name = user?.email ?? 'User';
+              final name = (user?.firstName != null || user?.lastName != null)
+                  ? '${user?.firstName ?? ''} ${user?.lastName ?? ''}'.trim()
+                  : user?.email ?? 'User';
               return Padding(
                 padding: const EdgeInsets.only(right: 16.0),
                 child: Tooltip(

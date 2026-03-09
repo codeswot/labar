@@ -12,6 +12,12 @@ part 'inventory_management_cubit.freezed.dart';
 class InventoryManagementState with _$InventoryManagementState {
   const factory InventoryManagementState({
     @Default(false) bool isLoading,
+    @Default(false) bool isInventoryLoadingMore,
+    @Default(true) bool hasMoreInventory,
+    @Default(1) int inventoryPage,
+    @Default(false) bool isWaybillsLoadingMore,
+    @Default(true) bool hasMoreWaybills,
+    @Default(1) int waybillsPage,
     @Default([]) List<Map<String, dynamic>> inventory,
     @Default([]) List<Map<String, dynamic>> waybills,
     @Default([]) List<Map<String, dynamic>> warehouses,
@@ -34,12 +40,11 @@ class InventoryManagementCubit extends Cubit<InventoryManagementState> {
   InventoryManagementCubit(this._repository)
       : super(const InventoryManagementState());
 
+  static const int pageSize = 50;
+
   Future<void> init() async {
     emit(state.copyWith(isLoading: true, error: null));
     try {
-      // Initial fetch if needed, but stream will emit too
-      final inventory = await _repository.getInventory();
-      final waybills = await _repository.getWaybills();
       final warehouses = await _repository.getWarehouses();
       final items = await _repository.getItems();
 
@@ -48,33 +53,111 @@ class InventoryManagementCubit extends Cubit<InventoryManagementState> {
           users.where((u) => u.role == 'warehouse_manager').toList();
 
       emit(state.copyWith(
-        isLoading: false,
-        inventory: inventory,
-        waybills: waybills,
         warehouses: warehouses,
         items: items,
         managers: managers,
       ));
 
-      // Subscribe for real-time updates
-      _inventorySubscription?.cancel();
-      _inventorySubscription = _repository.inventoryStream.listen((inventory) {
-        emit(state.copyWith(inventory: inventory));
-      });
+      await fetchInventory(refresh: true);
+      await fetchWaybills(refresh: true);
 
-      _waybillSubscription?.cancel();
-      _waybillSubscription = _repository.waybillsStream.listen((waybills) {
-        emit(state.copyWith(waybills: waybills));
-      });
-
+      // Subscribe only for warehouses if needed
       _warehouseSubscription?.cancel();
       _warehouseSubscription =
           _repository.warehousesStream.listen((warehouses) {
         emit(state.copyWith(warehouses: warehouses));
       });
+      
+      emit(state.copyWith(isLoading: false));
     } catch (e, stack) {
       AppLogger.error('Failed to init inventory', e, stack);
       emit(state.copyWith(isLoading: false, error: e.toString()));
+    }
+  }
+
+  Future<void> fetchInventory({bool refresh = false}) async {
+    if (!refresh && (state.isInventoryLoadingMore || !state.hasMoreInventory)) return;
+
+    if (refresh) {
+      emit(state.copyWith(
+        isLoading: true,
+        inventoryPage: 1,
+        hasMoreInventory: true,
+        inventory: [],
+      ));
+    } else {
+      emit(state.copyWith(isInventoryLoadingMore: true));
+    }
+
+    try {
+      final page = refresh ? 1 : state.inventoryPage;
+      final offset = (page - 1) * pageSize;
+
+      final newInventory = await _repository.getInventory(
+        limit: pageSize,
+        offset: offset,
+      );
+
+      final List<Map<String, dynamic>> updatedInventory =
+          refresh ? newInventory : [...state.inventory, ...newInventory];
+
+      emit(state.copyWith(
+        isLoading: false,
+        isInventoryLoadingMore: false,
+        inventory: updatedInventory,
+        inventoryPage: page + 1,
+        hasMoreInventory: newInventory.length == pageSize,
+      ));
+    } catch (e, stack) {
+      AppLogger.error('Failed to fetch inventory', e, stack);
+      emit(state.copyWith(
+        isLoading: false,
+        isInventoryLoadingMore: false,
+        error: e.toString(),
+      ));
+    }
+  }
+
+  Future<void> fetchWaybills({bool refresh = false}) async {
+    if (!refresh && (state.isWaybillsLoadingMore || !state.hasMoreWaybills)) return;
+
+    if (refresh) {
+      emit(state.copyWith(
+        isLoading: true,
+        waybillsPage: 1,
+        hasMoreWaybills: true,
+        waybills: [],
+      ));
+    } else {
+      emit(state.copyWith(isWaybillsLoadingMore: true));
+    }
+
+    try {
+      final page = refresh ? 1 : state.waybillsPage;
+      final offset = (page - 1) * pageSize;
+
+      final newWaybills = await _repository.getWaybills(
+        limit: pageSize,
+        offset: offset,
+      );
+
+      final List<Map<String, dynamic>> updatedWaybills =
+          refresh ? newWaybills : [...state.waybills, ...newWaybills];
+
+      emit(state.copyWith(
+        isLoading: false,
+        isWaybillsLoadingMore: false,
+        waybills: updatedWaybills,
+        waybillsPage: page + 1,
+        hasMoreWaybills: newWaybills.length == pageSize,
+      ));
+    } catch (e, stack) {
+      AppLogger.error('Failed to fetch waybills', e, stack);
+      emit(state.copyWith(
+        isLoading: false,
+        isWaybillsLoadingMore: false,
+        error: e.toString(),
+      ));
     }
   }
 

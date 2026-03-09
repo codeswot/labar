@@ -65,7 +65,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       throw const AuthException('Sign in failed: User is null');
     }
 
-    return _mapUser(response.user!);
+    return await _mapUser(response.user!);
   }
 
   @override
@@ -80,7 +80,20 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       data: data,
     );
     if (response.user != null) {
-      return _mapUser(response.user!);
+      // Create profile
+      await _supabaseClient.from('profiles').upsert({
+        'id': response.user!.id,
+        'email': email,
+        'first_name': data?['first_name'],
+        'last_name': data?['last_name'],
+      });
+      // Create role
+      await _supabaseClient.from('user_roles').upsert({
+        'id': response.user!.id,
+        'role': data?['role'] ?? 'farmer',
+        'active': true,
+      });
+      return await _mapUser(response.user!);
     }
     return null;
   }
@@ -99,7 +112,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       throw const AuthException('Sign in failed: User is null');
     }
 
-    return _mapUser(response.user!);
+    return await _mapUser(response.user!);
   }
 
   @override
@@ -114,7 +127,20 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       data: data,
     );
     if (response.user != null) {
-      return _mapUser(response.user!);
+      // Create profile
+      await _supabaseClient.from('profiles').upsert({
+        'id': response.user!.id,
+        'phone': phone,
+        'first_name': data?['first_name'],
+        'last_name': data?['last_name'],
+      });
+      // Create role
+      await _supabaseClient.from('user_roles').upsert({
+        'id': response.user!.id,
+        'role': data?['role'] ?? 'farmer',
+        'active': true,
+      });
+      return await _mapUser(response.user!);
     }
     return null;
   }
@@ -157,27 +183,46 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<UserEntity?> getCurrentUser() async {
     final user = _supabaseClient.auth.currentUser;
     if (user != null) {
-      return _mapUser(user);
+      return await _mapUser(user);
     }
     return null;
   }
 
   @override
   Stream<UserEntity?> get onAuthStateChanged {
-    return _supabaseClient.auth.onAuthStateChange.map((event) {
+    return _supabaseClient.auth.onAuthStateChange.asyncMap((event) async {
       final user = event.session?.user;
       if (user != null) {
-        return _mapUser(user);
+        return await _mapUser(user);
       }
       return null;
     });
   }
 
-  UserEntity _mapUser(User user) {
+  Future<UserEntity> _mapUser(User user) async {
+    // Fetch role
+    final roleData = await _supabaseClient
+        .from('user_roles')
+        .select('role, active')
+        .eq('id', user.id)
+        .maybeSingle();
+
+    // Fetch profile
+    final profileData = await _supabaseClient
+        .from('profiles')
+        .select('first_name, last_name, avatar_url')
+        .eq('id', user.id)
+        .maybeSingle();
+
     return UserEntity(
       id: user.id,
       email: user.email,
       phone: user.phone,
+      firstName: profileData?['first_name'],
+      lastName: profileData?['last_name'],
+      avatarUrl: profileData?['avatar_url'],
+      role: roleData?['role']?.toString(),
+      active: roleData?['active'] as bool?,
       userMetadata: user.userMetadata,
       createdAt: user.createdAt,
     );

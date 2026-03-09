@@ -19,13 +19,28 @@ class ApplicationManagementView extends StatefulWidget {
 
 class ApplicationManagementViewState extends State<ApplicationManagementView> {
   final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   String _searchQuery = '';
   String? _statusFilter;
   String? _stateFilter;
 
   @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      context.read<ApplicationManagementCubit>().fetchApplications();
+    }
+  }
+
+  @override
   void dispose() {
     _searchController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -221,72 +236,86 @@ class ApplicationManagementViewState extends State<ApplicationManagementView> {
                     child: SizedBox(
                       width: double.infinity,
                       child: SingleChildScrollView(
+                        controller: _scrollController,
                         scrollDirection: Axis.vertical,
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: DataTable(
-                            showCheckboxColumn: false,
-                            headingRowColor: WidgetStateProperty.all(
-                                context.moonColors?.goku),
-                            columns: const [
-                              DataColumn(label: Text('Reg No')),
-                              DataColumn(label: Text('Farmer Name')),
-                              DataColumn(label: Text('Status')),
-                              DataColumn(label: Text('State')),
-                              DataColumn(label: Text('Action')),
-                            ],
-                            rows: applications.map((app) {
-                              final status =
-                                  app['status']?.toString().toLowerCase() ??
-                                      'initial';
-                              final name = app['first_name'] != null
-                                  ? '${app['first_name']} ${app['last_name']}'
-                                  : 'Unknown';
-                              return DataRow(
-                                  onSelectChanged: (_) =>
-                                      _showApplicationDetailDialog(
-                                          context, app),
-                                  cells: [
-                                    DataCell(Text(app['reg_no'] ?? '-')),
-                                    DataCell(Text(name)),
-                                    DataCell(GestureDetector(
-                                      onTap: () => _showStatusPicker(
-                                          context, app['id'], status),
-                                      child: MoonTag(
-                                        label: Text(status.toUpperCase()),
-                                        tagSize: MoonTagSize.xs,
-                                        backgroundColor: _getStatusColor(status)
-                                            .withOpacity(0.2),
-                                      ),
-                                    )),
-                                    DataCell(
-                                        Text(app['state']?.toString() ?? '-')),
-                                    DataCell(Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        IconButton(
-                                          icon: const Icon(
-                                              Icons.warehouse_rounded,
-                                              size: 18),
-                                          tooltip: 'Assign Warehouse',
-                                          onPressed: () => _showWarehousePicker(
-                                              context,
-                                              app['id'],
-                                              state.warehouses),
-                                        ),
-                                        IconButton(
-                                          icon: const Icon(Icons.delete_outline,
-                                              color: Colors.red, size: 18),
-                                          tooltip: 'Delete Application',
-                                          onPressed: () =>
-                                              _confirmDeleteApplication(
-                                                  context, app),
-                                        ),
-                                      ],
-                                    )),
-                                  ]);
-                            }).toList(),
-                          ),
+                        child: Column(
+                          children: [
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: DataTable(
+                                showCheckboxColumn: false,
+                                headingRowColor: WidgetStateProperty.all(
+                                    context.moonColors?.goku),
+                                columns: const [
+                                  DataColumn(label: Text('Reg No')),
+                                  DataColumn(label: Text('Farmer Name')),
+                                  DataColumn(label: Text('Status')),
+                                  DataColumn(label: Text('State')),
+                                  DataColumn(label: Text('Action')),
+                                ],
+                                rows: applications.map((app) {
+                                  final status =
+                                      app['status']?.toString().toLowerCase() ??
+                                          'initial';
+                                  final name = app['first_name'] != null
+                                      ? '${app['first_name']} ${app['last_name']}'
+                                      : 'Unknown';
+                                  return DataRow(
+                                      onSelectChanged: (_) =>
+                                          _showApplicationDetailDialog(
+                                              context, app),
+                                      cells: [
+                                        DataCell(Text(app['reg_no'] ?? '-')),
+                                        DataCell(Text(name)),
+                                        DataCell(GestureDetector(
+                                          onTap: () => _showStatusPicker(
+                                              context, app['id'], status),
+                                          child: MoonTag(
+                                            label: Text(status.toUpperCase()),
+                                            tagSize: MoonTagSize.xs,
+                                            backgroundColor:
+                                                _getStatusColor(status)
+                                                    .withValues(alpha: 0.2),
+                                          ),
+                                        )),
+                                        DataCell(Text(
+                                            app['state']?.toString() ?? '-')),
+                                        DataCell(Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            IconButton(
+                                              icon: const Icon(
+                                                  Icons.warehouse_rounded,
+                                                  size: 18),
+                                              tooltip: 'Assign Warehouse',
+                                              onPressed: () =>
+                                                  _showWarehousePicker(
+                                                      context,
+                                                      app['id'],
+                                                      state.warehouses),
+                                            ),
+                                            IconButton(
+                                              icon: const Icon(
+                                                  Icons.delete_outline,
+                                                  color: Colors.red,
+                                                  size: 18),
+                                              tooltip: 'Delete Application',
+                                              onPressed: () =>
+                                                  _confirmDeleteApplication(
+                                                      context, app),
+                                            ),
+                                          ],
+                                        )),
+                                      ]);
+                                }).toList(),
+                              ),
+                            ),
+                            if (state.isLoadingMore)
+                              const Padding(
+                                padding: EdgeInsets.all(16.0),
+                                child: Center(child: MoonCircularLoader()),
+                              ),
+                          ],
                         ),
                       ),
                     ),

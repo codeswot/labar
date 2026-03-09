@@ -22,40 +22,46 @@ class AdminDashboardView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-            create: (context) => getIt<UserManagementCubit>()..fetchUsers()),
-        BlocProvider(
-            create: (context) =>
-                getIt<ApplicationManagementCubit>()..watchApplications()),
-        BlocProvider(
-            create: (context) => getIt<DashboardOverviewCubit>()..init()),
-        BlocProvider(
-            create: (context) => getIt<InventoryManagementCubit>()..init()),
-        BlocProvider(create: (context) => getIt<ItemManagementCubit>()..init()),
-      ],
-      child: _buildContent(index),
-    );
+    return _buildContent(index);
   }
 
   Widget _buildContent(int index) {
     switch (index) {
       case 0:
-        return const DashboardOverview();
+        return BlocProvider(
+          create: (context) => getIt<DashboardOverviewCubit>()..init(),
+          child: const DashboardOverview(),
+        );
       case 1:
-        return const ApplicationManagementView();
+        return BlocProvider(
+          create: (context) =>
+              getIt<ApplicationManagementCubit>()..watchApplications(),
+          child: const ApplicationManagementView(),
+        );
       case 2:
-        return const UserManagementView();
+        return BlocProvider(
+          create: (context) => getIt<UserManagementCubit>()..fetchUsers(),
+          child: const UserManagementView(),
+        );
       case 3:
-        return const InventoryManagementView();
+        return BlocProvider(
+          create: (context) => getIt<InventoryManagementCubit>()..init(),
+          child: const InventoryManagementView(),
+        );
       case 4:
         return WarehouseManagementView(
-            onNavigateToInventory: () => onIndexChanged?.call(3));
+          onNavigateToInventory: () => onIndexChanged?.call(3),
+        );
       case 5:
-        return const ItemManagementView();
+        return BlocProvider(
+          create: (context) => getIt<ItemManagementCubit>()..init(),
+          child: const ItemManagementView(),
+        );
       default:
-        return const DashboardOverview();
+        return BlocProvider(
+          create: (context) => getIt<DashboardOverviewCubit>()..init(),
+          child: const DashboardOverview(),
+        );
     }
   }
 }

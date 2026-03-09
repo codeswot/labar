@@ -19,6 +19,7 @@ class InventoryManagementView extends StatefulWidget {
 
 class _InventoryManagementViewState extends State<InventoryManagementView> {
   final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   String _searchQuery = '';
   String? _invWarehouseFilter;
   String? _invStateFilter;
@@ -26,8 +27,22 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
   String? _wbWarehouseFilter;
 
   @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      context.read<InventoryManagementCubit>().fetchWaybills();
+    }
+  }
+
+  @override
   void dispose() {
     _searchController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -50,6 +65,7 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
         }
 
         return SingleChildScrollView(
+          controller: _scrollController,
           padding: const EdgeInsets.all(32.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,7 +147,7 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                       color: context.moonColors?.beerus ??
-                          Colors.grey.withOpacity(0.2)),
+                          Colors.grey.withValues(alpha: 0.2)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -239,61 +255,84 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                         );
                       }
 
-                      return DataTable(
-                        showCheckboxColumn: false,
-                        columns: const [
-                          DataColumn(label: Text('Item Name')),
-                          DataColumn(label: Text('Warehouse')),
-                          DataColumn(label: Text('State')),
-                          DataColumn(label: Text('Quantity')),
-                          DataColumn(label: Text('Unit')),
-                          DataColumn(label: Text('Price per Item')),
-                          DataColumn(label: Text('Action')),
+                      return Column(
+                        children: [
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: DataTable(
+                              showCheckboxColumn: false,
+                              columns: const [
+                                DataColumn(label: Text('Item Name')),
+                                DataColumn(label: Text('Warehouse')),
+                                DataColumn(label: Text('State')),
+                                DataColumn(label: Text('Quantity')),
+                                DataColumn(label: Text('Unit')),
+                                DataColumn(label: Text('Price per Item')),
+                                DataColumn(label: Text('Action')),
+                              ],
+                              rows: filteredInventory.map((inv) {
+                                final itemData = inv['items'];
+                                return DataRow(
+                                    onSelectChanged: (_) =>
+                                        _showInventoryDetailDialog(context, inv),
+                                    cells: [
+                                      DataCell(Text(inv['item_name'] ?? '')),
+                                      DataCell(Text(inv['warehouses']?['name'] ??
+                                          'Unknown Warehouse')),
+                                      DataCell(
+                                          Text(inv['warehouses']?['state'] ?? 'N/A')),
+                                      DataCell(Text(inv['quantity'].toString())),
+                                      DataCell(Text(itemData?['unit'] ?? '')),
+                                      DataCell(Text(itemData?['price'] != null
+                                          ? CurrencyUtils.formatNaira(
+                                              itemData?['price'])
+                                          : 'Free')),
+                                      DataCell(
+                                        Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            IconButton(
+                                              icon: const Icon(Icons.edit_outlined,
+                                                  size: 18),
+                                              onPressed: () {
+                                                _showEditInventoryDialog(
+                                                    context, inv);
+                                              },
+                                              tooltip: 'Edit Quantity',
+                                            ),
+                                            IconButton(
+                                              icon: const Icon(Icons.delete_outline,
+                                                  size: 18, color: Colors.red),
+                                              onPressed: () {
+                                                _showDeleteInventoryConfirm(
+                                                    context, inv);
+                                              },
+                                              tooltip: 'Delete Entry',
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ]);
+                              }).toList(),
+                            ),
+                          ),
+                          if (state.isInventoryLoadingMore)
+                            const Padding(
+                              padding: EdgeInsets.all(16.0),
+                              child: Center(child: MoonCircularLoader()),
+                            ),
+                          if (state.hasMoreInventory && !state.isLoading)
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: AppButton.filled(
+                                isFullWidth: false,
+                                label: const Text('Load More Inventory'),
+                                onTap: () => context
+                                    .read<InventoryManagementCubit>()
+                                    .fetchInventory(),
+                              ),
+                            ),
                         ],
-                        rows: filteredInventory.map((inv) {
-                          final itemData = inv['items'];
-                          return DataRow(
-                              onSelectChanged: (_) =>
-                                  _showInventoryDetailDialog(context, inv),
-                              cells: [
-                                DataCell(Text(inv['item_name'] ?? '')),
-                                DataCell(Text(inv['warehouses']?['name'] ??
-                                    'Unknown Warehouse')),
-                                DataCell(
-                                    Text(inv['warehouses']?['state'] ?? 'N/A')),
-                                DataCell(Text(inv['quantity'].toString())),
-                                DataCell(Text(itemData?['unit'] ?? '')),
-                                DataCell(Text(itemData?['price'] != null
-                                    ? CurrencyUtils.formatNaira(
-                                        itemData?['price'])
-                                    : 'Free')),
-                                DataCell(
-                                  Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      IconButton(
-                                        icon: const Icon(Icons.edit_outlined,
-                                            size: 18),
-                                        onPressed: () {
-                                          _showEditInventoryDialog(
-                                              context, inv);
-                                        },
-                                        tooltip: 'Edit Quantity',
-                                      ),
-                                      IconButton(
-                                        icon: const Icon(Icons.delete_outline,
-                                            size: 18, color: Colors.red),
-                                        onPressed: () {
-                                          _showDeleteInventoryConfirm(
-                                              context, inv);
-                                        },
-                                        tooltip: 'Delete Entry',
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ]);
-                        }).toList(),
                       );
                     }),
                   ],
@@ -309,7 +348,7 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                       color: context.moonColors?.beerus ??
-                          Colors.grey.withOpacity(0.2)),
+                          Colors.grey.withValues(alpha: 0.2)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -378,39 +417,51 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                         );
                       }
 
-                      return DataTable(
-                        columns: const [
-                          DataColumn(label: Text('Waybill #')),
-                          DataColumn(label: Text('Item Name')),
-                          DataColumn(label: Text('Qty')),
-                          DataColumn(label: Text('Destination')),
-                          DataColumn(label: Text('Date Generated')),
-                          DataColumn(label: Text('Action')),
-                        ],
-                        rows: filteredWaybills.map((wb) {
-                          final generatedDate = (wb['dispatch_date'] != null)
-                              ? DateFormat('MMM dd, yyyy HH:mm')
-                                  .format(DateTime.parse(wb['dispatch_date']))
-                              : '';
+                      return Column(
+                        children: [
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: DataTable(
+                              columns: const [
+                                DataColumn(label: Text('Waybill #')),
+                                DataColumn(label: Text('Item Name')),
+                                DataColumn(label: Text('Qty')),
+                                DataColumn(label: Text('Destination')),
+                                DataColumn(label: Text('Date Generated')),
+                                DataColumn(label: Text('Action')),
+                              ],
+                              rows: filteredWaybills.map((wb) {
+                                final generatedDate = (wb['dispatch_date'] != null)
+                                    ? DateFormat('MMM dd, yyyy HH:mm')
+                                        .format(DateTime.parse(wb['dispatch_date']))
+                                    : '';
 
-                          return DataRow(cells: [
-                            DataCell(Text(wb['waybill_number'] ?? '')),
-                            DataCell(Text(wb['item_name'] ?? '')),
-                            DataCell(Text('${wb['quantity']} ${wb['unit']}')),
-                            DataCell(Text(wb['destination'] ?? '')),
-                            DataCell(Text(generatedDate)),
-                            DataCell(
-                              IconButton(
-                                icon: const Icon(Icons.picture_as_pdf,
-                                    size: 16, color: Colors.red),
-                                onPressed: () {
-                                  _downloadWaybillPDF(context, wb);
-                                },
-                                tooltip: 'Download PDF',
-                              ),
+                                return DataRow(cells: [
+                                  DataCell(Text(wb['waybill_number'] ?? '')),
+                                  DataCell(Text(wb['item_name'] ?? '')),
+                                  DataCell(Text('${wb['quantity']} ${wb['unit']}')),
+                                  DataCell(Text(wb['destination'] ?? '')),
+                                  DataCell(Text(generatedDate)),
+                                  DataCell(
+                                    IconButton(
+                                      icon: const Icon(Icons.picture_as_pdf,
+                                          size: 16, color: Colors.red),
+                                      onPressed: () {
+                                        _downloadWaybillPDF(context, wb);
+                                      },
+                                      tooltip: 'Download PDF',
+                                    ),
+                                  ),
+                                ]);
+                              }).toList(),
                             ),
-                          ]);
-                        }).toList(),
+                          ),
+                          if (state.isWaybillsLoadingMore)
+                            const Padding(
+                              padding: EdgeInsets.all(16.0),
+                              child: Center(child: MoonCircularLoader()),
+                            ),
+                        ],
                       );
                     }),
                   ],

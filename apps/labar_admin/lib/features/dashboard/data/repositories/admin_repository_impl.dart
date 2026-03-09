@@ -5,7 +5,7 @@ import 'package:labar_admin/core/utils/app_logger.dart';
 import '../../../auth/domain/entities/user_entity.dart';
 
 abstract class AdminRepository {
-  Future<List<UserEntity>> getUsers();
+  Future<List<UserEntity>> getUsers({int? limit, int? offset});
   Future<void> createUser({
     required String email,
     required String password,
@@ -66,7 +66,7 @@ abstract class AdminRepository {
   // Inventory & Waybills
   Future<List<Map<String, dynamic>>> getItemsByLocation(
       String location); // To filter items by location if needed
-  Future<List<Map<String, dynamic>>> getInventory();
+  Future<List<Map<String, dynamic>>> getInventory({int? limit, int? offset});
   Future<void> addOrUpdateInventory({
     required String warehouseId,
     required String itemId,
@@ -76,7 +76,7 @@ abstract class AdminRepository {
   });
   Future<void> updateInventoryQuantity(String id, num quantity);
   Future<void> deleteInventory(String id);
-  Future<List<Map<String, dynamic>>> getWaybills();
+  Future<List<Map<String, dynamic>>> getWaybills({int? limit, int? offset});
   Future<Map<String, dynamic>> createWaybill(Map<String, dynamic> data);
   Future<List<Map<String, dynamic>>> getWarehouses();
   Future<void> addWarehouse({
@@ -112,20 +112,36 @@ class AdminRepositoryImpl implements AdminRepository {
   AdminRepositoryImpl(this._supabaseClient);
 
   @override
-  Future<List<UserEntity>> getUsers() async {
-    final response = await _supabaseClient.from('admin_user_view').select();
+  Future<List<UserEntity>> getUsers({int? limit, int? offset}) async {
+    dynamic query = _supabaseClient.from('profiles').select('*, user_roles(*)');
+
+    if (offset != null && limit != null) {
+      query = query.range(offset, offset + limit - 1);
+    } else if (limit != null) {
+      query = query.limit(limit);
+    }
+
+    final response = await (query as dynamic).order('id', ascending: true);
 
     return (response as List).map((data) {
+      final roleValue = data['user_roles'];
+      final Map<String, dynamic>? roleData =
+          (roleValue is List && roleValue.isNotEmpty)
+              ? roleValue.first as Map<String, dynamic>
+              : (roleValue is Map ? roleValue as Map<String, dynamic> : null);
+
       return UserEntity(
         id: data['id'],
         email: data['email'],
         firstName: data['first_name'],
         lastName: data['last_name'],
         avatarUrl: data['avatar_url'],
-        userMetadata: data['raw_user_meta_data'],
-        createdAt: DateTime.parse(data['created_at']),
-        role: data['role'],
-        active: data['active'],
+        userMetadata: null, // userMetadata is not in profiles table
+        createdAt: data['updated_at'] != null
+            ? DateTime.parse(data['updated_at'])
+            : DateTime.now(),
+        role: roleData?['role'],
+        active: roleData?['active'],
       );
     }).toList();
   }
@@ -283,6 +299,7 @@ class AdminRepositoryImpl implements AdminRepository {
         .eq('id', resourceId);
   }
 
+  @override
   Future<void> markAllocatedResourceAsCollected(String resourceId) async {
     await _supabaseClient
         .from('allocated_resources')
@@ -357,11 +374,17 @@ class AdminRepositoryImpl implements AdminRepository {
   }
 
   @override
-  Future<List<Map<String, dynamic>>> getInventory() async {
-    final response = await _supabaseClient
+  Future<List<Map<String, dynamic>>> getInventory({int? limit, int? offset}) async {
+    dynamic query = _supabaseClient
         .from('inventory')
-        .select('*, warehouses!inner(name, state, address), items!inner(*)')
-        .order('created_at', ascending: false);
+        .select('*, warehouses!inner(name, state, address), items!inner(*)');
+
+    if (limit != null) {
+      final end = (offset ?? 0) + limit - 1;
+      query = (query as PostgrestFilterBuilder).range(offset ?? 0, end);
+    }
+
+    final response = await (query as dynamic).order('created_at', ascending: false);
     return List<Map<String, dynamic>>.from(response);
   }
 
@@ -409,11 +432,17 @@ class AdminRepositoryImpl implements AdminRepository {
   }
 
   @override
-  Future<List<Map<String, dynamic>>> getWaybills() async {
-    final response = await _supabaseClient
+  Future<List<Map<String, dynamic>>> getWaybills({int? limit, int? offset}) async {
+    dynamic query = _supabaseClient
         .from('waybills')
-        .select('*, warehouses!inner(name, state)')
-        .order('created_at', ascending: false);
+        .select('*, warehouses!inner(name, state)');
+
+    if (limit != null) {
+      final end = (offset ?? 0) + limit - 1;
+      query = (query as PostgrestFilterBuilder).range(offset ?? 0, end);
+    }
+
+    final response = await (query as dynamic).order('created_at', ascending: false);
     return List<Map<String, dynamic>>.from(response);
   }
 

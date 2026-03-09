@@ -15,13 +15,28 @@ class UserManagementView extends StatefulWidget {
 
 class UserManagementViewState extends State<UserManagementView> {
   final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   String _searchQuery = '';
   String? _roleFilter;
   bool? _activeFilter;
 
   @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      context.read<UserManagementCubit>().fetchUsers();
+    }
+  }
+
+  @override
   void dispose() {
     _searchController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -199,119 +214,131 @@ class UserManagementViewState extends State<UserManagementView> {
                     child: SizedBox(
                       width: double.infinity,
                       child: SingleChildScrollView(
+                        controller: _scrollController,
                         scrollDirection: Axis.vertical,
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: DataTable(
-                            showCheckboxColumn: false,
-                            headingRowColor: WidgetStateProperty.all(
-                                context.moonColors?.goku),
-                            columns: const [
-                              DataColumn(label: Text('Name')),
-                              DataColumn(label: Text('Email')),
-                              DataColumn(label: Text('Role')),
-                              DataColumn(label: Text('Created At')),
-                              DataColumn(label: Text('Status')),
-                              DataColumn(label: Text('Action')),
-                            ],
-                            rows: users.map((user) {
-                              final isActive = user.active ?? true;
-                              final isMe = user.id == currentUser?.id;
-                              final fullName = (user.firstName != null ||
-                                      user.lastName != null)
-                                  ? '${user.firstName ?? ''} ${user.lastName ?? ''}'
-                                      .trim()
-                                  : '-';
-                              return DataRow(
-                                  onSelectChanged: (_) =>
-                                      _showUserProfile(context, user),
-                                  cells: [
-                                    DataCell(Row(
-                                      children: [
-                                        Text(fullName),
-                                        if (isMe) ...[
-                                          const SizedBox(width: 8),
-                                          MoonTag(
-                                            label: const Text('ME'),
-                                            tagSize: MoonTagSize.xs,
-                                            backgroundColor: context
-                                                .moonColors?.beerus
-                                                .withValues(alpha: 0.5),
-                                          ),
-                                        ],
-                                      ],
-                                    )),
-                                    DataCell(Text(user.email ?? '-')),
-                                    DataCell(MoonTag(
-                                      label: Text(
-                                          user.role?.toUpperCase() ?? 'NONE'),
-                                      tagSize: MoonTagSize.xs,
-                                      backgroundColor: user.role ==
-                                              'super_admin'
-                                          ? Colors.purple.withValues(alpha: 0.2)
-                                          : null,
-                                    )),
-                                    DataCell(Text(user.createdAt
-                                        .toString()
-                                        .split(' ')
-                                        .first)),
-                                    DataCell(
-                                      callerRole == 'super_admin'
-                                          ? MoonSwitch(
-                                              value: isActive,
-                                              onChanged: isMe
-                                                  ? null
-                                                  : (v) => context
-                                                      .read<
-                                                          UserManagementCubit>()
-                                                      .toggleUserStatus(
-                                                          user.id, v),
-                                            )
-                                          : MoonTag(
-                                              label: Text(isActive
-                                                  ? 'ACTIVE'
-                                                  : 'INACTIVE'),
-                                              tagSize: MoonTagSize.xs,
-                                              borderRadius:
-                                                  BorderRadius.circular(99),
-                                              backgroundColor: isActive
-                                                  ? Colors.green
-                                                      .withValues(alpha: 0.2)
-                                                  : Colors.red
-                                                      .withValues(alpha: 0.2),
-                                            ),
-                                    ),
-                                    DataCell(
-                                      Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          if (callerRole == 'super_admin') ...[
-                                            IconButton(
-                                              icon: const Icon(Icons
-                                                  .manage_accounts_outlined),
-                                              tooltip: 'Change Role',
-                                              onPressed: isMe
-                                                  ? null
-                                                  : () => _showRolePicker(
-                                                      context, user),
-                                            ),
-                                            IconButton(
-                                              icon: const Icon(
-                                                  Icons.delete_outline,
-                                                  color: Colors.red),
-                                              tooltip: 'Delete User',
-                                              onPressed: isMe
-                                                  ? null
-                                                  : () => _confirmDelete(
-                                                      context, user),
-                                            ),
+                        child: Column(
+                          children: [
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: DataTable(
+                                showCheckboxColumn: false,
+                                headingRowColor: WidgetStateProperty.all(
+                                    context.moonColors?.goku),
+                                columns: const [
+                                  DataColumn(label: Text('Name')),
+                                  DataColumn(label: Text('Email')),
+                                  DataColumn(label: Text('Role')),
+                                  DataColumn(label: Text('Created At')),
+                                  DataColumn(label: Text('Status')),
+                                  DataColumn(label: Text('Action')),
+                                ],
+                                rows: users.map((user) {
+                                  final isActive = user.active ?? true;
+                                  final isMe = user.id == currentUser?.id;
+                                  final fullName = (user.firstName != null ||
+                                          user.lastName != null)
+                                      ? '${user.firstName ?? ''} ${user.lastName ?? ''}'
+                                          .trim()
+                                      : '-';
+                                  return DataRow(
+                                      onSelectChanged: (_) =>
+                                          _showUserProfile(context, user),
+                                      cells: [
+                                        DataCell(Row(
+                                          children: [
+                                            Text(fullName),
+                                            if (isMe) ...[
+                                              const SizedBox(width: 8),
+                                              MoonTag(
+                                                label: const Text('ME'),
+                                                tagSize: MoonTagSize.xs,
+                                                backgroundColor: context
+                                                    .moonColors?.beerus
+                                                    .withValues(alpha: 0.5),
+                                              ),
+                                            ],
                                           ],
-                                        ],
-                                      ),
-                                    ),
-                                  ]);
-                            }).toList(),
-                          ),
+                                        )),
+                                        DataCell(Text(user.email ?? '-')),
+                                        DataCell(MoonTag(
+                                          label: Text(user.role?.toUpperCase() ??
+                                              'NONE'),
+                                          tagSize: MoonTagSize.xs,
+                                          backgroundColor: user.role ==
+                                                  'super_admin'
+                                              ? Colors.purple
+                                                  .withValues(alpha: 0.2)
+                                              : null,
+                                        )),
+                                        DataCell(Text(user.createdAt
+                                            .toString()
+                                            .split(' ')
+                                            .first)),
+                                        DataCell(
+                                          callerRole == 'super_admin'
+                                              ? MoonSwitch(
+                                                  value: isActive,
+                                                  onChanged: isMe
+                                                      ? null
+                                                      : (v) => context
+                                                          .read<
+                                                              UserManagementCubit>()
+                                                          .toggleUserStatus(
+                                                              user.id, v),
+                                                )
+                                              : MoonTag(
+                                                  label: Text(isActive
+                                                      ? 'ACTIVE'
+                                                      : 'INACTIVE'),
+                                                  tagSize: MoonTagSize.xs,
+                                                  borderRadius:
+                                                      BorderRadius.circular(99),
+                                                  backgroundColor: isActive
+                                                      ? Colors.green
+                                                          .withValues(alpha: 0.2)
+                                                      : Colors.red
+                                                          .withValues(alpha: 0.2),
+                                                ),
+                                        ),
+                                        DataCell(
+                                          Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              if (callerRole ==
+                                                  'super_admin') ...[
+                                                IconButton(
+                                                  icon: const Icon(Icons
+                                                      .manage_accounts_outlined),
+                                                  tooltip: 'Change Role',
+                                                  onPressed: isMe
+                                                      ? null
+                                                      : () => _showRolePicker(
+                                                          context, user),
+                                                ),
+                                                IconButton(
+                                                  icon: const Icon(
+                                                      Icons.delete_outline,
+                                                      color: Colors.red),
+                                                  tooltip: 'Delete User',
+                                                  onPressed: isMe
+                                                      ? null
+                                                      : () => _confirmDelete(
+                                                          context, user),
+                                                ),
+                                              ],
+                                            ],
+                                          ),
+                                        ),
+                                      ]);
+                                }).toList(),
+                              ),
+                            ),
+                            if (state.isLoadingMore)
+                              const Padding(
+                                padding: EdgeInsets.all(16.0),
+                                child: Center(child: MoonCircularLoader()),
+                              ),
+                          ],
                         ),
                       ),
                     ),

@@ -21,6 +21,7 @@ mixin _$ApplicationManagementState {
   List<Map<String, dynamic>> get warehouses =>
       throw _privateConstructorUsedError;
   bool get isLoading => throw _privateConstructorUsedError;
+  bool get isLoadingMore => throw _privateConstructorUsedError;
   String? get error => throw _privateConstructorUsedError;
   Map<String, dynamic>? get selectedDesignation =>
       throw _privateConstructorUsedError;
@@ -28,6 +29,8 @@ mixin _$ApplicationManagementState {
       throw _privateConstructorUsedError;
   List<String> get availableStates => throw _privateConstructorUsedError;
   List<String> get availableLgas => throw _privateConstructorUsedError;
+  bool get hasMore => throw _privateConstructorUsedError;
+  int get page => throw _privateConstructorUsedError;
 
   /// Create a copy of ApplicationManagementState
   /// with the given fields replaced by the non-null parameter values.
@@ -47,11 +50,14 @@ abstract class $ApplicationManagementStateCopyWith<$Res> {
       {List<Map<String, dynamic>> applications,
       List<Map<String, dynamic>> warehouses,
       bool isLoading,
+      bool isLoadingMore,
       String? error,
       Map<String, dynamic>? selectedDesignation,
       List<Map<String, dynamic>> selectedResources,
       List<String> availableStates,
-      List<String> availableLgas});
+      List<String> availableLgas,
+      bool hasMore,
+      int page});
 }
 
 /// @nodoc
@@ -73,11 +79,14 @@ class _$ApplicationManagementStateCopyWithImpl<$Res,
     Object? applications = null,
     Object? warehouses = null,
     Object? isLoading = null,
+    Object? isLoadingMore = null,
     Object? error = freezed,
     Object? selectedDesignation = freezed,
     Object? selectedResources = null,
     Object? availableStates = null,
     Object? availableLgas = null,
+    Object? hasMore = null,
+    Object? page = null,
   }) {
     return _then(_value.copyWith(
       applications: null == applications
@@ -91,6 +100,10 @@ class _$ApplicationManagementStateCopyWithImpl<$Res,
       isLoading: null == isLoading
           ? _value.isLoading
           : isLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isLoadingMore: null == isLoadingMore
+          ? _value.isLoadingMore
+          : isLoadingMore // ignore: cast_nullable_to_non_nullable
               as bool,
       error: freezed == error
           ? _value.error
@@ -112,6 +125,14 @@ class _$ApplicationManagementStateCopyWithImpl<$Res,
           ? _value.availableLgas
           : availableLgas // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      hasMore: null == hasMore
+          ? _value.hasMore
+          : hasMore // ignore: cast_nullable_to_non_nullable
+              as bool,
+      page: null == page
+          ? _value.page
+          : page // ignore: cast_nullable_to_non_nullable
+              as int,
     ) as $Val);
   }
 }
@@ -129,11 +150,14 @@ abstract class _$$ApplicationManagementStateImplCopyWith<$Res>
       {List<Map<String, dynamic>> applications,
       List<Map<String, dynamic>> warehouses,
       bool isLoading,
+      bool isLoadingMore,
       String? error,
       Map<String, dynamic>? selectedDesignation,
       List<Map<String, dynamic>> selectedResources,
       List<String> availableStates,
-      List<String> availableLgas});
+      List<String> availableLgas,
+      bool hasMore,
+      int page});
 }
 
 /// @nodoc
@@ -154,11 +178,14 @@ class __$$ApplicationManagementStateImplCopyWithImpl<$Res>
     Object? applications = null,
     Object? warehouses = null,
     Object? isLoading = null,
+    Object? isLoadingMore = null,
     Object? error = freezed,
     Object? selectedDesignation = freezed,
     Object? selectedResources = null,
     Object? availableStates = null,
     Object? availableLgas = null,
+    Object? hasMore = null,
+    Object? page = null,
   }) {
     return _then(_$ApplicationManagementStateImpl(
       applications: null == applications
@@ -172,6 +199,10 @@ class __$$ApplicationManagementStateImplCopyWithImpl<$Res>
       isLoading: null == isLoading
           ? _value.isLoading
           : isLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isLoadingMore: null == isLoadingMore
+          ? _value.isLoadingMore
+          : isLoadingMore // ignore: cast_nullable_to_non_nullable
               as bool,
       error: freezed == error
           ? _value.error
@@ -193,6 +224,14 @@ class __$$ApplicationManagementStateImplCopyWithImpl<$Res>
           ? _value._availableLgas
           : availableLgas // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      hasMore: null == hasMore
+          ? _value.hasMore
+          : hasMore // ignore: cast_nullable_to_non_nullable
+              as bool,
+      page: null == page
+          ? _value.page
+          : page // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -204,11 +243,14 @@ class _$ApplicationManagementStateImpl implements _ApplicationManagementState {
       {final List<Map<String, dynamic>> applications = const [],
       final List<Map<String, dynamic>> warehouses = const [],
       this.isLoading = false,
+      this.isLoadingMore = false,
       this.error,
       final Map<String, dynamic>? selectedDesignation,
       final List<Map<String, dynamic>> selectedResources = const [],
       final List<String> availableStates = const [],
-      final List<String> availableLgas = const []})
+      final List<String> availableLgas = const [],
+      this.hasMore = true,
+      this.page = 0})
       : _applications = applications,
         _warehouses = warehouses,
         _selectedDesignation = selectedDesignation,
@@ -237,6 +279,9 @@ class _$ApplicationManagementStateImpl implements _ApplicationManagementState {
   @override
   @JsonKey()
   final bool isLoading;
+  @override
+  @JsonKey()
+  final bool isLoadingMore;
   @override
   final String? error;
   final Map<String, dynamic>? _selectedDesignation;
@@ -279,8 +324,15 @@ class _$ApplicationManagementStateImpl implements _ApplicationManagementState {
   }
 
   @override
+  @JsonKey()
+  final bool hasMore;
+  @override
+  @JsonKey()
+  final int page;
+
+  @override
   String toString() {
-    return 'ApplicationManagementState(applications: $applications, warehouses: $warehouses, isLoading: $isLoading, error: $error, selectedDesignation: $selectedDesignation, selectedResources: $selectedResources, availableStates: $availableStates, availableLgas: $availableLgas)';
+    return 'ApplicationManagementState(applications: $applications, warehouses: $warehouses, isLoading: $isLoading, isLoadingMore: $isLoadingMore, error: $error, selectedDesignation: $selectedDesignation, selectedResources: $selectedResources, availableStates: $availableStates, availableLgas: $availableLgas, hasMore: $hasMore, page: $page)';
   }
 
   @override
@@ -294,6 +346,8 @@ class _$ApplicationManagementStateImpl implements _ApplicationManagementState {
                 .equals(other._warehouses, _warehouses) &&
             (identical(other.isLoading, isLoading) ||
                 other.isLoading == isLoading) &&
+            (identical(other.isLoadingMore, isLoadingMore) ||
+                other.isLoadingMore == isLoadingMore) &&
             (identical(other.error, error) || other.error == error) &&
             const DeepCollectionEquality()
                 .equals(other._selectedDesignation, _selectedDesignation) &&
@@ -302,7 +356,9 @@ class _$ApplicationManagementStateImpl implements _ApplicationManagementState {
             const DeepCollectionEquality()
                 .equals(other._availableStates, _availableStates) &&
             const DeepCollectionEquality()
-                .equals(other._availableLgas, _availableLgas));
+                .equals(other._availableLgas, _availableLgas) &&
+            (identical(other.hasMore, hasMore) || other.hasMore == hasMore) &&
+            (identical(other.page, page) || other.page == page));
   }
 
   @override
@@ -311,11 +367,14 @@ class _$ApplicationManagementStateImpl implements _ApplicationManagementState {
       const DeepCollectionEquality().hash(_applications),
       const DeepCollectionEquality().hash(_warehouses),
       isLoading,
+      isLoadingMore,
       error,
       const DeepCollectionEquality().hash(_selectedDesignation),
       const DeepCollectionEquality().hash(_selectedResources),
       const DeepCollectionEquality().hash(_availableStates),
-      const DeepCollectionEquality().hash(_availableLgas));
+      const DeepCollectionEquality().hash(_availableLgas),
+      hasMore,
+      page);
 
   /// Create a copy of ApplicationManagementState
   /// with the given fields replaced by the non-null parameter values.
@@ -333,11 +392,14 @@ abstract class _ApplicationManagementState
       {final List<Map<String, dynamic>> applications,
       final List<Map<String, dynamic>> warehouses,
       final bool isLoading,
+      final bool isLoadingMore,
       final String? error,
       final Map<String, dynamic>? selectedDesignation,
       final List<Map<String, dynamic>> selectedResources,
       final List<String> availableStates,
-      final List<String> availableLgas}) = _$ApplicationManagementStateImpl;
+      final List<String> availableLgas,
+      final bool hasMore,
+      final int page}) = _$ApplicationManagementStateImpl;
 
   @override
   List<Map<String, dynamic>> get applications;
@@ -345,6 +407,8 @@ abstract class _ApplicationManagementState
   List<Map<String, dynamic>> get warehouses;
   @override
   bool get isLoading;
+  @override
+  bool get isLoadingMore;
   @override
   String? get error;
   @override
@@ -355,6 +419,10 @@ abstract class _ApplicationManagementState
   List<String> get availableStates;
   @override
   List<String> get availableLgas;
+  @override
+  bool get hasMore;
+  @override
+  int get page;
 
   /// Create a copy of ApplicationManagementState
   /// with the given fields replaced by the non-null parameter values.

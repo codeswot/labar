@@ -27,6 +27,26 @@ class _SignUpFormState extends State<SignUpForm> {
             MoonTextInputGroup(
               orientation: MoonTextInputGroupOrientation.vertical,
               children: [
+                AppFormTextInput(
+                  initialValue: state.firstName.value,
+                  onChanged: (value) => BlocProvider.of<SignUpCubit>(context)
+                      .firstNameChanged(value),
+                  hintText: context.l10n.firstName,
+                  errorText: state.firstName.displayError != null
+                      ? context.l10n.fieldRequired
+                      : null,
+                  leading: const Icon(MoonIcons.generic_user_24_regular),
+                ),
+                AppFormTextInput(
+                  initialValue: state.lastName.value,
+                  onChanged: (value) => BlocProvider.of<SignUpCubit>(context)
+                      .lastNameChanged(value),
+                  hintText: context.l10n.lastName,
+                  errorText: state.lastName.displayError != null
+                      ? context.l10n.fieldRequired
+                      : null,
+                  leading: const Icon(MoonIcons.generic_user_24_regular),
+                ),
                 if (!state.usePhone)
                   AppFormTextInput(
                     initialValue: state.email.value,

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -15,11 +16,14 @@ class ApplicationManagementState with _$ApplicationManagementState {
     @Default([]) List<Map<String, dynamic>> applications,
     @Default([]) List<Map<String, dynamic>> warehouses,
     @Default(false) bool isLoading,
+    @Default(false) bool isLoadingMore,
     String? error,
     Map<String, dynamic>? selectedDesignation,
     @Default([]) List<Map<String, dynamic>> selectedResources,
     @Default([]) List<String> availableStates,
     @Default([]) List<String> availableLgas,
+    @Default(true) bool hasMore,
+    @Default(0) int page,
   }) = _ApplicationManagementState;
 }
 
@@ -35,80 +39,58 @@ class ApplicationManagementCubit extends Cubit<ApplicationManagementState> {
     this._supabaseClient,
   ) : super(const ApplicationManagementState());
 
-  void watchApplications() async {
+  Future<void> fetchApplications({bool refresh = false}) async {
+    if (state.isLoading || (state.isLoadingMore && !refresh)) return;
+
     final userId = _supabaseClient.auth.currentUser?.id;
     if (userId == null) {
       emit(state.copyWith(
-        error: 'Session expired or invalid. Please log in again.',
+        error: 'Session expired. Please log in again.',
         isLoading: false,
       ));
       return;
     }
 
-    emit(state.copyWith(isLoading: true, error: null));
+    if (refresh) {
+      emit(state.copyWith(isLoading: true, page: 0, applications: [], hasMore: true));
+    } else {
+      emit(state.copyWith(isLoadingMore: true));
+    }
 
     try {
-      await loadStates();
-      _warehousesSubscription?.cancel();
-      _warehousesSubscription =
-          _adminRepository.warehousesStream.listen((data) {
-        emit(state.copyWith(warehouses: data));
-      });
+      if (refresh) await loadStates();
+      
+      const int pageSize = 50;
+      final int offset = state.page * pageSize;
 
-      _applicationsSubscription?.cancel();
-      _applicationsSubscription = _supabaseClient
+      final List<dynamic> data = await _supabaseClient
           .from('applications')
-          .stream(primaryKey: ['id'])
+          .select('*')
           .order('created_at', ascending: false)
-          .listen((data) async {
-            final applications = List<Map<String, dynamic>>.from(data);
+          .range(offset, offset + pageSize - 1);
 
-            await Future.wait(applications.map((app) async {
-              if (app['passport_path'] != null) {
-                try {
-                  final url = await _supabaseClient.storage
-                      .from('uploads')
-                      .createSignedUrl(app['passport_path'], 3600);
-                  app['passport_url'] = url;
-                } catch (_) {}
-              }
-              if (app['signature_path'] != null) {
-                try {
-                  final url = await _supabaseClient.storage
-                      .from('uploads')
-                      .createSignedUrl(app['signature_path'], 3600);
-                  app['signature_url'] = url;
-                } catch (_) {}
-              }
-              if (app['proof_of_payment_path'] != null) {
-                try {
-                  final url = await _supabaseClient.storage
-                      .from('uploads')
-                      .createSignedUrl(app['proof_of_payment_path'], 3600);
-                  app['proof_of_payment_url'] = url;
-                } catch (_) {}
-              }
-              if (app['id_card_path'] != null) {
-                try {
-                  final url = await _supabaseClient.storage
-                      .from('uploads')
-                      .createSignedUrl(app['id_card_path'], 3600);
-                  app['id_card_url'] = url;
-                } catch (_) {}
-              }
-            }));
+      final applications = List<Map<String, dynamic>>.from(data);
+      
+      emit(state.copyWith(
+        applications: refresh ? applications : [...state.applications, ...applications],
+        isLoading: false,
+        isLoadingMore: false,
+        page: state.page + 1,
+        hasMore: applications.length == pageSize,
+      ));
 
-            emit(state.copyWith(
-              applications: applications,
-              isLoading: false,
-            ));
-          }, onError: (e) {
-            emit(state.copyWith(isLoading: false, error: e.toString()));
-          });
+      // Warehouses can still be a stream or fetched once
+      if (refresh && _warehousesSubscription == null) {
+        _warehousesSubscription = _adminRepository.warehousesStream.listen((data) {
+          emit(state.copyWith(warehouses: data));
+        });
+      }
     } catch (e) {
-      emit(state.copyWith(isLoading: false, error: e.toString()));
+      emit(state.copyWith(isLoading: false, isLoadingMore: false, error: e.toString()));
     }
   }
+
+  void watchApplications() => fetchApplications(refresh: true);
 
   Future<void> fetchApplicationDetails(String applicationId) async {
     emit(state.copyWith(
@@ -117,6 +99,33 @@ class ApplicationManagementCubit extends Cubit<ApplicationManagementState> {
     ));
 
     try {
+      final appIndex = state.applications.indexWhere((a) => a['id'] == applicationId);
+      if (appIndex != -1) {
+        final app = Map<String, dynamic>.from(state.applications[appIndex]);
+        
+        // Lazy sign URLs only for this app
+        final paths = {
+          'passport_path': 'passport_url',
+          'signature_path': 'signature_url',
+          'proof_of_payment_path': 'proof_of_payment_url',
+          'id_card_path': 'id_card_url',
+        };
+
+        for (var entry in paths.entries) {
+          if (app[entry.key] != null) {
+            try {
+              app[entry.value] = await _supabaseClient.storage
+                  .from('uploads')
+                  .createSignedUrl(app[entry.key], 3600);
+            } catch (_) {}
+          }
+        }
+
+        final updatedApps = List<Map<String, dynamic>>.from(state.applications);
+        updatedApps[appIndex] = app;
+        emit(state.copyWith(applications: updatedApps));
+      }
+
       final designation =
           await _adminRepository.getFarmerDesignation(applicationId);
       final resources =
@@ -127,7 +136,7 @@ class ApplicationManagementCubit extends Cubit<ApplicationManagementState> {
         selectedResources: resources,
       ));
     } catch (e) {
-      print('Error fetching details: $e');
+      debugPrint('Error fetching details: $e');
     }
   }
 
@@ -255,7 +264,7 @@ class ApplicationManagementCubit extends Cubit<ApplicationManagementState> {
       final List<dynamic> data = json.decode(response);
       emit(state.copyWith(availableStates: List<String>.from(data)));
     } catch (e) {
-      print('Error loading states: $e');
+      debugPrint('Error loading states: $e');
     }
   }
 

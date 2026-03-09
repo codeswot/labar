@@ -17,6 +17,12 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$InventoryManagementState {
   bool get isLoading => throw _privateConstructorUsedError;
+  bool get isInventoryLoadingMore => throw _privateConstructorUsedError;
+  bool get hasMoreInventory => throw _privateConstructorUsedError;
+  int get inventoryPage => throw _privateConstructorUsedError;
+  bool get isWaybillsLoadingMore => throw _privateConstructorUsedError;
+  bool get hasMoreWaybills => throw _privateConstructorUsedError;
+  int get waybillsPage => throw _privateConstructorUsedError;
   List<Map<String, dynamic>> get inventory =>
       throw _privateConstructorUsedError;
   List<Map<String, dynamic>> get waybills => throw _privateConstructorUsedError;
@@ -47,6 +53,12 @@ abstract class $InventoryManagementStateCopyWith<$Res> {
   @useResult
   $Res call(
       {bool isLoading,
+      bool isInventoryLoadingMore,
+      bool hasMoreInventory,
+      int inventoryPage,
+      bool isWaybillsLoadingMore,
+      bool hasMoreWaybills,
+      int waybillsPage,
       List<Map<String, dynamic>> inventory,
       List<Map<String, dynamic>> waybills,
       List<Map<String, dynamic>> warehouses,
@@ -75,6 +87,12 @@ class _$InventoryManagementStateCopyWithImpl<$Res,
   @override
   $Res call({
     Object? isLoading = null,
+    Object? isInventoryLoadingMore = null,
+    Object? hasMoreInventory = null,
+    Object? inventoryPage = null,
+    Object? isWaybillsLoadingMore = null,
+    Object? hasMoreWaybills = null,
+    Object? waybillsPage = null,
     Object? inventory = null,
     Object? waybills = null,
     Object? warehouses = null,
@@ -90,6 +108,30 @@ class _$InventoryManagementStateCopyWithImpl<$Res,
           ? _value.isLoading
           : isLoading // ignore: cast_nullable_to_non_nullable
               as bool,
+      isInventoryLoadingMore: null == isInventoryLoadingMore
+          ? _value.isInventoryLoadingMore
+          : isInventoryLoadingMore // ignore: cast_nullable_to_non_nullable
+              as bool,
+      hasMoreInventory: null == hasMoreInventory
+          ? _value.hasMoreInventory
+          : hasMoreInventory // ignore: cast_nullable_to_non_nullable
+              as bool,
+      inventoryPage: null == inventoryPage
+          ? _value.inventoryPage
+          : inventoryPage // ignore: cast_nullable_to_non_nullable
+              as int,
+      isWaybillsLoadingMore: null == isWaybillsLoadingMore
+          ? _value.isWaybillsLoadingMore
+          : isWaybillsLoadingMore // ignore: cast_nullable_to_non_nullable
+              as bool,
+      hasMoreWaybills: null == hasMoreWaybills
+          ? _value.hasMoreWaybills
+          : hasMoreWaybills // ignore: cast_nullable_to_non_nullable
+              as bool,
+      waybillsPage: null == waybillsPage
+          ? _value.waybillsPage
+          : waybillsPage // ignore: cast_nullable_to_non_nullable
+              as int,
       inventory: null == inventory
           ? _value.inventory
           : inventory // ignore: cast_nullable_to_non_nullable
@@ -141,6 +183,12 @@ abstract class _$$InventoryManagementStateImplCopyWith<$Res>
   @useResult
   $Res call(
       {bool isLoading,
+      bool isInventoryLoadingMore,
+      bool hasMoreInventory,
+      int inventoryPage,
+      bool isWaybillsLoadingMore,
+      bool hasMoreWaybills,
+      int waybillsPage,
       List<Map<String, dynamic>> inventory,
       List<Map<String, dynamic>> waybills,
       List<Map<String, dynamic>> warehouses,
@@ -168,6 +216,12 @@ class __$$InventoryManagementStateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? isLoading = null,
+    Object? isInventoryLoadingMore = null,
+    Object? hasMoreInventory = null,
+    Object? inventoryPage = null,
+    Object? isWaybillsLoadingMore = null,
+    Object? hasMoreWaybills = null,
+    Object? waybillsPage = null,
     Object? inventory = null,
     Object? waybills = null,
     Object? warehouses = null,
@@ -183,6 +237,30 @@ class __$$InventoryManagementStateImplCopyWithImpl<$Res>
           ? _value.isLoading
           : isLoading // ignore: cast_nullable_to_non_nullable
               as bool,
+      isInventoryLoadingMore: null == isInventoryLoadingMore
+          ? _value.isInventoryLoadingMore
+          : isInventoryLoadingMore // ignore: cast_nullable_to_non_nullable
+              as bool,
+      hasMoreInventory: null == hasMoreInventory
+          ? _value.hasMoreInventory
+          : hasMoreInventory // ignore: cast_nullable_to_non_nullable
+              as bool,
+      inventoryPage: null == inventoryPage
+          ? _value.inventoryPage
+          : inventoryPage // ignore: cast_nullable_to_non_nullable
+              as int,
+      isWaybillsLoadingMore: null == isWaybillsLoadingMore
+          ? _value.isWaybillsLoadingMore
+          : isWaybillsLoadingMore // ignore: cast_nullable_to_non_nullable
+              as bool,
+      hasMoreWaybills: null == hasMoreWaybills
+          ? _value.hasMoreWaybills
+          : hasMoreWaybills // ignore: cast_nullable_to_non_nullable
+              as bool,
+      waybillsPage: null == waybillsPage
+          ? _value.waybillsPage
+          : waybillsPage // ignore: cast_nullable_to_non_nullable
+              as int,
       inventory: null == inventory
           ? _value._inventory
           : inventory // ignore: cast_nullable_to_non_nullable
@@ -228,6 +306,12 @@ class __$$InventoryManagementStateImplCopyWithImpl<$Res>
 class _$InventoryManagementStateImpl implements _InventoryManagementState {
   const _$InventoryManagementStateImpl(
       {this.isLoading = false,
+      this.isInventoryLoadingMore = false,
+      this.hasMoreInventory = true,
+      this.inventoryPage = 1,
+      this.isWaybillsLoadingMore = false,
+      this.hasMoreWaybills = true,
+      this.waybillsPage = 1,
       final List<Map<String, dynamic>> inventory = const [],
       final List<Map<String, dynamic>> waybills = const [],
       final List<Map<String, dynamic>> warehouses = const [],
@@ -249,6 +333,24 @@ class _$InventoryManagementStateImpl implements _InventoryManagementState {
   @override
   @JsonKey()
   final bool isLoading;
+  @override
+  @JsonKey()
+  final bool isInventoryLoadingMore;
+  @override
+  @JsonKey()
+  final bool hasMoreInventory;
+  @override
+  @JsonKey()
+  final int inventoryPage;
+  @override
+  @JsonKey()
+  final bool isWaybillsLoadingMore;
+  @override
+  @JsonKey()
+  final bool hasMoreWaybills;
+  @override
+  @JsonKey()
+  final int waybillsPage;
   final List<Map<String, dynamic>> _inventory;
   @override
   @JsonKey()
@@ -329,7 +431,7 @@ class _$InventoryManagementStateImpl implements _InventoryManagementState {
 
   @override
   String toString() {
-    return 'InventoryManagementState(isLoading: $isLoading, inventory: $inventory, waybills: $waybills, warehouses: $warehouses, items: $items, selectedInventoryAllocations: $selectedInventoryAllocations, selectedWarehouseAllocations: $selectedWarehouseAllocations, selectedWarehouseFarmers: $selectedWarehouseFarmers, managers: $managers, error: $error)';
+    return 'InventoryManagementState(isLoading: $isLoading, isInventoryLoadingMore: $isInventoryLoadingMore, hasMoreInventory: $hasMoreInventory, inventoryPage: $inventoryPage, isWaybillsLoadingMore: $isWaybillsLoadingMore, hasMoreWaybills: $hasMoreWaybills, waybillsPage: $waybillsPage, inventory: $inventory, waybills: $waybills, warehouses: $warehouses, items: $items, selectedInventoryAllocations: $selectedInventoryAllocations, selectedWarehouseAllocations: $selectedWarehouseAllocations, selectedWarehouseFarmers: $selectedWarehouseFarmers, managers: $managers, error: $error)';
   }
 
   @override
@@ -339,6 +441,18 @@ class _$InventoryManagementStateImpl implements _InventoryManagementState {
             other is _$InventoryManagementStateImpl &&
             (identical(other.isLoading, isLoading) ||
                 other.isLoading == isLoading) &&
+            (identical(other.isInventoryLoadingMore, isInventoryLoadingMore) ||
+                other.isInventoryLoadingMore == isInventoryLoadingMore) &&
+            (identical(other.hasMoreInventory, hasMoreInventory) ||
+                other.hasMoreInventory == hasMoreInventory) &&
+            (identical(other.inventoryPage, inventoryPage) ||
+                other.inventoryPage == inventoryPage) &&
+            (identical(other.isWaybillsLoadingMore, isWaybillsLoadingMore) ||
+                other.isWaybillsLoadingMore == isWaybillsLoadingMore) &&
+            (identical(other.hasMoreWaybills, hasMoreWaybills) ||
+                other.hasMoreWaybills == hasMoreWaybills) &&
+            (identical(other.waybillsPage, waybillsPage) ||
+                other.waybillsPage == waybillsPage) &&
             const DeepCollectionEquality()
                 .equals(other._inventory, _inventory) &&
             const DeepCollectionEquality().equals(other._waybills, _waybills) &&
@@ -361,6 +475,12 @@ class _$InventoryManagementStateImpl implements _InventoryManagementState {
   int get hashCode => Object.hash(
       runtimeType,
       isLoading,
+      isInventoryLoadingMore,
+      hasMoreInventory,
+      inventoryPage,
+      isWaybillsLoadingMore,
+      hasMoreWaybills,
+      waybillsPage,
       const DeepCollectionEquality().hash(_inventory),
       const DeepCollectionEquality().hash(_waybills),
       const DeepCollectionEquality().hash(_warehouses),
@@ -384,6 +504,12 @@ class _$InventoryManagementStateImpl implements _InventoryManagementState {
 abstract class _InventoryManagementState implements InventoryManagementState {
   const factory _InventoryManagementState(
       {final bool isLoading,
+      final bool isInventoryLoadingMore,
+      final bool hasMoreInventory,
+      final int inventoryPage,
+      final bool isWaybillsLoadingMore,
+      final bool hasMoreWaybills,
+      final int waybillsPage,
       final List<Map<String, dynamic>> inventory,
       final List<Map<String, dynamic>> waybills,
       final List<Map<String, dynamic>> warehouses,
@@ -396,6 +522,18 @@ abstract class _InventoryManagementState implements InventoryManagementState {
 
   @override
   bool get isLoading;
+  @override
+  bool get isInventoryLoadingMore;
+  @override
+  bool get hasMoreInventory;
+  @override
+  int get inventoryPage;
+  @override
+  bool get isWaybillsLoadingMore;
+  @override
+  bool get hasMoreWaybills;
+  @override
+  int get waybillsPage;
   @override
   List<Map<String, dynamic>> get inventory;
   @override

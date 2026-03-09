@@ -112,7 +112,7 @@ class _FarmMapViewState extends State<FarmMapView> {
                     polygons: [
                       Polygon(
                         points: polygonPoints,
-                        color: Colors.purple.withOpacity(0.3),
+                        color: Colors.purple.withValues(alpha: 0.3),
                         borderColor: Colors.purple,
                         borderStrokeWidth: 2.5,
                       ),
@@ -143,7 +143,7 @@ class _FarmMapViewState extends State<FarmMapView> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Colors.purple.withOpacity(0.85),
+                    color: Colors.purple.withValues(alpha: 0.85),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Row(

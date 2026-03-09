@@ -170,7 +170,12 @@ class _DashboardPageState extends State<DashboardPage> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Text(
-                                    user?.email?.split('@').first ?? 'User',
+                                    (user?.firstName != null ||
+                                            user?.lastName != null)
+                                        ? '${user?.firstName ?? ''} ${user?.lastName ?? ''}'
+                                            .trim()
+                                        : user?.email?.split('@').first ??
+                                            'User',
                                     style:
                                         context.moonTypography?.heading.text14,
                                     overflow: TextOverflow.ellipsis,
@@ -242,7 +247,7 @@ class _SidebarItem extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
             color: selected
-                ? context.moonColors?.piccolo.withOpacity(0.1)
+                ? context.moonColors?.piccolo.withValues(alpha: 0.1)
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(8),
           ),

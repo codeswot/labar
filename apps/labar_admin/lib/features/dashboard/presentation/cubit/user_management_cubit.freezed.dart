@@ -18,6 +18,9 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$UserManagementState {
   List<UserEntity> get users => throw _privateConstructorUsedError;
   bool get isLoading => throw _privateConstructorUsedError;
+  bool get isLoadingMore => throw _privateConstructorUsedError;
+  bool get hasMore => throw _privateConstructorUsedError;
+  int get page => throw _privateConstructorUsedError;
   String? get error => throw _privateConstructorUsedError;
 
   /// Create a copy of UserManagementState
@@ -33,7 +36,13 @@ abstract class $UserManagementStateCopyWith<$Res> {
           UserManagementState value, $Res Function(UserManagementState) then) =
       _$UserManagementStateCopyWithImpl<$Res, UserManagementState>;
   @useResult
-  $Res call({List<UserEntity> users, bool isLoading, String? error});
+  $Res call(
+      {List<UserEntity> users,
+      bool isLoading,
+      bool isLoadingMore,
+      bool hasMore,
+      int page,
+      String? error});
 }
 
 /// @nodoc
@@ -53,6 +62,9 @@ class _$UserManagementStateCopyWithImpl<$Res, $Val extends UserManagementState>
   $Res call({
     Object? users = null,
     Object? isLoading = null,
+    Object? isLoadingMore = null,
+    Object? hasMore = null,
+    Object? page = null,
     Object? error = freezed,
   }) {
     return _then(_value.copyWith(
@@ -64,6 +76,18 @@ class _$UserManagementStateCopyWithImpl<$Res, $Val extends UserManagementState>
           ? _value.isLoading
           : isLoading // ignore: cast_nullable_to_non_nullable
               as bool,
+      isLoadingMore: null == isLoadingMore
+          ? _value.isLoadingMore
+          : isLoadingMore // ignore: cast_nullable_to_non_nullable
+              as bool,
+      hasMore: null == hasMore
+          ? _value.hasMore
+          : hasMore // ignore: cast_nullable_to_non_nullable
+              as bool,
+      page: null == page
+          ? _value.page
+          : page // ignore: cast_nullable_to_non_nullable
+              as int,
       error: freezed == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
@@ -80,7 +104,13 @@ abstract class _$$UserManagementStateImplCopyWith<$Res>
       __$$UserManagementStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({List<UserEntity> users, bool isLoading, String? error});
+  $Res call(
+      {List<UserEntity> users,
+      bool isLoading,
+      bool isLoadingMore,
+      bool hasMore,
+      int page,
+      String? error});
 }
 
 /// @nodoc
@@ -98,6 +128,9 @@ class __$$UserManagementStateImplCopyWithImpl<$Res>
   $Res call({
     Object? users = null,
     Object? isLoading = null,
+    Object? isLoadingMore = null,
+    Object? hasMore = null,
+    Object? page = null,
     Object? error = freezed,
   }) {
     return _then(_$UserManagementStateImpl(
@@ -109,6 +142,18 @@ class __$$UserManagementStateImplCopyWithImpl<$Res>
           ? _value.isLoading
           : isLoading // ignore: cast_nullable_to_non_nullable
               as bool,
+      isLoadingMore: null == isLoadingMore
+          ? _value.isLoadingMore
+          : isLoadingMore // ignore: cast_nullable_to_non_nullable
+              as bool,
+      hasMore: null == hasMore
+          ? _value.hasMore
+          : hasMore // ignore: cast_nullable_to_non_nullable
+              as bool,
+      page: null == page
+          ? _value.page
+          : page // ignore: cast_nullable_to_non_nullable
+              as int,
       error: freezed == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
@@ -123,6 +168,9 @@ class _$UserManagementStateImpl implements _UserManagementState {
   const _$UserManagementStateImpl(
       {final List<UserEntity> users = const [],
       this.isLoading = false,
+      this.isLoadingMore = false,
+      this.hasMore = true,
+      this.page = 0,
       this.error})
       : _users = users;
 
@@ -139,11 +187,20 @@ class _$UserManagementStateImpl implements _UserManagementState {
   @JsonKey()
   final bool isLoading;
   @override
+  @JsonKey()
+  final bool isLoadingMore;
+  @override
+  @JsonKey()
+  final bool hasMore;
+  @override
+  @JsonKey()
+  final int page;
+  @override
   final String? error;
 
   @override
   String toString() {
-    return 'UserManagementState(users: $users, isLoading: $isLoading, error: $error)';
+    return 'UserManagementState(users: $users, isLoading: $isLoading, isLoadingMore: $isLoadingMore, hasMore: $hasMore, page: $page, error: $error)';
   }
 
   @override
@@ -154,12 +211,22 @@ class _$UserManagementStateImpl implements _UserManagementState {
             const DeepCollectionEquality().equals(other._users, _users) &&
             (identical(other.isLoading, isLoading) ||
                 other.isLoading == isLoading) &&
+            (identical(other.isLoadingMore, isLoadingMore) ||
+                other.isLoadingMore == isLoadingMore) &&
+            (identical(other.hasMore, hasMore) || other.hasMore == hasMore) &&
+            (identical(other.page, page) || other.page == page) &&
             (identical(other.error, error) || other.error == error));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType,
-      const DeepCollectionEquality().hash(_users), isLoading, error);
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(_users),
+      isLoading,
+      isLoadingMore,
+      hasMore,
+      page,
+      error);
 
   /// Create a copy of UserManagementState
   /// with the given fields replaced by the non-null parameter values.
@@ -175,12 +242,21 @@ abstract class _UserManagementState implements UserManagementState {
   const factory _UserManagementState(
       {final List<UserEntity> users,
       final bool isLoading,
+      final bool isLoadingMore,
+      final bool hasMore,
+      final int page,
       final String? error}) = _$UserManagementStateImpl;
 
   @override
   List<UserEntity> get users;
   @override
   bool get isLoading;
+  @override
+  bool get isLoadingMore;
+  @override
+  bool get hasMore;
+  @override
+  int get page;
   @override
   String? get error;
 

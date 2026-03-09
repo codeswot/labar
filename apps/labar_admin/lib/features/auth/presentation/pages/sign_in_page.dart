@@ -98,7 +98,9 @@ class _SignInPageState extends State<SignInPage> {
       if (user == null) {
         setState(() => _error = 'Invalid OTP');
       } else {
-        context.router.replaceAll([const DashboardRoute()]);
+        if (mounted) {
+          context.router.replaceAll([const DashboardRoute()]);
+        }
       }
     } on AuthException catch (e) {
       setState(() => _error = e.message);
@@ -121,7 +123,7 @@ class _SignInPageState extends State<SignInPage> {
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               ),

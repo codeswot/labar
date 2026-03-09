@@ -11,6 +11,9 @@ class UserManagementState with _$UserManagementState {
   const factory UserManagementState({
     @Default([]) List<UserEntity> users,
     @Default(false) bool isLoading,
+    @Default(false) bool isLoadingMore,
+    @Default(true) bool hasMore,
+    @Default(0) int page,
     String? error,
   }) = _UserManagementState;
 }
@@ -22,13 +25,33 @@ class UserManagementCubit extends Cubit<UserManagementState> {
   UserManagementCubit(this._adminRepository)
       : super(const UserManagementState());
 
-  Future<void> fetchUsers() async {
-    emit(state.copyWith(isLoading: true, error: null));
+  Future<void> fetchUsers({bool refresh = false}) async {
+    if (state.isLoading || (state.isLoadingMore && !refresh)) return;
+
+    if (refresh) {
+      emit(state.copyWith(isLoading: true, page: 0, users: [], hasMore: true, error: null));
+    } else {
+      emit(state.copyWith(isLoadingMore: true, error: null));
+    }
+
     try {
-      final users = await _adminRepository.getUsers();
-      emit(state.copyWith(users: users, isLoading: false));
+      const int pageSize = 50;
+      final int offset = state.page * pageSize;
+      
+      final users = await _adminRepository.getUsers(
+        limit: pageSize,
+        offset: offset,
+      );
+      
+      emit(state.copyWith(
+        users: refresh ? users : [...state.users, ...users],
+        isLoading: false,
+        isLoadingMore: false,
+        page: state.page + 1,
+        hasMore: users.length == pageSize,
+      ));
     } catch (e) {
-      emit(state.copyWith(isLoading: false, error: e.toString()));
+      emit(state.copyWith(isLoading: false, isLoadingMore: false, error: e.toString()));
     }
   }
 

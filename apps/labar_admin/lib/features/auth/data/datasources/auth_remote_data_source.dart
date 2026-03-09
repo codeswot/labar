@@ -95,12 +95,22 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         .eq('id', user.id)
         .maybeSingle();
 
+    // Fetch profile data
+    final profileData = await _supabaseClient
+        .from('profiles')
+        .select('first_name, last_name, avatar_url')
+        .eq('id', user.id)
+        .maybeSingle();
+
     return UserEntity(
       id: user.id,
       email: user.email,
       phone: user.phone,
       userMetadata: user.userMetadata,
       createdAt: DateTime.parse(user.createdAt),
+      firstName: profileData?['first_name'],
+      lastName: profileData?['last_name'],
+      avatarUrl: profileData?['avatar_url'],
       role: roleData?['role']?.toString(),
       active: roleData?['active'] as bool?,
     );

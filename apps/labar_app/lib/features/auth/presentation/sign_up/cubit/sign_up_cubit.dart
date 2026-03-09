@@ -12,13 +12,30 @@ class SignUpCubit extends Cubit<SignUpState> {
 
   SignUpCubit(this._signUpUseCase) : super(const SignUpState());
 
+  void firstNameChanged(String value) {
+    final firstName = TextInput.dirty(value);
+    emit(state.copyWith(
+      firstName: firstName,
+      status: FormzSubmissionStatus.initial,
+      isValid: _validateForm(firstName: firstName),
+    ));
+  }
+
+  void lastNameChanged(String value) {
+    final lastName = TextInput.dirty(value);
+    emit(state.copyWith(
+      lastName: lastName,
+      status: FormzSubmissionStatus.initial,
+      isValid: _validateForm(lastName: lastName),
+    ));
+  }
+
   void emailChanged(String value) {
     final email = Email.dirty(value);
     emit(state.copyWith(
       email: email,
       status: FormzSubmissionStatus.initial,
-      isValid: !state.usePhone &&
-          Formz.validate([email, state.password, state.confirmedPassword]),
+      isValid: _validateForm(email: email),
     ));
   }
 
@@ -27,8 +44,7 @@ class SignUpCubit extends Cubit<SignUpState> {
     emit(state.copyWith(
       phone: phone,
       status: FormzSubmissionStatus.initial,
-      isValid: state.usePhone &&
-          Formz.validate([phone, state.password, state.confirmedPassword]),
+      isValid: _validateForm(phone: phone),
     ));
   }
 
@@ -37,11 +53,7 @@ class SignUpCubit extends Cubit<SignUpState> {
     emit(state.copyWith(
       usePhone: newUsePhone,
       status: FormzSubmissionStatus.initial,
-      isValid: newUsePhone
-          ? Formz.validate(
-              [state.phone, state.password, state.confirmedPassword])
-          : Formz.validate(
-              [state.email, state.password, state.confirmedPassword]),
+      isValid: _validateForm(usePhone: newUsePhone),
     ));
   }
 
@@ -55,9 +67,7 @@ class SignUpCubit extends Cubit<SignUpState> {
       password: password,
       confirmedPassword: confirmedPassword,
       status: FormzSubmissionStatus.initial,
-      isValid: state.usePhone
-          ? Formz.validate([state.phone, password, confirmedPassword])
-          : Formz.validate([state.email, password, confirmedPassword]),
+      isValid: _validateForm(password: password, confirmedPassword: confirmedPassword),
     ));
   }
 
@@ -69,10 +79,27 @@ class SignUpCubit extends Cubit<SignUpState> {
     emit(state.copyWith(
       confirmedPassword: confirmedPassword,
       status: FormzSubmissionStatus.initial,
-      isValid: state.usePhone
-          ? Formz.validate([state.phone, state.password, confirmedPassword])
-          : Formz.validate([state.email, state.password, confirmedPassword]),
+      isValid: _validateForm(confirmedPassword: confirmedPassword),
     ));
+  }
+
+  bool _validateForm({
+    TextInput? firstName,
+    TextInput? lastName,
+    Email? email,
+    Phone? phone,
+    Password? password,
+    ConfirmedPassword? confirmedPassword,
+    bool? usePhone,
+  }) {
+    final currentUsePhone = usePhone ?? state.usePhone;
+    return Formz.validate([
+      firstName ?? state.firstName,
+      lastName ?? state.lastName,
+      if (currentUsePhone) (phone ?? state.phone) else (email ?? state.email),
+      password ?? state.password,
+      confirmedPassword ?? state.confirmedPassword,
+    ]);
   }
 
   Future<void> signUp() async {
@@ -81,7 +108,7 @@ class SignUpCubit extends Cubit<SignUpState> {
     emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
 
     String? formattedPhone = state.phone.value;
-    if (state.usePhone && formattedPhone.startsWith('0')) {
+    if (state.usePhone && formattedPhone.isNotEmpty && formattedPhone.startsWith('0')) {
       formattedPhone = '+234${formattedPhone.substring(1)}';
     }
 
@@ -89,6 +116,10 @@ class SignUpCubit extends Cubit<SignUpState> {
       email: state.usePhone ? null : state.email.value,
       phone: state.usePhone ? formattedPhone : null,
       password: state.password.value,
+      data: {
+        'first_name': state.firstName.value,
+        'last_name': state.lastName.value,
+      },
     ));
 
     result.fold(
