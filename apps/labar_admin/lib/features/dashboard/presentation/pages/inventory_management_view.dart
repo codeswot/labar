@@ -240,6 +240,7 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                       }
 
                       return DataTable(
+                        showCheckboxColumn: false,
                         columns: const [
                           DataColumn(label: Text('Item Name')),
                           DataColumn(label: Text('Warehouse')),
@@ -247,6 +248,7 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                           DataColumn(label: Text('Quantity')),
                           DataColumn(label: Text('Unit')),
                           DataColumn(label: Text('Price per Item')),
+                          DataColumn(label: Text('Action')),
                         ],
                         rows: filteredInventory.map((inv) {
                           final itemData = inv['items'];
@@ -265,6 +267,31 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
                                     ? CurrencyUtils.formatNaira(
                                         itemData?['price'])
                                     : 'Free')),
+                                DataCell(
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      IconButton(
+                                        icon: const Icon(Icons.edit_outlined,
+                                            size: 18),
+                                        onPressed: () {
+                                          _showEditInventoryDialog(
+                                              context, inv);
+                                        },
+                                        tooltip: 'Edit Quantity',
+                                      ),
+                                      IconButton(
+                                        icon: const Icon(Icons.delete_outline,
+                                            size: 18, color: Colors.red),
+                                        onPressed: () {
+                                          _showDeleteInventoryConfirm(
+                                              context, inv);
+                                        },
+                                        tooltip: 'Delete Entry',
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ]);
                         }).toList(),
                       );
@@ -1053,5 +1080,80 @@ class _InventoryManagementViewState extends State<InventoryManagementView> {
   void _downloadWaybillPDF(
       BuildContext context, Map<String, dynamic> waybillData) async {
     await WaybillPdfGenerator.generateAndDownload(waybillData);
+  }
+
+  void _showEditInventoryDialog(
+      BuildContext context, Map<String, dynamic> inventory) {
+    final quantityController =
+        TextEditingController(text: inventory['quantity'].toString());
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Edit Stock Level'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Item: ${inventory['item_name']}'),
+            Text('Warehouse: ${inventory['warehouses']?['name']}'),
+            const SizedBox(height: 16),
+            MoonTextInput(
+              controller: quantityController,
+              hintText: 'Quantity',
+              keyboardType: TextInputType.number,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Cancel'),
+          ),
+          AppButton.filled(
+            isFullWidth: false,
+            onTap: () {
+              final newQty = num.tryParse(quantityController.text);
+              if (newQty != null) {
+                context
+                    .read<InventoryManagementCubit>()
+                    .updateInventoryQuantity(inventory['id'], newQty);
+                Navigator.pop(dialogContext);
+              }
+            },
+            label: const Text('Update'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showDeleteInventoryConfirm(
+      BuildContext context, Map<String, dynamic> inventory) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Delete Inventory Entry'),
+        content: Text(
+            'Are you sure you want to delete "${inventory['item_name']}" from "${inventory['warehouses']?['name']}"?\n\nThis action cannot be undone.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Cancel'),
+          ),
+          AppButton.filled(
+            isFullWidth: false,
+            onTap: () {
+              context
+                  .read<InventoryManagementCubit>()
+                  .deleteInventory(inventory['id']);
+              Navigator.pop(dialogContext);
+            },
+            label: const Text('Delete'),
+            backgroundColor: Colors.red,
+          ),
+        ],
+      ),
+    );
   }
 }

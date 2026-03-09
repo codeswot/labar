@@ -136,14 +136,12 @@ class ApplicationManagementCubit extends Cubit<ApplicationManagementState> {
     required String warehouseId,
     String? note,
   }) async {
-    emit(state.copyWith(isLoading: true, error: null));
     try {
       await _adminRepository.assignWarehouse(
         applicationId: applicationId,
         warehouseId: warehouseId,
         note: note,
       );
-      emit(state.copyWith(isLoading: false));
       // Refresh details to show the new assignment
       await fetchApplicationDetails(applicationId);
     } catch (e) {
@@ -152,10 +150,8 @@ class ApplicationManagementCubit extends Cubit<ApplicationManagementState> {
   }
 
   Future<void> updateStatus(String id, String status) async {
-    emit(state.copyWith(isLoading: true, error: null));
     try {
       await _adminRepository.updateApplicationStatus(id, status);
-      emit(state.copyWith(isLoading: false));
     } catch (e) {
       emit(state.copyWith(isLoading: false, error: e.toString()));
     }
@@ -175,7 +171,6 @@ class ApplicationManagementCubit extends Cubit<ApplicationManagementState> {
       ));
       return;
     }
-    emit(state.copyWith(isLoading: true, error: null));
     try {
       await _adminRepository.createApplication(
         email: email,
@@ -184,17 +179,14 @@ class ApplicationManagementCubit extends Cubit<ApplicationManagementState> {
         passportBase64: passportBase64,
         signatureBase64: signatureBase64,
       );
-      emit(state.copyWith(isLoading: false));
     } catch (e) {
       emit(state.copyWith(isLoading: false, error: e.toString()));
     }
   }
 
   Future<void> deleteApplication(String id) async {
-    emit(state.copyWith(isLoading: true, error: null));
     try {
       await _adminRepository.deleteApplication(id);
-      emit(state.copyWith(isLoading: false));
     } catch (e) {
       emit(state.copyWith(isLoading: false, error: e.toString()));
     }
@@ -206,7 +198,6 @@ class ApplicationManagementCubit extends Cubit<ApplicationManagementState> {
     required num quantity,
     required String collectionAddress,
   }) async {
-    emit(state.copyWith(isLoading: true, error: null));
     try {
       await _adminRepository.allocateResource(
         applicationId: applicationId,
@@ -214,7 +205,6 @@ class ApplicationManagementCubit extends Cubit<ApplicationManagementState> {
         quantity: quantity,
         collectionAddress: collectionAddress,
       );
-      emit(state.copyWith(isLoading: false));
       // Refresh details to show the new allocation
       await fetchApplicationDetails(applicationId);
     } catch (e) {
@@ -226,10 +216,8 @@ class ApplicationManagementCubit extends Cubit<ApplicationManagementState> {
     required String resourceId,
     required String applicationId,
   }) async {
-    emit(state.copyWith(isLoading: true, error: null));
     try {
       await _adminRepository.removeAllocatedResource(resourceId);
-      emit(state.copyWith(isLoading: false));
       // Refresh details to reflect the removal
       await fetchApplicationDetails(applicationId);
     } catch (e) {
@@ -241,10 +229,8 @@ class ApplicationManagementCubit extends Cubit<ApplicationManagementState> {
     required String resourceId,
     required String applicationId,
   }) async {
-    emit(state.copyWith(isLoading: true, error: null));
     try {
       await _adminRepository.markAllocatedResourceAsCollected(resourceId);
-      emit(state.copyWith(isLoading: false));
       await fetchApplicationDetails(applicationId);
     } catch (e) {
       emit(state.copyWith(isLoading: false, error: e.toString()));
@@ -252,10 +238,8 @@ class ApplicationManagementCubit extends Cubit<ApplicationManagementState> {
   }
 
   Future<void> unassignWarehouse(String applicationId) async {
-    emit(state.copyWith(isLoading: true, error: null));
     try {
       await _adminRepository.unassignWarehouse(applicationId);
-      emit(state.copyWith(isLoading: false));
       // Refresh details to reflect the removal
       await fetchApplicationDetails(applicationId);
     } catch (e) {

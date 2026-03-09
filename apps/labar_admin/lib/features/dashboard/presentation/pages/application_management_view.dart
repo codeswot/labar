@@ -141,7 +141,7 @@ class ApplicationManagementViewState extends State<ApplicationManagementView> {
               child: BlocBuilder<ApplicationManagementCubit,
                   ApplicationManagementState>(
                 builder: (context, state) {
-                  if (state.isLoading) {
+                  if (state.isLoading && state.applications.isEmpty) {
                     return const Center(child: MoonCircularLoader());
                   }
 
@@ -789,8 +789,8 @@ class ApplicationManagementViewState extends State<ApplicationManagementView> {
     final longitudeController = TextEditingController(text: '');
     final townController = TextEditingController(text: '');
 
-    String? gender = '';
-    String? kycType = '';
+    String? gender;
+    String? kycType;
     String? selectedState;
     String? selectedLga;
     String? passportBase64;
@@ -1176,23 +1176,30 @@ class ApplicationManagementViewState extends State<ApplicationManagementView> {
         title: const Text('Assign Warehouse'),
         content: SizedBox(
           width: 400,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: warehouses
-                .map((w) => ListTile(
-                      title: Text('${w['name']} (${w['state'] ?? 'N/A'})'),
-                      subtitle: Text(w['address'] ?? ''),
-                      onTap: () {
-                        context
-                            .read<ApplicationManagementCubit>()
-                            .assignWarehouse(
-                              applicationId: appId,
-                              warehouseId: w['id'],
-                            );
-                        Navigator.pop(dialogContext);
-                      },
-                    ))
-                .toList(),
+          child: Container(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.6,
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: warehouses
+                    .map((w) => ListTile(
+                          title: Text('${w['name']} (${w['state'] ?? 'N/A'})'),
+                          subtitle: Text(w['address'] ?? ''),
+                          onTap: () {
+                            context
+                                .read<ApplicationManagementCubit>()
+                                .assignWarehouse(
+                                  applicationId: appId,
+                                  warehouseId: w['id'],
+                                );
+                            Navigator.pop(dialogContext);
+                          },
+                        ))
+                    .toList(),
+              ),
+            ),
           ),
         ),
       ),
@@ -1206,22 +1213,29 @@ class ApplicationManagementViewState extends State<ApplicationManagementView> {
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: const Text('Update Status'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: statuses
-              .map((s) => ListTile(
-                    title: Text(s.toUpperCase()),
-                    trailing: s == currentStatus
-                        ? const Icon(Icons.check, color: Colors.green)
-                        : null,
-                    onTap: () {
-                      context
-                          .read<ApplicationManagementCubit>()
-                          .updateStatus(appId, s);
-                      Navigator.pop(dialogContext);
-                    },
-                  ))
-              .toList(),
+        content: Container(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.6,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: statuses
+                  .map((s) => ListTile(
+                        title: Text(s.toUpperCase()),
+                        trailing: s == currentStatus
+                            ? const Icon(Icons.check, color: Colors.green)
+                            : null,
+                        onTap: () {
+                          context
+                              .read<ApplicationManagementCubit>()
+                              .updateStatus(appId, s);
+                          Navigator.pop(dialogContext);
+                        },
+                      ))
+                  .toList(),
+            ),
+          ),
         ),
       ),
     );
@@ -1245,59 +1259,61 @@ class ApplicationManagementViewState extends State<ApplicationManagementView> {
           title: const Text('Allocate Resource'),
           content: SizedBox(
             width: 400,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                MoonDropdown(
-                  show: showItemDropdown,
-                  constrainWidthToChild: true,
-                  onTapOutside: () =>
-                      setDialogState(() => showItemDropdown = false),
-                  content: Container(
-                    constraints: const BoxConstraints(maxHeight: 250),
-                    child: ListView(
-                      shrinkWrap: true,
-                      children: inventory.map((item) {
-                        return MoonMenuItem(
-                          onTap: () {
-                            setDialogState(() {
-                              selectedItemId = item['id'];
-                              showItemDropdown = false;
-                            });
-                          },
-                          label: Text(
-                              '${item['items']?['name']} - ${item['warehouses']?['name']} (Available: ${item['quantity']} ${item['items']?['unit']}${item['items']?['price'] != null ? ' - ${CurrencyUtils.formatNaira(item['items']?['price'])}' : ' - Free'})'),
-                        );
-                      }).toList(),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  MoonDropdown(
+                    show: showItemDropdown,
+                    constrainWidthToChild: true,
+                    onTapOutside: () =>
+                        setDialogState(() => showItemDropdown = false),
+                    content: Container(
+                      constraints: const BoxConstraints(maxHeight: 250),
+                      child: ListView(
+                        shrinkWrap: true,
+                        children: inventory.map((item) {
+                          return MoonMenuItem(
+                            onTap: () {
+                              setDialogState(() {
+                                selectedItemId = item['id'];
+                                showItemDropdown = false;
+                              });
+                            },
+                            label: Text(
+                                '${item['items']?['name']} - ${item['warehouses']?['name']} (Available: ${item['quantity']} ${item['items']?['unit']}${item['items']?['price'] != null ? ' - ${CurrencyUtils.formatNaira(item['items']?['price'])}' : ' - Free'})'),
+                          );
+                        }).toList(),
+                      ),
                     ),
-                  ),
-                  child: GestureDetector(
-                    onTap: () => setDialogState(
-                        () => showItemDropdown = !showItemDropdown),
-                    child: AbsorbPointer(
-                      child: MoonTextInput(
-                        hintText: 'Select Resource Item',
-                        readOnly: true,
-                        controller: TextEditingController(
-                            text: selectedItemId != null
-                                ? '${inventory.firstWhere((i) => i['id'] == selectedItemId)['items']?['name']} - ${inventory.firstWhere((i) => i['id'] == selectedItemId)['warehouses']?['name']}'
-                                : ''),
+                    child: GestureDetector(
+                      onTap: () => setDialogState(
+                          () => showItemDropdown = !showItemDropdown),
+                      child: AbsorbPointer(
+                        child: MoonTextInput(
+                          hintText: 'Select Resource Item',
+                          readOnly: true,
+                          controller: TextEditingController(
+                              text: selectedItemId != null
+                                  ? '${inventory.firstWhere((i) => i['id'] == selectedItemId)['items']?['name']} - ${inventory.firstWhere((i) => i['id'] == selectedItemId)['warehouses']?['name']}'
+                                  : ''),
+                        ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 12),
-                MoonTextInput(
-                  controller: quantityController,
-                  hintText: 'Quantity',
-                  keyboardType: TextInputType.number,
-                ),
-                const SizedBox(height: 12),
-                MoonTextInput(
-                  controller: addressController,
-                  hintText: 'Collection Address',
-                ),
-              ],
+                  const SizedBox(height: 12),
+                  MoonTextInput(
+                    controller: quantityController,
+                    hintText: 'Quantity',
+                    keyboardType: TextInputType.number,
+                  ),
+                  const SizedBox(height: 12),
+                  MoonTextInput(
+                    controller: addressController,
+                    hintText: 'Collection Address',
+                  ),
+                ],
+              ),
             ),
           ),
           actions: [

@@ -74,6 +74,8 @@ abstract class AdminRepository {
         itemName, // Keep for backward compatibility or unique index requirement
     required num quantity,
   });
+  Future<void> updateInventoryQuantity(String id, num quantity);
+  Future<void> deleteInventory(String id);
   Future<List<Map<String, dynamic>>> getWaybills();
   Future<Map<String, dynamic>> createWaybill(Map<String, dynamic> data);
   Future<List<Map<String, dynamic>>> getWarehouses();
@@ -391,6 +393,19 @@ class AdminRepositoryImpl implements AdminRepository {
         'quantity': quantity,
       });
     }
+  }
+
+  @override
+  Future<void> updateInventoryQuantity(String id, num quantity) async {
+    await _supabaseClient.from('inventory').update({
+      'quantity': quantity,
+      'updated_at': DateTime.now().toIso8601String(),
+    }).eq('id', id);
+  }
+
+  @override
+  Future<void> deleteInventory(String id) async {
+    await _supabaseClient.from('inventory').delete().eq('id', id);
   }
 
   @override

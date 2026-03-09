@@ -99,7 +99,6 @@ class InventoryManagementCubit extends Cubit<InventoryManagementState> {
         state: state,
         managerId: managerId,
       );
-      await init(); // Refresh
     } catch (e, stack) {
       AppLogger.error('Failed to add warehouse', e, stack);
       if (!isClosed) emit(this.state.copyWith(error: e.toString()));
@@ -121,7 +120,6 @@ class InventoryManagementCubit extends Cubit<InventoryManagementState> {
         state: state,
         managerId: managerId,
       );
-      await init(); // Refresh
     } catch (e, stack) {
       AppLogger.error('Failed to update warehouse', e, stack);
       if (!isClosed) emit(this.state.copyWith(error: e.toString()));
@@ -141,9 +139,26 @@ class InventoryManagementCubit extends Cubit<InventoryManagementState> {
         itemName: itemName,
         quantity: quantity,
       );
-      await init(); // Refresh
     } catch (e, stack) {
       AppLogger.error('Failed to add inventory', e, stack);
+      emit(state.copyWith(error: e.toString()));
+    }
+  }
+
+  Future<void> updateInventoryQuantity(String id, num quantity) async {
+    try {
+      await _repository.updateInventoryQuantity(id, quantity);
+    } catch (e, stack) {
+      AppLogger.error('Failed to update inventory quantity', e, stack);
+      emit(state.copyWith(error: e.toString()));
+    }
+  }
+
+  Future<void> deleteInventory(String id) async {
+    try {
+      await _repository.deleteInventory(id);
+    } catch (e, stack) {
+      AppLogger.error('Failed to delete inventory', e, stack);
       emit(state.copyWith(error: e.toString()));
     }
   }
@@ -173,7 +188,6 @@ class InventoryManagementCubit extends Cubit<InventoryManagementState> {
       };
 
       final waybill = await _repository.createWaybill(data);
-      await init(); // Refresh data
       return waybill;
     } catch (e, stack) {
       AppLogger.error('Failed to generate waybill', e, stack);
