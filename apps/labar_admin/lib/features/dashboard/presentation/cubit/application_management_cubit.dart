@@ -68,7 +68,7 @@ class ApplicationManagementCubit extends Cubit<ApplicationManagementState> {
 
       final List<dynamic> data = await _supabaseClient
           .from('applications')
-          .select('*')
+          .select('*, creator:profiles!created_by(first_name, last_name, user_roles(role))')
           .order('created_at', ascending: false)
           .range(offset, offset + pageSize - 1);
 

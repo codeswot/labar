@@ -33,9 +33,16 @@ class AdminDashboardView extends StatelessWidget {
           child: const DashboardOverview(),
         );
       case 1:
-        return BlocProvider(
-          create: (context) =>
-              getIt<ApplicationManagementCubit>()..watchApplications(),
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (context) =>
+                  getIt<ApplicationManagementCubit>()..watchApplications(),
+            ),
+            BlocProvider(
+              create: (context) => getIt<InventoryManagementCubit>()..init(),
+            ),
+          ],
           child: const ApplicationManagementView(),
         );
       case 2:

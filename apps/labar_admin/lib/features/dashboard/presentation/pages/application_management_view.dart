@@ -411,6 +411,10 @@ class ApplicationManagementViewState extends State<ApplicationManagementView> {
                             DetailInfo(
                                 label: 'Town/Village',
                                 value: app['town'] ?? '-'),
+                            DetailInfo(
+                              label: 'Created By',
+                              value: _getCreatedByText(app),
+                            ),
                           ],
                         ),
                       ),
@@ -474,7 +478,9 @@ class ApplicationManagementViewState extends State<ApplicationManagementView> {
                               'status',
                               'reg_no',
                               'id_card_path',
-                              'id_card_url'
+                              'id_card_url',
+                              'created_by',
+                              'creator',
                             }.contains(e.key))
                         .map((e) => SizedBox(
                               width: 200,
@@ -1439,6 +1445,39 @@ class ApplicationManagementViewState extends State<ApplicationManagementView> {
         ],
       ),
     );
+  }
+
+  String _getCreatedByText(dynamic app) {
+    final creator = app['creator'];
+    final createdByUserId = app['created_by'];
+    final ownerUserId = app['user_id'];
+
+    if (createdByUserId == ownerUserId) {
+      return 'Farmer';
+    }
+
+    if (creator != null) {
+      final firstName = creator['first_name'] ?? '';
+      final lastName = creator['last_name'] ?? '';
+      final roleData = creator['user_roles'];
+      String role = 'User';
+
+      if (roleData is List && roleData.isNotEmpty) {
+        role = roleData.first['role'] ?? 'User';
+      } else if (roleData is Map) {
+        role = roleData['role'] ?? 'User';
+      }
+
+      // Format role name
+      final displayRole = role
+          .split('_')
+          .map((word) => word[0].toUpperCase() + word.substring(1))
+          .join(' ');
+
+      return '$displayRole: $firstName $lastName';
+    }
+
+    return createdByUserId?.toString() ?? 'Unknown';
   }
 
   Color _getStatusColor(String status) {
