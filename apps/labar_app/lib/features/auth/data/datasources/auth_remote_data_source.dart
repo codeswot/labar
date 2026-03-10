@@ -87,12 +87,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         'first_name': data?['first_name'],
         'last_name': data?['last_name'],
       });
-      // Create role
-      await _supabaseClient.from('user_roles').upsert({
-        'id': response.user!.id,
-        'role': data?['role'] ?? 'farmer',
-        'active': true,
-      });
+
       return await _mapUser(response.user!);
     }
     return null;
@@ -134,12 +129,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         'first_name': data?['first_name'],
         'last_name': data?['last_name'],
       });
-      // Create role
-      await _supabaseClient.from('user_roles').upsert({
-        'id': response.user!.id,
-        'role': data?['role'] ?? 'farmer',
-        'active': true,
-      });
+
       return await _mapUser(response.user!);
     }
     return null;
