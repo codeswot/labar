@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:labar_admin/core/session/session_cubit.dart';
 import '../../data/repositories/admin_repository_impl.dart';
 
 part 'application_management_cubit.freezed.dart';
@@ -31,12 +32,14 @@ class ApplicationManagementState with _$ApplicationManagementState {
 class ApplicationManagementCubit extends Cubit<ApplicationManagementState> {
   final AdminRepository _adminRepository;
   final SupabaseClient _supabaseClient;
+  final SessionCubit _sessionCubit;
   StreamSubscription? _applicationsSubscription;
   StreamSubscription? _warehousesSubscription;
 
   ApplicationManagementCubit(
     this._adminRepository,
     this._supabaseClient,
+    this._sessionCubit,
   ) : super(const ApplicationManagementState());
 
   Future<void> fetchApplications({bool refresh = false}) async {
@@ -81,7 +84,13 @@ class ApplicationManagementCubit extends Cubit<ApplicationManagementState> {
 
       // Warehouses can still be a stream or fetched once
       if (refresh && _warehousesSubscription == null) {
-        _warehousesSubscription = _adminRepository.warehousesStream.listen((data) {
+        final user = _sessionCubit.state.user;
+        final isManager = user?.role == 'warehouse_manager';
+        final managerWarehouseId = isManager ? user?.warehouseId : null;
+
+        _warehousesSubscription = _adminRepository
+            .warehousesStream(warehouseId: managerWarehouseId)
+            .listen((data) {
           emit(state.copyWith(warehouses: data));
         });
       }

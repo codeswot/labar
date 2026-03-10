@@ -69,17 +69,20 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i1071.AdminRepositoryImpl(gh<_i454.SupabaseClient>()));
     gh.factory<_i20.ItemManagementCubit>(
         () => _i20.ItemManagementCubit(gh<_i1071.AdminRepository>()));
-    gh.factory<_i481.ApplicationManagementCubit>(
-        () => _i481.ApplicationManagementCubit(
-              gh<_i1071.AdminRepository>(),
-              gh<_i454.SupabaseClient>(),
-            ));
-    gh.factory<_i572.UserManagementCubit>(
-        () => _i572.UserManagementCubit(gh<_i1071.AdminRepository>()));
     gh.lazySingleton<_i787.AuthRepository>(
         () => _i153.AuthRepositoryImpl(gh<_i107.AuthRemoteDataSource>()));
     gh.lazySingleton<_i796.SessionCubit>(
         () => _i796.SessionCubit(gh<_i787.AuthRepository>()));
+    gh.factory<_i481.ApplicationManagementCubit>(
+        () => _i481.ApplicationManagementCubit(
+              gh<_i1071.AdminRepository>(),
+              gh<_i454.SupabaseClient>(),
+              gh<_i796.SessionCubit>(),
+            ));
+    gh.factory<_i572.UserManagementCubit>(() => _i572.UserManagementCubit(
+          gh<_i1071.AdminRepository>(),
+          gh<_i796.SessionCubit>(),
+        ));
     gh.factory<_i783.InventoryManagementCubit>(
         () => _i783.InventoryManagementCubit(
               gh<_i1071.AdminRepository>(),

@@ -7,6 +7,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:labar_admin/core/di/injection.dart';
 import 'package:labar_admin/features/dashboard/presentation/cubit/agent_cubit.dart';
+import 'package:labar_admin/features/dashboard/presentation/widgets/location_picker.dart';
+import 'package:latlong2/latlong.dart' as ll;
 import 'package:ui_library/ui_library.dart';
 
 class AgentDashboardView extends StatelessWidget {
@@ -387,6 +389,29 @@ class _AgentApplicationsList extends StatelessWidget {
                                 keyboardType:
                                     const TextInputType.numberWithOptions(
                                         decimal: true, signed: true))),
+                        const SizedBox(width: 8),
+                        AppButton.outlined(
+                          label: const Icon(Icons.map_outlined),
+                          onTap: () async {
+                            final result = await showDialog<ll.LatLng>(
+                              context: context,
+                              builder: (context) => Dialog(
+                                child: LocationPicker(
+                                  initialLat: double.tryParse(
+                                      latitudeController.text),
+                                  initialLng: double.tryParse(
+                                      longitudeController.text),
+                                ),
+                              ),
+                            );
+                            if (result != null) {
+                              latitudeController.text =
+                                  result.latitude.toString();
+                              longitudeController.text =
+                                  result.longitude.toString();
+                            }
+                          },
+                        ),
                       ]),
                       sectionTitle('Bank Details'),
                       MoonFormTextInput(

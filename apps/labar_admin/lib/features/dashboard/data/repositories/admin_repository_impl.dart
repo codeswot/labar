@@ -80,7 +80,7 @@ abstract class AdminRepository {
   Future<List<Map<String, dynamic>>> getWaybills(
       {int? limit, int? offset, String? warehouseId});
   Future<Map<String, dynamic>> createWaybill(Map<String, dynamic> data);
-  Future<List<Map<String, dynamic>>> getWarehouses();
+  Future<List<Map<String, dynamic>>> getWarehouses({String? warehouseId});
   Future<void> addWarehouse({
     required String name,
     required String address,
@@ -111,7 +111,7 @@ abstract class AdminRepository {
   Stream<List<Map<String, dynamic>>> get itemsStream;
   Stream<List<Map<String, dynamic>>> inventoryStream({String? warehouseId});
   Stream<List<Map<String, dynamic>>> waybillsStream({String? warehouseId});
-  Stream<List<Map<String, dynamic>>> get warehousesStream;
+  Stream<List<Map<String, dynamic>>> warehousesStream({String? warehouseId});
 }
 
 @LazySingleton(as: AdminRepository)
@@ -144,10 +144,10 @@ class AdminRepositoryImpl implements AdminRepository {
 
   UserEntity _mapToUserEntity(Map<String, dynamic> data) {
     final roleValue = data['user_roles'];
-    final Map<String, dynamic>? roleData = (roleValue is List &&
-            roleValue.isNotEmpty)
-        ? roleValue.first as Map<String, dynamic>
-        : (roleValue is Map ? roleValue as Map<String, dynamic> : null);
+    final Map<String, dynamic>? roleData =
+        (roleValue is List && roleValue.isNotEmpty)
+            ? roleValue.first as Map<String, dynamic>
+            : (roleValue is Map ? roleValue as Map<String, dynamic> : null);
 
     final wmValue = data['warehouse_managers'];
     final Map<String, dynamic>? wmInfo = (wmValue is List && wmValue.isNotEmpty)
@@ -163,7 +163,7 @@ class AdminRepositoryImpl implements AdminRepository {
     return UserEntity(
       id: data['id'],
       email: data['email'],
-      phone: data['phone'],
+      phone: data['phone'] ?? data['phone_number'],
       firstName: data['first_name'],
       lastName: data['last_name'],
       avatarUrl: data['avatar_url'],
@@ -203,7 +203,8 @@ class AdminRepositoryImpl implements AdminRepository {
     String? lastName,
     Map<String, dynamic>? metadata,
   }) async {
-    final response = await _supabaseClient.functions.invoke('admin-service', body: {
+    final response =
+        await _supabaseClient.functions.invoke('admin-service', body: {
       'action': 'create_user',
       'email': email,
       'password': password,
@@ -510,7 +511,7 @@ class AdminRepositoryImpl implements AdminRepository {
 
     final List<UserEntity> users = [];
     for (var item in response) {
-      // Check if already assigned? 
+      // Check if already assigned?
       // Actually we can keep it simple and filter in UI or just show all.
       // But let's map it.
       users.add(_mapToUserEntity(item));
@@ -595,11 +596,16 @@ class AdminRepositoryImpl implements AdminRepository {
   }
 
   @override
-  Future<List<Map<String, dynamic>>> getWarehouses() async {
-    final response = await _supabaseClient
-        .from('warehouses')
-        .select()
-        .order('created_at', ascending: false);
+  Future<List<Map<String, dynamic>>> getWarehouses(
+      {String? warehouseId}) async {
+    dynamic query = _supabaseClient.from('warehouses').select();
+
+    if (warehouseId != null) {
+      query = query.eq('id', warehouseId);
+    }
+
+    final response =
+        await (query as dynamic).order('created_at', ascending: false);
     return List<Map<String, dynamic>>.from(response);
   }
 
@@ -688,8 +694,8 @@ class AdminRepositoryImpl implements AdminRepository {
           .stream(primaryKey: ['id'])
           .order('updated_at', ascending: false)
           .asyncMap((event) async {
-        return await getInventory(warehouseId: warehouseId);
-      });
+            return await getInventory(warehouseId: warehouseId);
+          });
 
   @override
   Stream<List<Map<String, dynamic>>> waybillsStream({String? warehouseId}) =>
@@ -698,13 +704,14 @@ class AdminRepositoryImpl implements AdminRepository {
           .stream(primaryKey: ['id'])
           .order('created_at', ascending: false)
           .asyncMap((event) async {
-        return await getWaybills(warehouseId: warehouseId);
-      });
+            return await getWaybills(warehouseId: warehouseId);
+          });
 
   @override
-  Stream<List<Map<String, dynamic>>> get warehousesStream => _supabaseClient
+  Stream<List<Map<String, dynamic>>> warehousesStream({String? warehouseId}) =>
+      _supabaseClient
           .from('warehouses')
           .stream(primaryKey: ['id']).asyncMap((event) async {
-        return await getWarehouses();
+        return await getWarehouses(warehouseId: warehouseId);
       });
 }

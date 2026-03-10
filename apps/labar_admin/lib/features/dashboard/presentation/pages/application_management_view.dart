@@ -7,6 +7,8 @@ import 'package:labar_admin/features/dashboard/presentation/cubit/application_ma
 import 'package:labar_admin/features/dashboard/presentation/cubit/inventory_management_cubit.dart';
 import 'package:labar_admin/features/dashboard/presentation/widgets/detail_info.dart';
 import 'package:labar_admin/features/dashboard/presentation/widgets/farm_map_view.dart';
+import 'package:labar_admin/features/dashboard/presentation/widgets/location_picker.dart';
+import 'package:latlong2/latlong.dart' as ll;
 import 'package:ui_library/ui_library.dart';
 
 class ApplicationManagementView extends StatefulWidget {
@@ -992,6 +994,29 @@ class ApplicationManagementViewState extends State<ApplicationManagementView> {
                                   child: MoonTextInput(
                                       controller: longitudeController,
                                       hintText: 'Longitude')),
+                              const SizedBox(width: 12),
+                              AppButton.outlined(
+                                label: const Icon(Icons.map_outlined),
+                                onTap: () async {
+                                  final result = await showDialog<ll.LatLng>(
+                                    context: context,
+                                    builder: (context) => Dialog(
+                                      child: LocationPicker(
+                                        initialLat: double.tryParse(
+                                            latitudeController.text),
+                                        initialLng: double.tryParse(
+                                            longitudeController.text),
+                                      ),
+                                    ),
+                                  );
+                                  if (result != null) {
+                                    latitudeController.text =
+                                        result.latitude.toString();
+                                    longitudeController.text =
+                                        result.longitude.toString();
+                                  }
+                                },
+                              ),
                             ],
                           ),
                           const SizedBox(height: 24),

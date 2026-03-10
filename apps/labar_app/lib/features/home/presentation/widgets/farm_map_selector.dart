@@ -91,29 +91,47 @@ class _FarmMapSelectorState extends State<FarmMapSelector> {
     });
 
     try {
-      final url = Uri.parse(
-          'https://nominatim.openstreetmap.org/search?format=json&q=$query&countrycodes=ng');
+      final url = Uri.parse('https://nominatim.openstreetmap.org/search')
+          .replace(queryParameters: {
+        'format': 'json',
+        'q': query,
+        'countrycodes': 'ng',
+        'addressdetails': '1',
+        'limit': '10',
+      });
       final response = await http.get(url, headers: {
         'User-Agent': 'LabarApp/1.0',
+        'Accept-Language': 'en',
       });
 
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
+        final List<dynamic> data = json.decode(response.body);
         setState(() {
           _searchResults = data;
         });
+        if (data.isEmpty) {
+          // ignore: use_build_context_synchronously
+          MoonToast.show(context, label: const Text('No locations found'));
+        }
+      } else {
+        // ignore: use_build_context_synchronously
+        MoonToast.show(context, label: const Text('Search service unavailable'));
       }
     } catch (e) {
       print('Search error: $e');
+      // ignore: use_build_context_synchronously
+      MoonToast.show(context, label: const Text('Error searching location'));
     } finally {
-      setState(() {
-        _isSearching = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isSearching = false;
+        });
+      }
     }
   }
 
   void _moveToLocation(double lat, double lon) {
-    _mapController.move(ll.LatLng(lat, lon), 18);
+    _mapController.move(ll.LatLng(lat, lon), 17.5);
     setState(() {
       _showSearchResults = false;
       _searchController.clear();

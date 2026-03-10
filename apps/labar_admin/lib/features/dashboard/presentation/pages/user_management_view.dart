@@ -259,7 +259,8 @@ class UserManagementViewState extends State<UserManagementView> {
                                             ],
                                           ],
                                         )),
-                                        DataCell(Text(user.email ?? user.phone ?? '-')),
+                                        DataCell(Text(
+                                            user.email ?? user.phone ?? '-')),
                                         DataCell(Column(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
@@ -282,9 +283,12 @@ class UserManagementViewState extends State<UserManagementView> {
                                                 user.warehouseName != null)
                                               Text(
                                                 user.warehouseName!,
-                                                style: context.moonTypography?.body.text12.copyWith(
-                                                        color: context.moonColors?.trunks,
-                                                      ),
+                                                style: context
+                                                    .moonTypography?.body.text12
+                                                    .copyWith(
+                                                  color: context
+                                                      .moonColors?.trunks,
+                                                ),
                                               ),
                                           ],
                                         )),
@@ -312,10 +316,10 @@ class UserManagementViewState extends State<UserManagementView> {
                                                   borderRadius:
                                                       BorderRadius.circular(99),
                                                   backgroundColor: isActive
-                                                      ? Colors.green
-                                                          .withValues(alpha: 0.2)
-                                                      : Colors.red
-                                                          .withValues(alpha: 0.2),
+                                                      ? Colors.green.withValues(
+                                                          alpha: 0.2)
+                                                      : Colors.red.withValues(
+                                                          alpha: 0.2),
                                                 ),
                                         ),
                                         DataCell(
@@ -333,29 +337,29 @@ class UserManagementViewState extends State<UserManagementView> {
                                                       : () => _showRolePicker(
                                                           context, user),
                                                 ),
-                                                 IconButton(
-                                                   icon: Icon(
-                                                       Icons.delete_outline,
-                                                       color: Colors.red),
-                                                   tooltip: 'Delete User',
-                                                   onPressed: isMe
-                                                       ? null
-                                                       : () => _confirmDelete(
-                                                           context, user),
-                                                 ),
-                                               ],
-                                               if (callerRole == 'super_admin' &&
-                                                   user.role ==
-                                                       'warehouse_manager')
-                                                 IconButton(
-                                                   icon: Icon(Icons
-                                                       .warehouse_outlined),
-                                                   tooltip: 'Assign Warehouse',
-                                                   onPressed: () =>
-                                                       _showWarehousePicker(
-                                                           context, user),
-                                                 ),
-                                             ],
+                                                IconButton(
+                                                  icon: Icon(
+                                                      Icons.delete_outline,
+                                                      color: Colors.red),
+                                                  tooltip: 'Delete User',
+                                                  onPressed: isMe
+                                                      ? null
+                                                      : () => _confirmDelete(
+                                                          context, user),
+                                                ),
+                                              ],
+                                              if (callerRole == 'super_admin' &&
+                                                  user.role ==
+                                                      'warehouse_manager')
+                                                IconButton(
+                                                  icon: Icon(
+                                                      Icons.warehouse_outlined),
+                                                  tooltip: 'Assign Warehouse',
+                                                  onPressed: () =>
+                                                      _showWarehousePicker(
+                                                          context, user),
+                                                ),
+                                            ],
                                           ),
                                         ),
                                       ]);
@@ -569,7 +573,8 @@ class UserManagementViewState extends State<UserManagementView> {
                         value: selectedWarehouseId,
                         hint: const Text('Select Warehouse'),
                         isExpanded: true,
-                        onChanged: (v) => setState(() => selectedWarehouseId = v),
+                        onChanged: (v) =>
+                            setState(() => selectedWarehouseId = v),
                         items: cubit.state.warehouses
                             .map((w) => DropdownMenuItem<String>(
                                   value: w['id'],
@@ -593,19 +598,24 @@ class UserManagementViewState extends State<UserManagementView> {
                       selectedWarehouseId == null) {
                     return;
                   }
-                  
-                  final userId = await context.read<UserManagementCubit>().createUser(
-                        email: emailController.text.trim(),
-                        password: passwordController.text,
-                        role: selectedRole,
-                        firstName: firstNameController.text.trim(),
-                        lastName: lastNameController.text.trim(),
-                      );
-                  
-                  if (userId != null && selectedRole == 'warehouse_manager' && selectedWarehouseId != null) {
-                    await context.read<UserManagementCubit>().assignWarehouseManager(userId, selectedWarehouseId!);
+
+                  final userId =
+                      await context.read<UserManagementCubit>().createUser(
+                            email: emailController.text.trim(),
+                            password: passwordController.text,
+                            role: selectedRole,
+                            firstName: firstNameController.text.trim(),
+                            lastName: lastNameController.text.trim(),
+                          );
+
+                  if (userId != null &&
+                      selectedRole == 'warehouse_manager' &&
+                      selectedWarehouseId != null) {
+                    await context
+                        .read<UserManagementCubit>()
+                        .assignWarehouseManager(userId, selectedWarehouseId!);
                   }
-                  
+
                   Navigator.pop(dialogContext);
                 },
                 label: const Text('Create'),

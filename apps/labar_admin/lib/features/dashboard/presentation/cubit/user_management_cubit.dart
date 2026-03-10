@@ -5,6 +5,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import '../../../auth/domain/entities/user_entity.dart';
 import '../../data/repositories/admin_repository_impl.dart';
+import 'package:labar_admin/core/session/session_cubit.dart';
 
 part 'user_management_cubit.freezed.dart';
 
@@ -25,10 +26,11 @@ class UserManagementState with _$UserManagementState {
 @injectable
 class UserManagementCubit extends Cubit<UserManagementState> {
   final AdminRepository _adminRepository;
+  final SessionCubit _sessionCubit;
   StreamSubscription? _userSubscription;
   RealtimeChannel? _realtimeChannel;
 
-  UserManagementCubit(this._adminRepository)
+  UserManagementCubit(this._adminRepository, this._sessionCubit)
       : super(const UserManagementState()) {
     _initStream();
   }
@@ -111,7 +113,12 @@ class UserManagementCubit extends Cubit<UserManagementState> {
 
     try {
       if (state.warehouses.isEmpty) {
-        final warehouses = await _adminRepository.getWarehouses();
+        final user = _sessionCubit.state.user;
+        final isManager = user?.role == 'warehouse_manager';
+        final managerWarehouseId = isManager ? user?.warehouseId : null;
+
+        final warehouses =
+            await _adminRepository.getWarehouses(warehouseId: managerWarehouseId);
         emit(state.copyWith(warehouses: warehouses));
       }
 

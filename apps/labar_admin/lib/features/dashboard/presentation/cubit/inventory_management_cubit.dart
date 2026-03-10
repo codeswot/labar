@@ -50,7 +50,12 @@ class InventoryManagementCubit extends Cubit<InventoryManagementState> {
   Future<void> init() async {
     emit(state.copyWith(isLoading: true, error: null));
     try {
-      final warehouses = await _repository.getWarehouses();
+      final user = _sessionCubit.state.user;
+      final isManager = user?.role == 'warehouse_manager';
+      final managerWarehouseId = isManager ? user?.warehouseId : null;
+
+      final warehouses =
+          await _repository.getWarehouses(warehouseId: managerWarehouseId);
       final items = await _repository.getItems();
 
       emit(state.copyWith(
@@ -62,12 +67,10 @@ class InventoryManagementCubit extends Cubit<InventoryManagementState> {
       await fetchWaybills(refresh: true);
 
       // Subscribe to streams for real-time updates
-      final user = _sessionCubit.state.user;
-      final isManager = user?.role == 'warehouse_manager';
-      final managerWarehouseId = isManager ? user?.warehouseId : null;
       _warehouseSubscription?.cancel();
-      _warehouseSubscription =
-          _repository.warehousesStream.listen((warehouses) {
+      _warehouseSubscription = _repository
+          .warehousesStream(warehouseId: managerWarehouseId)
+          .listen((warehouses) {
         if (state.warehouses.isEmpty) {
           emit(state.copyWith(warehouses: warehouses));
         }
@@ -192,8 +195,12 @@ class InventoryManagementCubit extends Cubit<InventoryManagementState> {
             schema: 'public',
             table: 'warehouses',
             callback: (payload) async {
+              final user = _sessionCubit.state.user;
+              final isManager = user?.role == 'warehouse_manager';
+              final managerWarehouseId = isManager ? user?.warehouseId : null;
               // Warehouses are small, cool to refresh all or just fetch initial list
-              final warehouses = await _repository.getWarehouses();
+              final warehouses =
+                  await _repository.getWarehouses(warehouseId: managerWarehouseId);
               emit(state.copyWith(warehouses: warehouses));
             },
           )
