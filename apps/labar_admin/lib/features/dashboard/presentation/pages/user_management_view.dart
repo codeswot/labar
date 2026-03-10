@@ -393,6 +393,7 @@ class UserManagementViewState extends State<UserManagementView> {
             DetailInfo(label: 'First Name', value: user.firstName ?? '-'),
             DetailInfo(label: 'Last Name', value: user.lastName ?? '-'),
             DetailInfo(label: 'Email', value: user.email ?? '-'),
+            DetailInfo(label: 'Phone', value: user.phone ?? '-'),
             DetailInfo(label: 'Role', value: user.role?.toUpperCase() ?? '-'),
             DetailInfo(label: 'Created At', value: user.createdAt.toString()),
             DetailInfo(
