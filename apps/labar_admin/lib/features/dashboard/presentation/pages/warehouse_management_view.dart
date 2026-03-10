@@ -7,7 +7,6 @@ import 'package:labar_admin/core/utils/currency_utils.dart';
 import 'package:labar_admin/features/dashboard/presentation/cubit/inventory_management_cubit.dart';
 import 'package:labar_admin/features/dashboard/presentation/widgets/detail_info.dart';
 import 'package:ui_library/ui_library.dart';
-import 'package:labar_admin/features/auth/domain/entities/user_entity.dart';
 
 class WarehouseManagementView extends StatefulWidget {
   final VoidCallback? onNavigateToInventory;
@@ -211,7 +210,7 @@ class WarehouseManagementViewState extends State<WarehouseManagementView> {
 
                       // Inventory Tabs
                       DefaultTabController(
-                        length: 3,
+                        length: 4,
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -220,6 +219,7 @@ class WarehouseManagementViewState extends State<WarehouseManagementView> {
                                 Tab(text: 'Inventory'),
                                 Tab(text: 'Attached Farmers'),
                                 Tab(text: 'Allocation Records'),
+                                Tab(text: 'Managers'),
                               ],
                             ),
                             const SizedBox(height: 16),
@@ -233,6 +233,9 @@ class WarehouseManagementViewState extends State<WarehouseManagementView> {
                                   _buildFarmersList(farmers),
                                   // Allocations
                                   _buildAllocationsList(allocations),
+                                  // Managers
+                                  _buildManagersList(context,
+                                      state.selectedWarehouseManagers, warehouse['id']),
                                 ],
                               ),
                             ),
@@ -415,9 +418,7 @@ class WarehouseManagementViewState extends State<WarehouseManagementView> {
     final nameController = TextEditingController();
     final addressController = TextEditingController();
     String? selectedState;
-    String? selectedManagerId;
     bool showStateDropdown = false;
-    bool showManagerDropdown = false;
 
     final nigeriaStates = [
       "Abia",
@@ -517,67 +518,6 @@ class WarehouseManagementViewState extends State<WarehouseManagementView> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  BlocBuilder<InventoryManagementCubit,
-                      InventoryManagementState>(
-                    builder: (context, state) {
-                      final managers = state.managers;
-                      return MoonDropdown(
-                        constrainWidthToChild: true,
-                        show: showManagerDropdown,
-                        onTapOutside: () =>
-                            setState(() => showManagerDropdown = false),
-                        content: Container(
-                          constraints: const BoxConstraints(maxHeight: 250),
-                          child: ListView(
-                            shrinkWrap: true,
-                            children: [
-                              MoonMenuItem(
-                                onTap: () {
-                                  setState(() {
-                                    selectedManagerId = null;
-                                    showManagerDropdown = false;
-                                  });
-                                },
-                                label: const Text('No Manager'),
-                              ),
-                              ...managers.map((m) => MoonMenuItem(
-                                    onTap: () {
-                                      setState(() {
-                                        selectedManagerId = m.id;
-                                        showManagerDropdown = false;
-                                      });
-                                    },
-                                    label: Text(
-                                        '${m.firstName ?? ''} ${m.lastName ?? ''} (${m.email})'),
-                                  )),
-                            ],
-                          ),
-                        ),
-                        child: GestureDetector(
-                          onTap: () => setState(
-                              () => showManagerDropdown = !showManagerDropdown),
-                          child: AbsorbPointer(
-                            child: MoonTextInput(
-                              hintText: 'Assign Manager',
-                              controller: TextEditingController(
-                                text: selectedManagerId == null
-                                    ? 'No Manager'
-                                    : managers
-                                        .firstWhere(
-                                            (m) => m.id == selectedManagerId,
-                                            orElse: () => UserEntity(
-                                                id: '',
-                                                createdAt: DateTime(0)))
-                                        .email,
-                              ),
-                              trailing: const Icon(Icons.arrow_drop_down),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
                 ],
               ),
             ),
@@ -597,7 +537,6 @@ class WarehouseManagementViewState extends State<WarehouseManagementView> {
                           name: nameController.text,
                           address: addressController.text,
                           state: selectedState,
-                          managerId: selectedManagerId,
                         );
                     Navigator.pop(dialogContext);
                   }
@@ -738,6 +677,109 @@ class WarehouseManagementViewState extends State<WarehouseManagementView> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildManagersList(BuildContext context,
+      List<Map<String, dynamic>> managers, String warehouseId) {
+    return Column(
+      children: [
+        Expanded(
+          child: managers.isEmpty
+              ? const Center(child: Text('No managers assigned.'))
+              : ListView.separated(
+                  itemCount: managers.length,
+                  separatorBuilder: (_, __) => const Divider(),
+                  itemBuilder: (context, index) {
+                    final m = managers[index];
+                    final profile = m['profiles'];
+                    final name = (profile != null)
+                        ? '${profile['first_name'] ?? ''} ${profile['last_name'] ?? ''}'
+                            .trim()
+                        : 'Unknown';
+                    final email = profile?['email'] ?? 'N/A';
+
+                    return ListTile(
+                      leading: const MoonAvatar(content: Icon(Icons.person)),
+                      title: Text(name.isEmpty ? email : name),
+                      subtitle: Text(email),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.person_remove_rounded,
+                            color: Colors.red),
+                        onPressed: () {
+                          context
+                              .read<InventoryManagementCubit>()
+                              .unassignManager(m['user_id'], warehouseId);
+                        },
+                      ),
+                    );
+                  },
+                ),
+        ),
+        const SizedBox(height: 16),
+        AppButton.filled(
+          isFullWidth: true,
+          label: const Text('Attach New Manager'),
+          onTap: () => _showAttachManagerDialog(context, warehouseId),
+        ),
+      ],
+    );
+  }
+
+  void _showAttachManagerDialog(BuildContext context, String warehouseId) {
+    final cubit = context.read<InventoryManagementCubit>();
+    cubit.fetchPotentialManagers();
+
+    showDialog(
+      context: context,
+      builder: (dialogCtx) => BlocProvider.value(
+        value: cubit,
+        child: BlocBuilder<InventoryManagementCubit, InventoryManagementState>(
+          builder: (context, state) {
+            final potential = state.potentialManagers;
+
+            return AlertDialog(
+              title: const Text('Attach Warehouse Manager'),
+              content: SizedBox(
+                width: 400,
+                height: 300,
+                child: state.isLoading
+                    ? const Center(child: MoonCircularLoader())
+                    : potential.isEmpty
+                        ? const Center(
+                            child: Text('No available managers found.'))
+                        : ListView.separated(
+                            itemCount: potential.length,
+                            separatorBuilder: (_, __) => const Divider(),
+                            itemBuilder: (context, index) {
+                              final u = potential[index];
+                              final uName = '${u.firstName ?? ''} ${u.lastName ?? ''}'.trim();
+                              return ListTile(
+                                title: Text(uName.isEmpty
+                                    ? u.email ?? ''
+                                    : uName),
+                                subtitle: Text(u.email ?? ''),
+                                trailing: const Icon(Icons.add_circle_outline),
+                                onTap: () {
+                                  context
+                                      .read<InventoryManagementCubit>()
+                                      .assignManager(u.id, warehouseId);
+                                  Navigator.pop(dialogCtx);
+                                },
+                              );
+                            },
+                          ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(dialogCtx),
+                  child: const Text('Close'),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );

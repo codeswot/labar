@@ -18,6 +18,8 @@ _$UserEntityImpl _$$UserEntityImplFromJson(Map<String, dynamic> json) =>
       createdAt: DateTime.parse(json['createdAt'] as String),
       role: json['role'] as String?,
       active: json['active'] as bool?,
+      warehouseId: json['warehouseId'] as String?,
+      warehouseName: json['warehouseName'] as String?,
     );
 
 Map<String, dynamic> _$$UserEntityImplToJson(_$UserEntityImpl instance) =>
@@ -32,4 +34,6 @@ Map<String, dynamic> _$$UserEntityImplToJson(_$UserEntityImpl instance) =>
       'createdAt': instance.createdAt.toIso8601String(),
       'role': instance.role,
       'active': instance.active,
+      'warehouseId': instance.warehouseId,
+      'warehouseName': instance.warehouseName,
     };

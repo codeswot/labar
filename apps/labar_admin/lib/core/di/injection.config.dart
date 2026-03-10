@@ -67,8 +67,6 @@ extension GetItInjectableX on _i174.GetIt {
         ));
     gh.lazySingleton<_i1071.AdminRepository>(
         () => _i1071.AdminRepositoryImpl(gh<_i454.SupabaseClient>()));
-    gh.factory<_i783.InventoryManagementCubit>(
-        () => _i783.InventoryManagementCubit(gh<_i1071.AdminRepository>()));
     gh.factory<_i20.ItemManagementCubit>(
         () => _i20.ItemManagementCubit(gh<_i1071.AdminRepository>()));
     gh.factory<_i481.ApplicationManagementCubit>(
@@ -82,6 +80,11 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i153.AuthRepositoryImpl(gh<_i107.AuthRemoteDataSource>()));
     gh.lazySingleton<_i796.SessionCubit>(
         () => _i796.SessionCubit(gh<_i787.AuthRepository>()));
+    gh.factory<_i783.InventoryManagementCubit>(
+        () => _i783.InventoryManagementCubit(
+              gh<_i1071.AdminRepository>(),
+              gh<_i796.SessionCubit>(),
+            ));
     return this;
   }
 }

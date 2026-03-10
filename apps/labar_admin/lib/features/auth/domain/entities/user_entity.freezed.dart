@@ -30,6 +30,8 @@ mixin _$UserEntity {
   DateTime get createdAt => throw _privateConstructorUsedError;
   String? get role => throw _privateConstructorUsedError;
   bool? get active => throw _privateConstructorUsedError;
+  String? get warehouseId => throw _privateConstructorUsedError;
+  String? get warehouseName => throw _privateConstructorUsedError;
 
   /// Serializes this UserEntity to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -57,7 +59,9 @@ abstract class $UserEntityCopyWith<$Res> {
       Map<String, dynamic>? userMetadata,
       DateTime createdAt,
       String? role,
-      bool? active});
+      bool? active,
+      String? warehouseId,
+      String? warehouseName});
 }
 
 /// @nodoc
@@ -85,6 +89,8 @@ class _$UserEntityCopyWithImpl<$Res, $Val extends UserEntity>
     Object? createdAt = null,
     Object? role = freezed,
     Object? active = freezed,
+    Object? warehouseId = freezed,
+    Object? warehouseName = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -127,6 +133,14 @@ class _$UserEntityCopyWithImpl<$Res, $Val extends UserEntity>
           ? _value.active
           : active // ignore: cast_nullable_to_non_nullable
               as bool?,
+      warehouseId: freezed == warehouseId
+          ? _value.warehouseId
+          : warehouseId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      warehouseName: freezed == warehouseName
+          ? _value.warehouseName
+          : warehouseName // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -149,7 +163,9 @@ abstract class _$$UserEntityImplCopyWith<$Res>
       Map<String, dynamic>? userMetadata,
       DateTime createdAt,
       String? role,
-      bool? active});
+      bool? active,
+      String? warehouseId,
+      String? warehouseName});
 }
 
 /// @nodoc
@@ -175,6 +191,8 @@ class __$$UserEntityImplCopyWithImpl<$Res>
     Object? createdAt = null,
     Object? role = freezed,
     Object? active = freezed,
+    Object? warehouseId = freezed,
+    Object? warehouseName = freezed,
   }) {
     return _then(_$UserEntityImpl(
       id: null == id
@@ -217,6 +235,14 @@ class __$$UserEntityImplCopyWithImpl<$Res>
           ? _value.active
           : active // ignore: cast_nullable_to_non_nullable
               as bool?,
+      warehouseId: freezed == warehouseId
+          ? _value.warehouseId
+          : warehouseId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      warehouseName: freezed == warehouseName
+          ? _value.warehouseName
+          : warehouseName // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -234,7 +260,9 @@ class _$UserEntityImpl implements _UserEntity {
       final Map<String, dynamic>? userMetadata,
       required this.createdAt,
       this.role,
-      this.active})
+      this.active,
+      this.warehouseId,
+      this.warehouseName})
       : _userMetadata = userMetadata;
 
   factory _$UserEntityImpl.fromJson(Map<String, dynamic> json) =>
@@ -268,10 +296,14 @@ class _$UserEntityImpl implements _UserEntity {
   final String? role;
   @override
   final bool? active;
+  @override
+  final String? warehouseId;
+  @override
+  final String? warehouseName;
 
   @override
   String toString() {
-    return 'UserEntity(id: $id, email: $email, phone: $phone, firstName: $firstName, lastName: $lastName, avatarUrl: $avatarUrl, userMetadata: $userMetadata, createdAt: $createdAt, role: $role, active: $active)';
+    return 'UserEntity(id: $id, email: $email, phone: $phone, firstName: $firstName, lastName: $lastName, avatarUrl: $avatarUrl, userMetadata: $userMetadata, createdAt: $createdAt, role: $role, active: $active, warehouseId: $warehouseId, warehouseName: $warehouseName)';
   }
 
   @override
@@ -293,7 +325,11 @@ class _$UserEntityImpl implements _UserEntity {
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.role, role) || other.role == role) &&
-            (identical(other.active, active) || other.active == active));
+            (identical(other.active, active) || other.active == active) &&
+            (identical(other.warehouseId, warehouseId) ||
+                other.warehouseId == warehouseId) &&
+            (identical(other.warehouseName, warehouseName) ||
+                other.warehouseName == warehouseName));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -309,7 +345,9 @@ class _$UserEntityImpl implements _UserEntity {
       const DeepCollectionEquality().hash(_userMetadata),
       createdAt,
       role,
-      active);
+      active,
+      warehouseId,
+      warehouseName);
 
   /// Create a copy of UserEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -338,7 +376,9 @@ abstract class _UserEntity implements UserEntity {
       final Map<String, dynamic>? userMetadata,
       required final DateTime createdAt,
       final String? role,
-      final bool? active}) = _$UserEntityImpl;
+      final bool? active,
+      final String? warehouseId,
+      final String? warehouseName}) = _$UserEntityImpl;
 
   factory _UserEntity.fromJson(Map<String, dynamic> json) =
       _$UserEntityImpl.fromJson;
@@ -363,6 +403,10 @@ abstract class _UserEntity implements UserEntity {
   String? get role;
   @override
   bool? get active;
+  @override
+  String? get warehouseId;
+  @override
+  String? get warehouseName;
 
   /// Create a copy of UserEntity
   /// with the given fields replaced by the non-null parameter values.

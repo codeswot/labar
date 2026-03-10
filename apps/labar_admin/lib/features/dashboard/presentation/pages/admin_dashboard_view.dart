@@ -49,8 +49,11 @@ class AdminDashboardView extends StatelessWidget {
           child: const InventoryManagementView(),
         );
       case 4:
-        return WarehouseManagementView(
-          onNavigateToInventory: () => onIndexChanged?.call(3),
+        return BlocProvider(
+          create: (context) => getIt<InventoryManagementCubit>()..init(),
+          child: WarehouseManagementView(
+            onNavigateToInventory: () => onIndexChanged?.call(3),
+          ),
         );
       case 5:
         return BlocProvider(

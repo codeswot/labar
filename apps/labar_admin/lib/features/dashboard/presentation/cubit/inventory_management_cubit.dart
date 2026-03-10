@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:labar_admin/core/session/session_cubit.dart';
+import 'package:labar_admin/features/auth/domain/entities/user_entity.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:labar_admin/core/utils/app_logger.dart';
 import 'package:labar_admin/features/dashboard/data/repositories/admin_repository_impl.dart';
-import '../../../auth/domain/entities/user_entity.dart';
 
 part 'inventory_management_cubit.freezed.dart';
 
@@ -25,7 +27,8 @@ class InventoryManagementState with _$InventoryManagementState {
     @Default([]) List<Map<String, dynamic>> selectedInventoryAllocations,
     @Default([]) List<Map<String, dynamic>> selectedWarehouseAllocations,
     @Default([]) List<Map<String, dynamic>> selectedWarehouseFarmers,
-    @Default([]) List<UserEntity> managers,
+    @Default([]) List<Map<String, dynamic>> selectedWarehouseManagers,
+    @Default([]) List<UserEntity> potentialManagers,
     String? error,
   }) = _InventoryManagementState;
 }
@@ -33,11 +36,13 @@ class InventoryManagementState with _$InventoryManagementState {
 @injectable
 class InventoryManagementCubit extends Cubit<InventoryManagementState> {
   final AdminRepository _repository;
+  final SessionCubit _sessionCubit;
   StreamSubscription? _inventorySubscription;
   StreamSubscription? _waybillSubscription;
   StreamSubscription? _warehouseSubscription;
+  RealtimeChannel? _realtimeChannel;
 
-  InventoryManagementCubit(this._repository)
+  InventoryManagementCubit(this._repository, this._sessionCubit)
       : super(const InventoryManagementState());
 
   static const int pageSize = 50;
@@ -48,26 +53,152 @@ class InventoryManagementCubit extends Cubit<InventoryManagementState> {
       final warehouses = await _repository.getWarehouses();
       final items = await _repository.getItems();
 
-      final users = await _repository.getUsers();
-      final managers =
-          users.where((u) => u.role == 'warehouse_manager').toList();
-
       emit(state.copyWith(
         warehouses: warehouses,
         items: items,
-        managers: managers,
       ));
 
       await fetchInventory(refresh: true);
       await fetchWaybills(refresh: true);
 
-      // Subscribe only for warehouses if needed
+      // Subscribe to streams for real-time updates
+      final user = _sessionCubit.state.user;
+      final isManager = user?.role == 'warehouse_manager';
+      final managerWarehouseId = isManager ? user?.warehouseId : null;
       _warehouseSubscription?.cancel();
       _warehouseSubscription =
           _repository.warehousesStream.listen((warehouses) {
-        emit(state.copyWith(warehouses: warehouses));
+        if (state.warehouses.isEmpty) {
+          emit(state.copyWith(warehouses: warehouses));
+        }
       });
-      
+
+      _inventorySubscription?.cancel();
+      _inventorySubscription = _repository
+          .inventoryStream(warehouseId: managerWarehouseId)
+          .listen((inventory) {
+        // Only update if not currently loading/paging to avoid sync issues
+        if (!state.isLoading && state.inventory.isEmpty) {
+          emit(state.copyWith(inventory: inventory));
+        }
+      });
+
+      _waybillSubscription?.cancel();
+      _waybillSubscription = _repository
+          .waybillsStream(warehouseId: managerWarehouseId)
+          .listen((waybills) {
+        if (!state.isLoading && state.waybills.isEmpty) {
+          emit(state.copyWith(waybills: waybills));
+        }
+      });
+
+      // Surgical realtime updates
+      _realtimeChannel?.unsubscribe();
+      final client = (_repository as AdminRepositoryImpl).supabaseClient;
+      _realtimeChannel = client.channel('public:surgical_inventory');
+
+      _realtimeChannel!
+          .onPostgresChanges(
+            event: PostgresChangeEvent.all,
+            schema: 'public',
+            table: 'inventory',
+            callback: (payload) async {
+              final id = payload.newRecord['id'] ?? payload.oldRecord['id'];
+              if (id == null) return;
+
+              // Filter by warehouse if manager
+              if (managerWarehouseId != null) {
+                final recordWarehouseId =
+                    payload.newRecord['warehouse_id']?.toString();
+                if (recordWarehouseId != null &&
+                    recordWarehouseId != managerWarehouseId) {
+                  // If it's an update and was previously in our list, remove it
+                  if (payload.eventType == PostgresChangeEvent.update) {
+                    final updated =
+                        List<Map<String, dynamic>>.from(state.inventory)
+                          ..removeWhere((i) => i['id'] == id);
+                    emit(state.copyWith(inventory: updated));
+                  }
+                  return;
+                }
+              }
+
+              if (payload.eventType == PostgresChangeEvent.delete) {
+                final updated = List<Map<String, dynamic>>.from(state.inventory)
+                  ..removeWhere((i) => i['id'] == id);
+                emit(state.copyWith(inventory: updated));
+              } else {
+                final updatedItem = await _repository.getInventoryById(id);
+                if (updatedItem != null) {
+                  final updatedList =
+                      List<Map<String, dynamic>>.from(state.inventory);
+                  final index = updatedList.indexWhere((i) => i['id'] == id);
+                  if (index != -1) {
+                    updatedList[index] = updatedItem;
+                  } else {
+                    updatedList.insert(0, updatedItem);
+                  }
+                  emit(state.copyWith(inventory: updatedList));
+                }
+              }
+            },
+          )
+          .onPostgresChanges(
+            event: PostgresChangeEvent.all,
+            schema: 'public',
+            table: 'waybills',
+            callback: (payload) async {
+              final id = payload.newRecord['id'] ?? payload.oldRecord['id'];
+              if (id == null) return;
+
+              // Filter by warehouse if manager
+              if (managerWarehouseId != null) {
+                final recordWarehouseId =
+                    payload.newRecord['warehouse_id']?.toString();
+                if (recordWarehouseId != null &&
+                    recordWarehouseId != managerWarehouseId) {
+                  if (payload.eventType == PostgresChangeEvent.update) {
+                    final updated =
+                        List<Map<String, dynamic>>.from(state.waybills)
+                          ..removeWhere((w) => w['id'] == id);
+                    emit(state.copyWith(waybills: updated));
+                  }
+                  return;
+                }
+              }
+
+              if (payload.eventType == PostgresChangeEvent.delete) {
+                final updated = List<Map<String, dynamic>>.from(state.waybills)
+                  ..removeWhere((w) => w['id'] == id);
+                emit(state.copyWith(waybills: updated));
+              } else {
+                final updatedItem = await _repository.getWaybillById(id);
+                if (updatedItem != null) {
+                  final updatedList =
+                      List<Map<String, dynamic>>.from(state.waybills);
+                  final index = updatedList.indexWhere((w) => w['id'] == id);
+                  if (index != -1) {
+                    updatedList[index] = updatedItem;
+                  } else {
+                    updatedList.insert(0, updatedItem);
+                  }
+                  emit(state.copyWith(waybills: updatedList));
+                }
+              }
+            },
+          )
+          .onPostgresChanges(
+            event: PostgresChangeEvent.all,
+            schema: 'public',
+            table: 'warehouses',
+            callback: (payload) async {
+              // Warehouses are small, cool to refresh all or just fetch initial list
+              final warehouses = await _repository.getWarehouses();
+              emit(state.copyWith(warehouses: warehouses));
+            },
+          )
+          .subscribe();
+
       emit(state.copyWith(isLoading: false));
     } catch (e, stack) {
       AppLogger.error('Failed to init inventory', e, stack);
@@ -76,7 +207,8 @@ class InventoryManagementCubit extends Cubit<InventoryManagementState> {
   }
 
   Future<void> fetchInventory({bool refresh = false}) async {
-    if (!refresh && (state.isInventoryLoadingMore || !state.hasMoreInventory)) return;
+    if (!refresh && (state.isInventoryLoadingMore || !state.hasMoreInventory))
+      return;
 
     if (refresh) {
       emit(state.copyWith(
@@ -90,12 +222,17 @@ class InventoryManagementCubit extends Cubit<InventoryManagementState> {
     }
 
     try {
+      final user = _sessionCubit.state.user;
+      final isManager = user?.role == 'warehouse_manager';
+      final warehouseId = isManager ? user?.warehouseId : null;
+
       final page = refresh ? 1 : state.inventoryPage;
       final offset = (page - 1) * pageSize;
 
       final newInventory = await _repository.getInventory(
         limit: pageSize,
         offset: offset,
+        warehouseId: warehouseId,
       );
 
       final List<Map<String, dynamic>> updatedInventory =
@@ -119,7 +256,8 @@ class InventoryManagementCubit extends Cubit<InventoryManagementState> {
   }
 
   Future<void> fetchWaybills({bool refresh = false}) async {
-    if (!refresh && (state.isWaybillsLoadingMore || !state.hasMoreWaybills)) return;
+    if (!refresh && (state.isWaybillsLoadingMore || !state.hasMoreWaybills))
+      return;
 
     if (refresh) {
       emit(state.copyWith(
@@ -133,12 +271,17 @@ class InventoryManagementCubit extends Cubit<InventoryManagementState> {
     }
 
     try {
+      final user = _sessionCubit.state.user;
+      final isManager = user?.role == 'warehouse_manager';
+      final warehouseId = isManager ? user?.warehouseId : null;
+
       final page = refresh ? 1 : state.waybillsPage;
       final offset = (page - 1) * pageSize;
 
       final newWaybills = await _repository.getWaybills(
         limit: pageSize,
         offset: offset,
+        warehouseId: warehouseId,
       );
 
       final List<Map<String, dynamic>> updatedWaybills =
@@ -161,26 +304,16 @@ class InventoryManagementCubit extends Cubit<InventoryManagementState> {
     }
   }
 
-  @override
-  Future<void> close() {
-    _inventorySubscription?.cancel();
-    _waybillSubscription?.cancel();
-    _warehouseSubscription?.cancel();
-    return super.close();
-  }
-
   Future<void> addWarehouse({
     required String name,
     required String address,
     String? state,
-    String? managerId,
   }) async {
     try {
       await _repository.addWarehouse(
         name: name,
         address: address,
         state: state,
-        managerId: managerId,
       );
     } catch (e, stack) {
       AppLogger.error('Failed to add warehouse', e, stack);
@@ -193,7 +326,6 @@ class InventoryManagementCubit extends Cubit<InventoryManagementState> {
     required String name,
     required String address,
     String? state,
-    String? managerId,
   }) async {
     try {
       await _repository.updateWarehouse(
@@ -201,7 +333,6 @@ class InventoryManagementCubit extends Cubit<InventoryManagementState> {
         name: name,
         address: address,
         state: state,
-        managerId: managerId,
       );
     } catch (e, stack) {
       AppLogger.error('Failed to update warehouse', e, stack);
@@ -300,19 +431,63 @@ class InventoryManagementCubit extends Cubit<InventoryManagementState> {
         isLoading: true,
         error: null,
         selectedWarehouseFarmers: [],
-        selectedWarehouseAllocations: []));
+        selectedWarehouseAllocations: [],
+        selectedWarehouseManagers: []));
     try {
       final farmers = await _repository.getWarehouseFarmers(warehouseId);
       final allocations =
           await _repository.getWarehouseAllocations(warehouseId);
+      final managers = await _repository.getWarehouseManagers(warehouseId);
+
       emit(state.copyWith(
         isLoading: false,
         selectedWarehouseFarmers: farmers,
         selectedWarehouseAllocations: allocations,
+        selectedWarehouseManagers: managers,
       ));
     } catch (e, stack) {
       AppLogger.error('Failed to fetch warehouse details', e, stack);
       emit(state.copyWith(isLoading: false, error: e.toString()));
     }
+  }
+
+  Future<void> fetchPotentialManagers() async {
+    try {
+      final managers = await _repository.getPotentialManagers();
+      emit(state.copyWith(potentialManagers: managers));
+    } catch (e, stack) {
+      AppLogger.error('Failed to fetch potential managers', e, stack);
+    }
+  }
+
+  Future<void> assignManager(String userId, String warehouseId) async {
+    emit(state.copyWith(isLoading: true, error: null));
+    try {
+      await _repository.assignWarehouseManager(userId, warehouseId);
+      // Refresh details
+      await fetchWarehouseDetails(warehouseId);
+    } catch (e) {
+      emit(state.copyWith(isLoading: false, error: e.toString()));
+    }
+  }
+
+  Future<void> unassignManager(String userId, String warehouseId) async {
+    emit(state.copyWith(isLoading: true, error: null));
+    try {
+      await _repository.unassignWarehouseManager(userId);
+      // Refresh details
+      await fetchWarehouseDetails(warehouseId);
+    } catch (e) {
+      emit(state.copyWith(isLoading: false, error: e.toString()));
+    }
+  }
+
+  @override
+  Future<void> close() {
+    _inventorySubscription?.cancel();
+    _waybillSubscription?.cancel();
+    _warehouseSubscription?.cancel();
+    _realtimeChannel?.unsubscribe();
+    return super.close();
   }
 }

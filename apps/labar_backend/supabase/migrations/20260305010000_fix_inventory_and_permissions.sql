@@ -17,14 +17,8 @@ CREATE TABLE IF NOT EXISTS public.allocated_resources (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- 3. Update Warehouse table (ensure manager_id exists)
--- Since we don't have the create table, we just try to add it
-DO $$ 
-BEGIN
-  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='warehouses' AND column_name='manager_id') THEN
-    ALTER TABLE public.warehouses ADD COLUMN manager_id UUID REFERENCES auth.users(id) ON DELETE SET NULL;
-  END IF;
-END $$;
+-- 3. Update Warehouse table
+-- (Removed manager_id check as it is not used)
 
 -- 4. Inventory Deduction Triggers
 
@@ -84,36 +78,11 @@ FOR EACH ROW EXECUTE FUNCTION public.handle_inventory_on_allocation();
 -- Enable RLS on allocated_resources if not already
 ALTER TABLE public.allocated_resources ENABLE ROW LEVEL SECURITY;
 
--- Inventory Policies
-DROP POLICY IF EXISTS "Warehouse managers can view their inventory" ON public.inventory;
-CREATE POLICY "Warehouse managers can view their inventory" ON public.inventory
-  FOR SELECT USING (
-    auth.uid() IN (
-      SELECT manager_id FROM public.warehouses WHERE id = warehouse_id
-    )
-  );
-
 -- Waybills Policies
-DROP POLICY IF EXISTS "Warehouse managers can view their waybills" ON public.waybills;
-CREATE POLICY "Warehouse managers can view their waybills" ON public.waybills
-  FOR SELECT USING (
-    auth.uid() IN (
-      SELECT manager_id FROM public.warehouses WHERE id = warehouse_id
-    )
-  );
 
 -- Allocated Resources Policies
 DROP POLICY IF EXISTS "Admins and agents can view allocations" ON public.allocated_resources;
 CREATE POLICY "Admins and agents can view allocations" ON public.allocated_resources
   FOR SELECT USING (auth.uid() IN (SELECT id FROM public.user_roles WHERE role IN ('admin', 'super_admin', 'agent')));
 
-DROP POLICY IF EXISTS "Warehouse managers can view their allocations" ON public.allocated_resources;
-CREATE POLICY "Warehouse managers can view their allocations" ON public.allocated_resources
-  FOR SELECT USING (
-    auth.uid() IN (
-      SELECT w.manager_id 
-      FROM public.warehouses w 
-      JOIN public.inventory i ON i.warehouse_id = w.id 
-      WHERE i.id = item
-    )
-  );
+-- Allocations Policies handled above

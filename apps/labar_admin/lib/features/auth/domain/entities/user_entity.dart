@@ -16,6 +16,8 @@ class UserEntity with _$UserEntity {
     required DateTime createdAt,
     String? role,
     bool? active,
+    String? warehouseId,
+    String? warehouseName,
   }) = _UserEntity;
 
   factory UserEntity.fromJson(Map<String, dynamic> json) =>

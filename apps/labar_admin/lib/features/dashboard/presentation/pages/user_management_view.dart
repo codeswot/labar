@@ -226,7 +226,7 @@ class UserManagementViewState extends State<UserManagementView> {
                                     context.moonColors?.goku),
                                 columns: const [
                                   DataColumn(label: Text('Name')),
-                                  DataColumn(label: Text('Email')),
+                                  DataColumn(label: Text('Email / Phone')),
                                   DataColumn(label: Text('Role')),
                                   DataColumn(label: Text('Created At')),
                                   DataColumn(label: Text('Status')),
@@ -239,7 +239,7 @@ class UserManagementViewState extends State<UserManagementView> {
                                           user.lastName != null)
                                       ? '${user.firstName ?? ''} ${user.lastName ?? ''}'
                                           .trim()
-                                      : '-';
+                                      : (user.email ?? user.phone ?? '-');
                                   return DataRow(
                                       onSelectChanged: (_) =>
                                           _showUserProfile(context, user),
@@ -259,16 +259,34 @@ class UserManagementViewState extends State<UserManagementView> {
                                             ],
                                           ],
                                         )),
-                                        DataCell(Text(user.email ?? '-')),
-                                        DataCell(MoonTag(
-                                          label: Text(user.role?.toUpperCase() ??
-                                              'NONE'),
-                                          tagSize: MoonTagSize.xs,
-                                          backgroundColor: user.role ==
-                                                  'super_admin'
-                                              ? Colors.purple
-                                                  .withValues(alpha: 0.2)
-                                              : null,
+                                        DataCell(Text(user.email ?? user.phone ?? '-')),
+                                        DataCell(Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            MoonTag(
+                                              label: Text(
+                                                  user.role?.toUpperCase() ??
+                                                      'NONE'),
+                                              tagSize: MoonTagSize.xs,
+                                              backgroundColor: user.role ==
+                                                      'super_admin'
+                                                  ? Colors.purple
+                                                      .withValues(alpha: 0.2)
+                                                  : null,
+                                            ),
+                                            if (user.role ==
+                                                    'warehouse_manager' &&
+                                                user.warehouseName != null)
+                                              Text(
+                                                user.warehouseName!,
+                                                style: context.moonTypography?.body.text12.copyWith(
+                                                        color: context.moonColors?.trunks,
+                                                      ),
+                                              ),
+                                          ],
                                         )),
                                         DataCell(Text(user.createdAt
                                             .toString()
@@ -315,18 +333,29 @@ class UserManagementViewState extends State<UserManagementView> {
                                                       : () => _showRolePicker(
                                                           context, user),
                                                 ),
-                                                IconButton(
-                                                  icon: const Icon(
-                                                      Icons.delete_outline,
-                                                      color: Colors.red),
-                                                  tooltip: 'Delete User',
-                                                  onPressed: isMe
-                                                      ? null
-                                                      : () => _confirmDelete(
-                                                          context, user),
-                                                ),
-                                              ],
-                                            ],
+                                                 IconButton(
+                                                   icon: Icon(
+                                                       Icons.delete_outline,
+                                                       color: Colors.red),
+                                                   tooltip: 'Delete User',
+                                                   onPressed: isMe
+                                                       ? null
+                                                       : () => _confirmDelete(
+                                                           context, user),
+                                                 ),
+                                               ],
+                                               if (callerRole == 'super_admin' &&
+                                                   user.role ==
+                                                       'warehouse_manager')
+                                                 IconButton(
+                                                   icon: Icon(Icons
+                                                       .warehouse_outlined),
+                                                   tooltip: 'Assign Warehouse',
+                                                   onPressed: () =>
+                                                       _showWarehousePicker(
+                                                           context, user),
+                                                 ),
+                                             ],
                                           ),
                                         ),
                                       ]);
@@ -400,14 +429,52 @@ class UserManagementViewState extends State<UserManagementView> {
                     trailing: r == user.role
                         ? const Icon(Icons.check, color: Colors.green)
                         : null,
-                    onTap: () {
-                      context
-                          .read<UserManagementCubit>()
-                          .updateRole(user.id, r);
-                      Navigator.pop(dialogContext);
+                    onTap: () async {
+                      if (r == 'warehouse_manager') {
+                        Navigator.pop(dialogContext);
+                        _showWarehousePicker(context, user, roleToSet: r);
+                      } else {
+                        context
+                            .read<UserManagementCubit>()
+                            .updateRole(user.id, r);
+                        Navigator.pop(dialogContext);
+                      }
                     },
                   ))
               .toList(),
+        ),
+      ),
+    );
+  }
+
+  void _showWarehousePicker(BuildContext context, UserEntity user,
+      {String? roleToSet}) {
+    final cubit = context.read<UserManagementCubit>();
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Select Warehouse'),
+        content: SizedBox(
+          width: 300,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (cubit.state.warehouses.isEmpty)
+                const Center(child: MoonCircularLoader())
+              else
+                ...cubit.state.warehouses.map((w) => ListTile(
+                      title: Text(w['name'] ?? 'Unknown'),
+                      subtitle: Text(w['state'] ?? ''),
+                      onTap: () {
+                        if (roleToSet != null) {
+                          cubit.updateRole(user.id, roleToSet);
+                        }
+                        cubit.assignWarehouseManager(user.id, w['id']);
+                        Navigator.pop(dialogContext);
+                      },
+                    )),
+            ],
+          ),
         ),
       ),
     );
@@ -442,6 +509,8 @@ class UserManagementViewState extends State<UserManagementView> {
     final lastNameController = TextEditingController();
     String selectedRole = 'agent';
     final callerRole = context.read<SessionCubit>().state.user?.role;
+    final cubit = context.read<UserManagementCubit>();
+    String? selectedWarehouseId;
     bool obscurePassword = true;
     showDialog(
       context: context,
@@ -492,6 +561,23 @@ class UserManagementViewState extends State<UserManagementView> {
                       ],
                     ),
                   ),
+                  if (selectedRole == 'warehouse_manager') ...[
+                    const SizedBox(height: 12),
+                    DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: selectedWarehouseId,
+                        hint: const Text('Select Warehouse'),
+                        isExpanded: true,
+                        onChanged: (v) => setState(() => selectedWarehouseId = v),
+                        items: cubit.state.warehouses
+                            .map((w) => DropdownMenuItem<String>(
+                                  value: w['id'],
+                                  child: Text(w['name'] ?? 'Unknown'),
+                                ))
+                            .toList(),
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -501,14 +587,24 @@ class UserManagementViewState extends State<UserManagementView> {
                   child: const Text('Cancel')),
               AppButton.filled(
                 isFullWidth: false,
-                onTap: () {
-                  context.read<UserManagementCubit>().createUser(
+                onTap: () async {
+                  if (selectedRole == 'warehouse_manager' &&
+                      selectedWarehouseId == null) {
+                    return;
+                  }
+                  
+                  final userId = await context.read<UserManagementCubit>().createUser(
                         email: emailController.text.trim(),
                         password: passwordController.text,
                         role: selectedRole,
                         firstName: firstNameController.text.trim(),
                         lastName: lastNameController.text.trim(),
                       );
+                  
+                  if (userId != null && selectedRole == 'warehouse_manager' && selectedWarehouseId != null) {
+                    await context.read<UserManagementCubit>().assignWarehouseManager(userId, selectedWarehouseId!);
+                  }
+                  
                   Navigator.pop(dialogContext);
                 },
                 label: const Text('Create'),

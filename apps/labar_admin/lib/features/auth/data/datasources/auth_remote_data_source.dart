@@ -95,12 +95,23 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         .eq('id', user.id)
         .maybeSingle();
 
-    // Fetch profile data
+    // Fetch profile and warehouse data
     final profileData = await _supabaseClient
         .from('profiles')
-        .select('first_name, last_name, avatar_url')
+        .select('first_name, last_name, avatar_url, warehouse_managers(warehouse_id, warehouses(name))')
         .eq('id', user.id)
         .maybeSingle();
+
+    final wmValue = profileData?['warehouse_managers'];
+    final Map<String, dynamic>? wmInfo = (wmValue is List && wmValue.isNotEmpty)
+        ? wmValue.first as Map<String, dynamic>
+        : (wmValue is Map ? wmValue as Map<String, dynamic> : null);
+    final warehouseData = wmInfo?['warehouses'];
+    final Map<String, dynamic>? warehouse = (warehouseData is Map)
+        ? warehouseData as Map<String, dynamic>
+        : (warehouseData is List && warehouseData.isNotEmpty)
+            ? warehouseData.first as Map<String, dynamic>
+            : null;
 
     return UserEntity(
       id: user.id,
@@ -113,6 +124,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       avatarUrl: profileData?['avatar_url'],
       role: roleData?['role']?.toString(),
       active: roleData?['active'] as bool?,
+      warehouseId: wmInfo?['warehouse_id']?.toString(),
+      warehouseName: warehouse?['name']?.toString(),
     );
   }
 }

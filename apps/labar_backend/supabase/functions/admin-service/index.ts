@@ -338,27 +338,20 @@ serve(async (req: Request) => {
             })
         }
 
-        if (action === 'delete_user') {
-            const { data: targetUser } = await supabaseClient.from('user_roles').select('role').eq('id', userId).single();
-            const targetRole = targetUser?.role;
+        // Use the RPC instead of auth.admin.deleteUser to bypass DB constraint issues
+        const { error: rpcError } = await supabaseClient.rpc('delete_user_admin', {
+            user_id_to_delete: userId
+        })
 
-            const isAuthorized = callerRole === 'super_admin' ||
-                (callerRole === 'admin' && targetRole && ['admin', 'agent', 'farmer', 'warehouse_manager'].includes(targetRole));
-
-            if (!isAuthorized) {
-                return new Response(JSON.stringify({ error: 'Only super_admin or admin can delete users' }), {
-                    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-                    status: 403,
-                })
-            }
-            const { error } = await supabaseClient.auth.admin.deleteUser(userId)
-            if (error) throw error
-
-            return new Response(JSON.stringify({ message: 'User deleted' }), {
-                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-                status: 200,
-            })
+        if (rpcError) {
+            console.error(`[delete_user] RPC Error:`, JSON.stringify(rpcError, null, 2))
+            throw rpcError
         }
+
+        return new Response(JSON.stringify({ message: 'User deleted' }), {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 200,
+        })
 
         return new Response(JSON.stringify({ error: 'Invalid action' }), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },

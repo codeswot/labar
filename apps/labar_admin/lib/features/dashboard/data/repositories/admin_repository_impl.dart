@@ -6,7 +6,7 @@ import '../../../auth/domain/entities/user_entity.dart';
 
 abstract class AdminRepository {
   Future<List<UserEntity>> getUsers({int? limit, int? offset});
-  Future<void> createUser({
+  Future<String?> createUser({
     required String email,
     required String password,
     required String role,
@@ -66,7 +66,8 @@ abstract class AdminRepository {
   // Inventory & Waybills
   Future<List<Map<String, dynamic>>> getItemsByLocation(
       String location); // To filter items by location if needed
-  Future<List<Map<String, dynamic>>> getInventory({int? limit, int? offset});
+  Future<List<Map<String, dynamic>>> getInventory(
+      {int? limit, int? offset, String? warehouseId});
   Future<void> addOrUpdateInventory({
     required String warehouseId,
     required String itemId,
@@ -76,21 +77,20 @@ abstract class AdminRepository {
   });
   Future<void> updateInventoryQuantity(String id, num quantity);
   Future<void> deleteInventory(String id);
-  Future<List<Map<String, dynamic>>> getWaybills({int? limit, int? offset});
+  Future<List<Map<String, dynamic>>> getWaybills(
+      {int? limit, int? offset, String? warehouseId});
   Future<Map<String, dynamic>> createWaybill(Map<String, dynamic> data);
   Future<List<Map<String, dynamic>>> getWarehouses();
   Future<void> addWarehouse({
     required String name,
     required String address,
     String? state,
-    String? managerId,
   });
   Future<void> updateWarehouse({
     required String id,
     required String name,
     required String address,
     String? state,
-    String? managerId,
   });
   Future<List<Map<String, dynamic>>> getInventoryAllocations(
       String inventoryId);
@@ -98,10 +98,19 @@ abstract class AdminRepository {
   Future<List<Map<String, dynamic>>> getWarehouseAllocations(
       String warehouseId);
 
+  Future<UserEntity?> getUserById(String userId);
+  Future<Map<String, dynamic>?> getInventoryById(String id);
+  Future<Map<String, dynamic>?> getWaybillById(String id);
+  Future<void> assignWarehouseManager(String userId, String warehouseId);
+  Future<void> unassignWarehouseManager(String userId);
+  Future<List<Map<String, dynamic>>> getWarehouseManagers(String warehouseId);
+  Future<List<UserEntity>> getPotentialManagers();
+
   // Streams for real-time
+  Stream<List<UserEntity>> get usersStream;
   Stream<List<Map<String, dynamic>>> get itemsStream;
-  Stream<List<Map<String, dynamic>>> get inventoryStream;
-  Stream<List<Map<String, dynamic>>> get waybillsStream;
+  Stream<List<Map<String, dynamic>>> inventoryStream({String? warehouseId});
+  Stream<List<Map<String, dynamic>>> waybillsStream({String? warehouseId});
   Stream<List<Map<String, dynamic>>> get warehousesStream;
 }
 
@@ -109,11 +118,15 @@ abstract class AdminRepository {
 class AdminRepositoryImpl implements AdminRepository {
   final SupabaseClient _supabaseClient;
 
+  SupabaseClient get supabaseClient => _supabaseClient;
+
   AdminRepositoryImpl(this._supabaseClient);
 
   @override
   Future<List<UserEntity>> getUsers({int? limit, int? offset}) async {
-    dynamic query = _supabaseClient.from('profiles').select('*, user_roles(*)');
+    dynamic query = _supabaseClient
+        .from('profiles')
+        .select('*, user_roles(*), warehouse_managers(*, warehouses(*))');
 
     if (offset != null && limit != null) {
       query = query.range(offset, offset + limit - 1);
@@ -121,33 +134,68 @@ class AdminRepositoryImpl implements AdminRepository {
       query = query.limit(limit);
     }
 
-    final response = await (query as dynamic).order('id', ascending: true);
+    final response =
+        await (query as dynamic).order('updated_at', ascending: false);
 
     return (response as List).map((data) {
-      final roleValue = data['user_roles'];
-      final Map<String, dynamic>? roleData =
-          (roleValue is List && roleValue.isNotEmpty)
-              ? roleValue.first as Map<String, dynamic>
-              : (roleValue is Map ? roleValue as Map<String, dynamic> : null);
-
-      return UserEntity(
-        id: data['id'],
-        email: data['email'],
-        firstName: data['first_name'],
-        lastName: data['last_name'],
-        avatarUrl: data['avatar_url'],
-        userMetadata: null, // userMetadata is not in profiles table
-        createdAt: data['updated_at'] != null
-            ? DateTime.parse(data['updated_at'])
-            : DateTime.now(),
-        role: roleData?['role'],
-        active: roleData?['active'],
-      );
+      return _mapToUserEntity(data);
     }).toList();
   }
 
+  UserEntity _mapToUserEntity(Map<String, dynamic> data) {
+    final roleValue = data['user_roles'];
+    final Map<String, dynamic>? roleData = (roleValue is List &&
+            roleValue.isNotEmpty)
+        ? roleValue.first as Map<String, dynamic>
+        : (roleValue is Map ? roleValue as Map<String, dynamic> : null);
+
+    final wmValue = data['warehouse_managers'];
+    final Map<String, dynamic>? wmInfo = (wmValue is List && wmValue.isNotEmpty)
+        ? wmValue.first as Map<String, dynamic>
+        : (wmValue is Map ? wmValue as Map<String, dynamic> : null);
+    final warehouseData = wmInfo?['warehouses'];
+    final Map<String, dynamic>? warehouse = (warehouseData is Map)
+        ? warehouseData as Map<String, dynamic>
+        : (warehouseData is List && warehouseData.isNotEmpty)
+            ? warehouseData.first as Map<String, dynamic>
+            : null;
+
+    return UserEntity(
+      id: data['id'],
+      email: data['email'],
+      phone: data['phone'],
+      firstName: data['first_name'],
+      lastName: data['last_name'],
+      avatarUrl: data['avatar_url'],
+      role: roleData?['role']?.toString(),
+      active: roleData?['active'] as bool? ?? true,
+      createdAt: data['created_at'] != null
+          ? DateTime.parse(data['created_at'])
+          : DateTime.now(),
+      warehouseId: wmInfo?['warehouse_id']?.toString(),
+      warehouseName: warehouse?['name']?.toString(),
+    );
+  }
+
   @override
-  Future<void> createUser({
+  Future<UserEntity?> getUserById(String userId) async {
+    try {
+      final response = await _supabaseClient
+          .from('profiles')
+          .select('*, user_roles(*), warehouse_managers(*, warehouses(*))')
+          .eq('id', userId)
+          .maybeSingle();
+
+      if (response == null) return null;
+      return _mapToUserEntity(response);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  @override
+  @override
+  Future<String?> createUser({
     required String email,
     required String password,
     required String role,
@@ -155,7 +203,7 @@ class AdminRepositoryImpl implements AdminRepository {
     String? lastName,
     Map<String, dynamic>? metadata,
   }) async {
-    await _supabaseClient.functions.invoke('admin-service', body: {
+    final response = await _supabaseClient.functions.invoke('admin-service', body: {
       'action': 'create_user',
       'email': email,
       'password': password,
@@ -166,6 +214,11 @@ class AdminRepositoryImpl implements AdminRepository {
         'last_name': lastName,
       },
     });
+
+    if (response.data != null && response.data['user'] != null) {
+      return response.data['user']['id'];
+    }
+    return null;
   }
 
   @override
@@ -374,18 +427,95 @@ class AdminRepositoryImpl implements AdminRepository {
   }
 
   @override
-  Future<List<Map<String, dynamic>>> getInventory({int? limit, int? offset}) async {
+  Future<List<Map<String, dynamic>>> getInventory(
+      {int? limit, int? offset, String? warehouseId}) async {
     dynamic query = _supabaseClient
         .from('inventory')
         .select('*, warehouses!inner(name, state, address), items!inner(*)');
+
+    if (warehouseId != null) {
+      query = query.eq('warehouse_id', warehouseId);
+    }
 
     if (limit != null) {
       final end = (offset ?? 0) + limit - 1;
       query = (query as PostgrestFilterBuilder).range(offset ?? 0, end);
     }
 
-    final response = await (query as dynamic).order('created_at', ascending: false);
+    final response =
+        await (query as dynamic).order('updated_at', ascending: false);
     return List<Map<String, dynamic>>.from(response);
+  }
+
+  @override
+  Future<Map<String, dynamic>?> getInventoryById(String id) async {
+    try {
+      final response = await _supabaseClient
+          .from('inventory')
+          .select('*, warehouses!inner(name, state, address), items!inner(*)')
+          .eq('id', id)
+          .maybeSingle();
+      return response;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>?> getWaybillById(String id) async {
+    try {
+      final response = await _supabaseClient
+          .from('waybills')
+          .select('*, warehouse:warehouses!inner(name)')
+          .eq('id', id)
+          .maybeSingle();
+      return response;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  @override
+  Future<void> assignWarehouseManager(String userId, String warehouseId) async {
+    await _supabaseClient.from('warehouse_managers').upsert({
+      'user_id': userId,
+      'warehouse_id': warehouseId,
+    }, onConflict: 'user_id');
+  }
+
+  @override
+  Future<void> unassignWarehouseManager(String userId) async {
+    await _supabaseClient
+        .from('warehouse_managers')
+        .delete()
+        .eq('user_id', userId);
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getWarehouseManagers(
+      String warehouseId) async {
+    final response = await _supabaseClient
+        .from('warehouse_managers')
+        .select('*, profiles(*)')
+        .eq('warehouse_id', warehouseId);
+    return List<Map<String, dynamic>>.from(response);
+  }
+
+  @override
+  Future<List<UserEntity>> getPotentialManagers() async {
+    final response = await _supabaseClient
+        .from('profiles')
+        .select('*, user_roles!inner(*)')
+        .eq('user_roles.role', 'warehouse_manager');
+
+    final List<UserEntity> users = [];
+    for (var item in response) {
+      // Check if already assigned? 
+      // Actually we can keep it simple and filter in UI or just show all.
+      // But let's map it.
+      users.add(_mapToUserEntity(item));
+    }
+    return users;
   }
 
   @override
@@ -432,17 +562,23 @@ class AdminRepositoryImpl implements AdminRepository {
   }
 
   @override
-  Future<List<Map<String, dynamic>>> getWaybills({int? limit, int? offset}) async {
+  Future<List<Map<String, dynamic>>> getWaybills(
+      {int? limit, int? offset, String? warehouseId}) async {
     dynamic query = _supabaseClient
         .from('waybills')
-        .select('*, warehouses!inner(name, state)');
+        .select('*, warehouse:warehouses!inner(name)');
+
+    if (warehouseId != null) {
+      query = query.eq('warehouse_id', warehouseId);
+    }
 
     if (limit != null) {
       final end = (offset ?? 0) + limit - 1;
       query = (query as PostgrestFilterBuilder).range(offset ?? 0, end);
     }
 
-    final response = await (query as dynamic).order('created_at', ascending: false);
+    final response =
+        await (query as dynamic).order('created_at', ascending: false);
     return List<Map<String, dynamic>>.from(response);
   }
 
@@ -460,7 +596,10 @@ class AdminRepositoryImpl implements AdminRepository {
 
   @override
   Future<List<Map<String, dynamic>>> getWarehouses() async {
-    final response = await _supabaseClient.from('warehouses').select();
+    final response = await _supabaseClient
+        .from('warehouses')
+        .select()
+        .order('created_at', ascending: false);
     return List<Map<String, dynamic>>.from(response);
   }
 
@@ -469,13 +608,11 @@ class AdminRepositoryImpl implements AdminRepository {
     required String name,
     required String address,
     String? state,
-    String? managerId,
   }) async {
     await _supabaseClient.from('warehouses').insert({
       'name': name,
       'address': address,
       'state': state,
-      'manager_id': managerId,
     });
   }
 
@@ -485,13 +622,11 @@ class AdminRepositoryImpl implements AdminRepository {
     required String name,
     required String address,
     String? state,
-    String? managerId,
   }) async {
     await _supabaseClient.from('warehouses').update({
       'name': name,
       'address': address,
       'state': state,
-      'manager_id': managerId,
     }).eq('id', id);
   }
 
@@ -529,6 +664,15 @@ class AdminRepositoryImpl implements AdminRepository {
   }
 
   @override
+  Stream<List<UserEntity>> get usersStream => _supabaseClient
+      .from('profiles')
+      .stream(primaryKey: ['id'])
+      .order('updated_at', ascending: false)
+      .asyncMap((event) async {
+        return await getUsers();
+      });
+
+  @override
   Stream<List<Map<String, dynamic>>> get itemsStream => _supabaseClient
       .from('items')
       .stream(primaryKey: ['id'])
@@ -538,23 +682,23 @@ class AdminRepositoryImpl implements AdminRepository {
       });
 
   @override
-  Stream<List<Map<String, dynamic>>> get inventoryStream => _supabaseClient
-      .from('inventory')
-      .stream(primaryKey: ['id'])
-      .order('created_at', ascending: false)
-      .asyncMap((event) async {
-        // We need the joins, stream doesn't support them directly easily
-        // but we can fetch the latest list when stream emits
-        return await getInventory();
+  Stream<List<Map<String, dynamic>>> inventoryStream({String? warehouseId}) =>
+      _supabaseClient
+          .from('inventory')
+          .stream(primaryKey: ['id'])
+          .order('updated_at', ascending: false)
+          .asyncMap((event) async {
+        return await getInventory(warehouseId: warehouseId);
       });
 
   @override
-  Stream<List<Map<String, dynamic>>> get waybillsStream => _supabaseClient
-      .from('waybills')
-      .stream(primaryKey: ['id'])
-      .order('created_at', ascending: false)
-      .asyncMap((event) async {
-        return await getWaybills();
+  Stream<List<Map<String, dynamic>>> waybillsStream({String? warehouseId}) =>
+      _supabaseClient
+          .from('waybills')
+          .stream(primaryKey: ['id'])
+          .order('created_at', ascending: false)
+          .asyncMap((event) async {
+        return await getWaybills(warehouseId: warehouseId);
       });
 
   @override

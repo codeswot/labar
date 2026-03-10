@@ -18,9 +18,12 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$UserManagementState {
   List<UserEntity> get users => throw _privateConstructorUsedError;
   bool get isLoading => throw _privateConstructorUsedError;
+  bool get isActionLoading => throw _privateConstructorUsedError;
   bool get isLoadingMore => throw _privateConstructorUsedError;
   bool get hasMore => throw _privateConstructorUsedError;
   int get page => throw _privateConstructorUsedError;
+  List<Map<String, dynamic>> get warehouses =>
+      throw _privateConstructorUsedError;
   String? get error => throw _privateConstructorUsedError;
 
   /// Create a copy of UserManagementState
@@ -39,9 +42,11 @@ abstract class $UserManagementStateCopyWith<$Res> {
   $Res call(
       {List<UserEntity> users,
       bool isLoading,
+      bool isActionLoading,
       bool isLoadingMore,
       bool hasMore,
       int page,
+      List<Map<String, dynamic>> warehouses,
       String? error});
 }
 
@@ -62,9 +67,11 @@ class _$UserManagementStateCopyWithImpl<$Res, $Val extends UserManagementState>
   $Res call({
     Object? users = null,
     Object? isLoading = null,
+    Object? isActionLoading = null,
     Object? isLoadingMore = null,
     Object? hasMore = null,
     Object? page = null,
+    Object? warehouses = null,
     Object? error = freezed,
   }) {
     return _then(_value.copyWith(
@@ -75,6 +82,10 @@ class _$UserManagementStateCopyWithImpl<$Res, $Val extends UserManagementState>
       isLoading: null == isLoading
           ? _value.isLoading
           : isLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isActionLoading: null == isActionLoading
+          ? _value.isActionLoading
+          : isActionLoading // ignore: cast_nullable_to_non_nullable
               as bool,
       isLoadingMore: null == isLoadingMore
           ? _value.isLoadingMore
@@ -88,6 +99,10 @@ class _$UserManagementStateCopyWithImpl<$Res, $Val extends UserManagementState>
           ? _value.page
           : page // ignore: cast_nullable_to_non_nullable
               as int,
+      warehouses: null == warehouses
+          ? _value.warehouses
+          : warehouses // ignore: cast_nullable_to_non_nullable
+              as List<Map<String, dynamic>>,
       error: freezed == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
@@ -107,9 +122,11 @@ abstract class _$$UserManagementStateImplCopyWith<$Res>
   $Res call(
       {List<UserEntity> users,
       bool isLoading,
+      bool isActionLoading,
       bool isLoadingMore,
       bool hasMore,
       int page,
+      List<Map<String, dynamic>> warehouses,
       String? error});
 }
 
@@ -128,9 +145,11 @@ class __$$UserManagementStateImplCopyWithImpl<$Res>
   $Res call({
     Object? users = null,
     Object? isLoading = null,
+    Object? isActionLoading = null,
     Object? isLoadingMore = null,
     Object? hasMore = null,
     Object? page = null,
+    Object? warehouses = null,
     Object? error = freezed,
   }) {
     return _then(_$UserManagementStateImpl(
@@ -141,6 +160,10 @@ class __$$UserManagementStateImplCopyWithImpl<$Res>
       isLoading: null == isLoading
           ? _value.isLoading
           : isLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isActionLoading: null == isActionLoading
+          ? _value.isActionLoading
+          : isActionLoading // ignore: cast_nullable_to_non_nullable
               as bool,
       isLoadingMore: null == isLoadingMore
           ? _value.isLoadingMore
@@ -154,6 +177,10 @@ class __$$UserManagementStateImplCopyWithImpl<$Res>
           ? _value.page
           : page // ignore: cast_nullable_to_non_nullable
               as int,
+      warehouses: null == warehouses
+          ? _value._warehouses
+          : warehouses // ignore: cast_nullable_to_non_nullable
+              as List<Map<String, dynamic>>,
       error: freezed == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
@@ -168,11 +195,14 @@ class _$UserManagementStateImpl implements _UserManagementState {
   const _$UserManagementStateImpl(
       {final List<UserEntity> users = const [],
       this.isLoading = false,
+      this.isActionLoading = false,
       this.isLoadingMore = false,
       this.hasMore = true,
       this.page = 0,
+      final List<Map<String, dynamic>> warehouses = const [],
       this.error})
-      : _users = users;
+      : _users = users,
+        _warehouses = warehouses;
 
   final List<UserEntity> _users;
   @override
@@ -188,6 +218,9 @@ class _$UserManagementStateImpl implements _UserManagementState {
   final bool isLoading;
   @override
   @JsonKey()
+  final bool isActionLoading;
+  @override
+  @JsonKey()
   final bool isLoadingMore;
   @override
   @JsonKey()
@@ -195,12 +228,21 @@ class _$UserManagementStateImpl implements _UserManagementState {
   @override
   @JsonKey()
   final int page;
+  final List<Map<String, dynamic>> _warehouses;
+  @override
+  @JsonKey()
+  List<Map<String, dynamic>> get warehouses {
+    if (_warehouses is EqualUnmodifiableListView) return _warehouses;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_warehouses);
+  }
+
   @override
   final String? error;
 
   @override
   String toString() {
-    return 'UserManagementState(users: $users, isLoading: $isLoading, isLoadingMore: $isLoadingMore, hasMore: $hasMore, page: $page, error: $error)';
+    return 'UserManagementState(users: $users, isLoading: $isLoading, isActionLoading: $isActionLoading, isLoadingMore: $isLoadingMore, hasMore: $hasMore, page: $page, warehouses: $warehouses, error: $error)';
   }
 
   @override
@@ -211,10 +253,14 @@ class _$UserManagementStateImpl implements _UserManagementState {
             const DeepCollectionEquality().equals(other._users, _users) &&
             (identical(other.isLoading, isLoading) ||
                 other.isLoading == isLoading) &&
+            (identical(other.isActionLoading, isActionLoading) ||
+                other.isActionLoading == isActionLoading) &&
             (identical(other.isLoadingMore, isLoadingMore) ||
                 other.isLoadingMore == isLoadingMore) &&
             (identical(other.hasMore, hasMore) || other.hasMore == hasMore) &&
             (identical(other.page, page) || other.page == page) &&
+            const DeepCollectionEquality()
+                .equals(other._warehouses, _warehouses) &&
             (identical(other.error, error) || other.error == error));
   }
 
@@ -223,9 +269,11 @@ class _$UserManagementStateImpl implements _UserManagementState {
       runtimeType,
       const DeepCollectionEquality().hash(_users),
       isLoading,
+      isActionLoading,
       isLoadingMore,
       hasMore,
       page,
+      const DeepCollectionEquality().hash(_warehouses),
       error);
 
   /// Create a copy of UserManagementState
@@ -242,9 +290,11 @@ abstract class _UserManagementState implements UserManagementState {
   const factory _UserManagementState(
       {final List<UserEntity> users,
       final bool isLoading,
+      final bool isActionLoading,
       final bool isLoadingMore,
       final bool hasMore,
       final int page,
+      final List<Map<String, dynamic>> warehouses,
       final String? error}) = _$UserManagementStateImpl;
 
   @override
@@ -252,11 +302,15 @@ abstract class _UserManagementState implements UserManagementState {
   @override
   bool get isLoading;
   @override
+  bool get isActionLoading;
+  @override
   bool get isLoadingMore;
   @override
   bool get hasMore;
   @override
   int get page;
+  @override
+  List<Map<String, dynamic>> get warehouses;
   @override
   String? get error;
 
